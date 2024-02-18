@@ -12,6 +12,7 @@
   https://note.youdao.com/s/1k0x7BLt<br>
 - 吟美 pdf 完整说明文档：
   在百度网盘->人工智能->吟美说明文档->AI 虚拟主播 Vtuber 研发(N 卡版本)-v1.5.1.pdf<br>
+- 旧版吟美项目【因集成过多内置第三方项目，已废弃】：https://github.com/worm128/AI-YinMei-backup
 
 ## **介绍**
 
@@ -25,12 +26,16 @@
 - 支持绘画图片鉴黄 public-NSFW-y-distinguish
 - 支持搜索和搜图服务 duckduckgo（需要魔法上网）
 - 支持搜图服务 baidu 搜图（不需要魔法上网）
+- 支持 AI 回复聊天框【html 插件】
+- 支持 AI 唱歌
+- 支持歌单【html 插件】
 
 ### 软件下载
 
 - 在百度网盘：https://pan.baidu.com/s/1wB1aNTpN5X2WSPCq3GADJw?pwd=1kz2
 - 语音播放器 mpv：语音播放、音乐播放使用
   在百度网盘->人工智能->软件->mpv.exe<br>
+  注意：项目需要在根目录放两个播放器，分别是：mpv.exe【播放语音】、song.exe【播放音乐】
 - 虚拟声卡：虚拟人物口型输出音频
   在百度网盘->人工智能->软件->虚拟声卡 Virtual Audio Cable v4.10 破解版<br>
 - ffmpeg：音频解码器，用于语音合成
@@ -141,8 +146,17 @@ py nsfw_web.py
 6、(必选)皮肤启动，安装 steam，安装 VTube Studio<br>
 这个自行下载 steam 平台，在平台里面有一个 VTube Studio 软件，它就是启动 live2D 的虚拟主播皮肤<br>
 
-7、(必选)其他<br>
+7、(必选)虚拟声卡驱动<br>
 安装虚拟声卡：虚拟声卡驱动（Virtual Audio Cable）4.66 官方版<br>
+
+8、(可选)AI 回复框【HTML 插件】<br>
+把项目文件：ai-yinmei\html\chatui.html 放入 OBS 浏览器插件展示
+
+9、(可选)歌单显示【HTML 插件】<br>
+把项目文件：ai-yinmei\html\songlist.html 放入 OBS 浏览器插件展示
+
+10、(可选)时间显示【HTML 插件】<br>
+把项目文件：ai-yinmei\html\time.html 放入 OBS 浏览器插件展示
 
 此外，需要在 text-generation-webui/models 路径放入 LLM 模型，我这里放的是 chatgml2 的模型，大家可以任意选择底层 LLM 模型，例如，千问、百川、chatglm、llama 等<br>
 更多详细技术细节，请看技术文档：https://note.youdao.com/s/1k0x7BLt<br>
