@@ -133,7 +133,7 @@ py nsfw_web.py
 ```
 
 5、(可选)启动唱歌服务 Auto-Convert-Music<br>
-服务暂不开源<br>
+项目地址：https://github.com/MuBai-He/Auto-Convert-Music<br>
 
 6、(必选)皮肤启动，安装 steam，安装 VTube Studio<br>
 这个自行下载 steam 平台，在平台里面有一个 VTube Studio 软件，它就是启动 live2D 的虚拟主播皮肤<br>
