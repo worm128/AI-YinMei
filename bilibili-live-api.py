@@ -180,6 +180,15 @@ nsfw_progress_limit=0.2 #nsfw黄图-绘画进度鉴黄
 nsfw_lock = threading.Lock()
 # ============================================
 
+# ============= 语音合成 =====================
+bert_vists_url="192.168.2.58:5000"
+speaker_name="珊瑚宫心海[中]"
+sdp_ratio=0.2  #SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
+noise=0.2 #控制感情变化程度，默认0.2
+noisew=0.9 #控制音节发音变化程度，默认0.9
+speed=1  #语速
+# ============================================
+
 print("--------------------")
 print("AI虚拟主播-启动成功！")
 print("--------------------")
@@ -187,7 +196,6 @@ print("--------------------")
 # 用户进入直播间
 @room.on("INTERACT_WORD")
 async def in_liveroom(event):
-    print(event)
     user_name = event["data"]["data"]["uname"]  # 获取用户昵称
     time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
     print(f"{time1}:粉丝\033[36m[{user_name}]\033[0m进入了直播间")
@@ -222,6 +230,7 @@ async def input_msg(event):
     
     query = event["data"]["info"][1]  # 获取弹幕内容
     user_name = event["data"]["info"][2][1]  # 获取用户昵称
+    #消息处理分发
     msg_deal(query,user_name)
 
 # 收到礼物
@@ -293,86 +302,77 @@ def msg_deal(query,user_name):
     global LogsList
 
     query=filter(query,filterCh)
-    print(f"\033[36m[{user_name}]\033[0m:{query}")  # 打印弹幕信息
-    if not QuestionList.full():
-        #tts_say(query)
-        #命令执行
-        status = cmd(query)  
-        if status==1:
-            print(f"执行命令：{query}")
-            return
-        
-        # 说话不执行任务
-        text = ["\\"]
-        num = is_index_contain_string(text, query)  # 判断是不是需要搜索
-        if num > 0:
-            return
-        
-        # 搜索引擎查询
-        text = ["查询", "查一下", "搜索"]
-        num = is_index_contain_string(text, query)  # 判断是不是需要搜索
-        if num > 0:
-            queryExtract = query[num : len(query)]  # 提取提问语句
-            print("搜索词：" + queryExtract)
-            # prompt = f'帮我在答案"{searchStr}"中提取"{queryExtract}"的信息'
-            # print(f"重置提问:{prompt}")
-            # is_query = True
-            if queryExtract=="":
-               return
-            text_search_json = {"prompt": queryExtract, "username": user_name}
-            SearchTextList.put(text_search_json)
-            return
+    print(f"[{user_name}]:{query}")  # 打印弹幕信息
 
-        # 搜索图片
-        text = ["搜图", "搜个图", "搜图片", "搜一下图片"]
-        num = is_index_contain_string(text, query)  # 判断是不是需要搜索
-        if num > 0:
-            queryExtract = query[num : len(query)]  # 提取提问语句
-            print("搜索图：" + queryExtract)
-            if queryExtract=="":
-               return
-            img_search_json = {"prompt": queryExtract, "username": user_name}
-            SearchImgList.put(img_search_json)
-            return
+    #命令执行
+    status = cmd(query)  
+    if status==1:
+        print(f"执行命令：{query}")
+        return
 
-        # 绘画
-        text = ["画画", "画一个", "画一下", "画个"]
-        num = is_index_contain_string(text, query)
-        if num > 0:
-            queryExtract = query[num : len(query)]  # 提取提问语句
-            print("绘画提示：" + queryExtract)
-            if queryExtract=="":
-               return
-            draw_json = {"prompt": queryExtract, "username": user_name}
-            # 加入绘画队列
-            DrawQueueList.put(draw_json)
-            return
+    # 说话不执行任务
+    text = ["\\"]
+    num = is_index_contain_string(text, query)  # 判断是不是需要搜索
+    if num > 0:
+        return
 
-        # 唱歌
-        text = ["唱一下", "唱一首", "唱歌"]
-        num = is_index_contain_string(text, query)
-        if num > 0:
-            queryExtract = query[num : len(query)]  # 提取提问语句
-            print("唱歌提示：" + queryExtract)
-            song_json = {"prompt": queryExtract, "username": user_name}
-            SongQueueList.put(song_json)
-            return
-        
-        #询问LLM
-        # QuestionName.put(user_name)  # 将用户名放入队列
-        # QuestionList.put(query)  # 将弹幕消息放入队列
-        # 默认画画
-        # queryExtract = query[num : len(query)]  # 提取提问语句
-        # print("绘画提示：" + queryExtract)
-        # draw_json = {"prompt": queryExtract, "username": user_name}
-        # # 加入绘画队列
-        # DrawQueueList.put(draw_json)
+    # 搜索引擎查询
+    text = ["查询", "查一下", "搜索"]
+    num = is_index_contain_string(text, query)  # 判断是不是需要搜索
+    if num > 0:
+        queryExtract = query[num : len(query)]  # 提取提问语句
+        print("搜索词：" + queryExtract)
+        # prompt = f'帮我在答案"{searchStr}"中提取"{queryExtract}"的信息'
+        # print(f"重置提问:{prompt}")
+        # is_query = True
+        if queryExtract=="":
+           return
+        text_search_json = {"prompt": queryExtract, "username": user_name}
+        SearchTextList.put(text_search_json)
+        return
 
-        time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        LogsList.put(f"[{time1}] [{user_name}]：{query}")
-        print("\033[32mSystem>>\033[0m已将该条弹幕添加入问题队列")
-    else:
-        print("\033[32mSystem>>\033[0m队列已满，该条弹幕被丢弃")
+    # 搜索图片
+    text = ["搜图", "搜个图", "搜图片", "搜一下图片"]
+    num = is_index_contain_string(text, query)  # 判断是不是需要搜索
+    if num > 0:
+        queryExtract = query[num : len(query)]  # 提取提问语句
+        print("搜索图：" + queryExtract)
+        if queryExtract=="":
+           return
+        img_search_json = {"prompt": queryExtract, "username": user_name}
+        SearchImgList.put(img_search_json)
+        return
+
+    # 绘画
+    text = ["画画", "画一个", "画一下", "画个"]
+    num = is_index_contain_string(text, query)
+    if num > 0:
+        queryExtract = query[num : len(query)]  # 提取提问语句
+        print("绘画提示：" + queryExtract)
+        if queryExtract=="":
+           return
+        draw_json = {"prompt": queryExtract, "username": user_name}
+        # 加入绘画队列
+        DrawQueueList.put(draw_json)
+        return
+
+    # 唱歌
+    text = ["唱一下", "唱一首", "唱歌"]
+    num = is_index_contain_string(text, query)
+    if num > 0:
+        queryExtract = query[num : len(query)]  # 提取提问语句
+        print("唱歌提示：" + queryExtract)
+        song_json = {"prompt": queryExtract, "username": user_name}
+        SongQueueList.put(song_json)
+        return
+
+    #询问LLM
+    # QuestionName.put(user_name)  # 将用户名放入队列
+    # QuestionList.put(query)  # 将弹幕消息放入队列
+
+    # time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # LogsList.put(f"[{time1}] [{user_name}]：{query}")
+    # print("\033[32mSystem>>\033[0m已将该条弹幕添加入问题队列")
 
 # 命令控制：优先
 def cmd(query):
@@ -723,11 +723,17 @@ def check_tts():
         tts_thread = Thread(target=tts_generate)
         tts_thread.start()
 
-# bert-vits2语音合成
+
+'''
+bert-vits2语音合成
+filename：音频文件名
+text：说话文本
+emotion：情感描述
+'''
 def bert_vits2(filename,text,emotion):
     save_path=f".\output\{filename}.mp3"
     text=parse.quote(text)
-    response = requests.get(url=f"http://127.0.0.1:5000/voice?text={text}&model_id=0&speaker_name=珊瑚宫心海[中]&sdp_ratio=0.2&noise=0.2&noisew=0.9&length=1&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}")
+    response = requests.get(url=f"http://{bert_vists_url}/voice?text={text}&model_id=0&speaker_name={speaker_name}&sdp_ratio={sdp_ratio}&noise={noise}&noisew={noisew}&length={speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}")
     if response.status_code == 200:
        audio_data = response.content # 获取音频数据
        with open(save_path, 'wb') as file:
@@ -754,6 +760,7 @@ def tts_say_do(text):
     
     # 识别表情
     jsonstr = emote_content(text)
+    print(f"输出表情{jsonstr}")
     emotion = "happy"
     if len(jsonstr)>0:
         emotion = jsonstr[0]["content"]
@@ -766,16 +773,17 @@ def tts_say_do(text):
     #     f"edge-tts --voice zh-CN-XiaoxiaoNeural --rate=+20% --f .\output\{filename}.txt --write-media .\output\{filename}.mp3 2>nul",
     #     shell=True,
     # )
+        
     # bert_vits2合成语音
     status = bert_vits2(filename,text,emotion)
-    if status ==0:
+    if status == 0:
        return
 
     # 输出表情
     emote_thread = Thread(target=emote_show,args=(jsonstr,))
     emote_thread.start()
     
-    #输出回复字幕
+    # 输出回复字幕
     ReplyTextList.put(text)
 
     # 播放声音
@@ -783,7 +791,6 @@ def tts_say_do(text):
 
     # 执行命令行指令
     subprocess.run(f"del /f .\output\say{SayCount}.mp3 1>nul", shell=True)
-    # subprocess.run(f"del /f .\output\say{SayCount}.txt 1>nul", shell=True)
     SayCount += 1
     
 
@@ -836,31 +843,40 @@ def tts_generate():
 # 文本识别表情内容
 def emote_content(response):
     jsonstr = []
-    # =========== 开心 ==============
-    text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画"]
+    # =========== 随机动作 ==============
+    text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "欢迎", "搜", "唱"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"happy","key":"开心","num":num})
-    # =========== 招呼 ==============
-    text = ["你好", "在吗", "干嘛", "名字", "欢迎", "搜"]
-    num = is_array_contain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content":"call","key":"招呼","num":num})
-    # =========== 生气 ==============
-    text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "忘记"]
-    num = is_array_contain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content":"angry","key":"生气","num":num})
-    # =========== 尴尬 ==============
-    text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋"]
-    num = is_array_contain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content":"blush","key":"尴尬","num":num})
-    # =========== 认同 ==============
-    text = ["认同", "点头", "嗯", "哦", "女仆", "唱"]
-    num = is_array_contain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content":"approve","key":"认同","num":num})
+        press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+        press = random.randrange(0, len(press_arry))
+        jsonstr.append({"content":"happy","key":press,"num":num})
+    # ===============================
+
+    # # =========== 开心 ==============
+    # text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画"]
+    # num = is_array_contain_string(text, response)
+    # if num > 0:
+    #     jsonstr.append({"content":"happy","key":"开心","num":num})
+    # # =========== 招呼 ==============
+    # text = ["你好", "在吗", "干嘛", "名字", "欢迎", "搜"]
+    # num = is_array_contain_string(text, response)
+    # if num > 0:
+    #     jsonstr.append({"content":"call","key":"招呼","num":num})
+    # # =========== 生气 ==============
+    # text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "忘记"]
+    # num = is_array_contain_string(text, response)
+    # if num > 0:
+    #     jsonstr.append({"content":"angry","key":"生气","num":num})
+    # # =========== 尴尬 ==============
+    # text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋"]
+    # num = is_array_contain_string(text, response)
+    # if num > 0:
+    #     jsonstr.append({"content":"blush","key":"尴尬","num":num})
+    # # =========== 认同 ==============
+    # text = ["认同", "点头", "嗯", "哦", "女仆", "唱"]
+    # num = is_array_contain_string(text, response)
+    # if num > 0:
+    #     jsonstr.append({"content":"approve","key":"认同","num":num})
     return jsonstr
 
 # 表情加入:使用键盘控制VTube
@@ -953,13 +969,12 @@ def mpv_read():
 
         # 识别表情
         jsonstr = emote_content(response)
+        print(f"输出表情{jsonstr}")
         # 输出表情
         emote_thread = Thread(target=emote_show,args=(jsonstr,))
         emote_thread.start()
 
-        print(
-            f"\033[32mSystem>>\033[0m开始播放output{temp1}.mp3，当前待播语音数：{current_mpvlist_count}"
-        )
+        print(f"开始播放output{temp1}.mp3，当前待播语音数：{current_mpvlist_count}")
         # 播放声音
         mpv_play(f".\output\output{temp1}.mp3",100)
 
