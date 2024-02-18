@@ -4,6 +4,7 @@
 - AI 名称：吟美
 - 开发者：Winlone
 - B 站频道：程序猿的退休生活
+- B 站视频教程：https://www.bilibili.com/video/BV18b4y1V7Qm/
 - Q 群：27831318
 - 版本：1.0
 - 详细笔记：
@@ -23,12 +24,24 @@
 - 支持搜索和搜图服务 duckduckgo（需要魔法上网）
 - 支持搜图服务 baidu 搜图（不需要魔法上网）
 
+### 软件下载
+
+- 在百度网盘：https://pan.baidu.com/s/1wB1aNTpN5X2WSPCq3GADJw?pwd=1kz2
+- 语音播放器 mpv：语音播放、音乐播放使用
+  在百度网盘->人工智能->软件->mpv.exe<br>
+- 虚拟声卡：虚拟人物口型输出音频
+  在百度网盘->人工智能->软件->虚拟声卡 Virtual Audio Cable v4.10 破解版<br>
+- ffmpeg：音频解码器，用于语音合成
+  在百度网盘->人工智能->软件->ffmpeg<br>
+
 ### 运行环境
 
 - Python 3.11.6
 
 ### 调用类库
 
+- 轻量安装（推荐-不包含 LLM 语言模型）：requirements.txt
+- 全量安装（包含 LLM 语言模型、LLM 训练模型等）：requirements-all.txt
 - 对应重要的 py 包<br>
   torch：2.1.0+cu121<br>
   peft：0.6.2<br>
