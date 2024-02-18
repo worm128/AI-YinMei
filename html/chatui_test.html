@@ -1,0 +1,85 @@
+<html lang="zh">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="referrer" content="no-referrer">
+		<link rel="icon" href="/favicon.ico">
+		<title>chat</title>
+		<style>
+            /* Transparent background */
+            body {
+                background-color: transparent !important;
+            }
+			#chat {
+				width: 800px; height:400px; overflow: hidden; 
+            }
+			#content {
+                width: auto; height:auto; 
+            }
+			#content .area{
+			    background-color: #b91919; color: white; line-height: 40px;
+				font-size: 32px; font-weight: bold; word-wrap: break-word;overflow:hidden;
+				letter-spacing:5px; font-family:"微软雅黑";
+				margin-bottom: 10px; padding: 5px; width: auto; height: auto; 
+				-webkit-border-radius: 10px; text-shadow: 1px 1px 3px #000000;
+				border: solid 1px #4e4e4e; box-shadow: 0px 1px 1px 0px #4e4e4e;
+			}
+        </style>
+		<script type="text/javascript" src="jquery-3.7.1.min.js"></script>
+	</head>
+	<body>
+		<div id="chat">
+			  <div id="content"></div>
+		</div>
+		<div id="tip"></div>
+		<script type="text/javascript">
+			function typewriter(text) {
+				var i = 0; // 当前要显示的字符索引
+				$("#content").last().append("<div class=\"area\"></div>")
+				function showChar() {
+					if (i < text.length) {
+						$("#content div").last().append(text[i]);
+						//document.getElementById("content").innerHTML += text[i]; // 将当前字符添加到页面元素中
+						//滚动到底部
+						$("#chat").scrollTop($("#content").height());
+						i++; // 更新索引值
+						setTimeout(showChar, 200); // 每次间隔xx调用自身，模拟打字效果
+					} else {
+						console.log('完成'); // 所有字符都已经输出完毕时触发此行代码
+						var count = $('#content div').length;
+						if(count>50)
+						  $('#content div').slice(0, 20).remove();
+					}
+				}
+				
+				showChar(); // 开始输出第一个字符
+			}
+			
+			// JavaScript部分
+			function refreshPage(){
+				$.ajax({
+                    url: "http://127.0.0.1:1800/chatreplytest",
+                    type: "get",
+                    dataType: "jsonp",
+                    //需要和服务端回掉方法中的参数名相对应
+                    //注释掉这句话默认传的名称叫callback
+                    jsonp: "CallBack",
+                    cache: false,
+                    data: {},
+                    success: function (data) {
+						if(data["status"]=="成功")
+						{
+						    content = data["content"]
+						    typewriter(content)
+						}
+                    }
+                });
+			}
+			// 每隔2000毫秒（2秒）输出"Hello World!"到控制台
+			setInterval(function(){
+				refreshPage();
+			}, 1000);
+		</script>
+	</body>
+</html>

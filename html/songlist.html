@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="referrer" content="no-referrer">
+		<link rel="icon" href="/favicon.ico">
+		<title>songlist</title>
+		<style>
+            /* Transparent background */
+            body {
+                background-color: transparent !important;
+            }
+			#chat {
+				width: 1200px; height:800px; overflow: hidden; 
+            }
+			#content {
+                width: auto; height:auto; 
+            }
+			.title{
+				color: #ff0777; line-height: 55px;font-size: 55px; font-weight: bold;
+				-webkit-border-radius: 15px; text-shadow: 1px 1px 3px #000000;
+				margin-bottom: 30px;
+			}
+			#content .area{
+			    color: #ffffff; line-height: 58px;
+				font-size: 43px; font-weight: bold; word-wrap: break-word;overflow:hidden;
+				letter-spacing:5px; font-family:"微软雅黑";
+				width: auto; height: auto; 
+				-webkit-border-radius: 15px; text-shadow: 1px 1px 3px #000000;
+				
+			}
+			#content .area:first-child{
+			    color: #fff12c; 
+			}
+        </style>
+		<script type="text/javascript" src="jquery-3.7.1.min.js"></script>
+	</head>
+	<body>
+		<div id="chat">
+			  <div class="title">点播歌曲：</div>
+			  <div id="content"></div>
+		</div>
+		<div id="tip"></div>
+		<script type="text/javascript">
+			
+			// JavaScript部分
+			function refreshPage(){
+				$.ajax({
+                    url: "http://127.0.0.1:1800/songlist",
+                    type: "get",
+                    dataType: "jsonp",
+                    //需要和服务端回掉方法中的参数名相对应
+                    //注释掉这句话默认传的名称叫callback
+                    jsonp: "CallBack",
+                    cache: false,
+                    data: {},
+                    success: function (data) {
+						if(data["status"]=="成功")
+						{
+							content = data["content"];
+							$("#content").html("")
+							i = 1
+							for(item in content)
+							{
+								tip=""
+								if(i==1)
+								{
+									tip="<span>[正在播放]<span>"
+								}
+								console.log(item)
+								$("#content").last().append("<div class=\"area\">"+i+"."+content[item]["songname"]+tip+"<br/></div>")
+								i++;
+							}
+						}
+						
+                    }
+                });
+			}
+			// 每隔1000毫秒（1秒）
+			setInterval(function(){
+				refreshPage();
+			}, 5000);
+		</script>
+	</body>
+</html>
