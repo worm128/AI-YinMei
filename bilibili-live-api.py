@@ -16,9 +16,10 @@ import random
 import re
 import traceback
 import websocket
-import crawler
+
 import logging
 
+from search import crawler
 from io import BytesIO
 from PIL import Image
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
