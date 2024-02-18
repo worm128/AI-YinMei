@@ -6,7 +6,7 @@
 - B 站频道：程序猿的退休生活
 - B 站视频教程：https://www.bilibili.com/video/BV18b4y1V7Qm/
 - Q 群：27831318
-- 版本：1.0
+- 版本：1.5.1
 - 详细笔记：
   现在发现有道云笔记网页版本不能查看笔记图片，需要完整教案请进入 Q 群 27831318 获取 pdf 文档<br>
   https://note.youdao.com/s/1k0x7BLt<br>
