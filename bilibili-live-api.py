@@ -71,13 +71,12 @@ create_song_lock = threading.Lock()
 play_song_lock = threading.Lock()
 say_lock = threading.Lock()
 # ============= LLM参数 =====================
-QuestionList = queue.Queue()  # 定义问题 用户名 回复 播放列表 四个先进先出队列
-QuestionName = queue.Queue()
-AnswerList = queue.Queue()
-MpvList = queue.Queue()
-EmoteList = queue.Queue()
-LogsList = queue.Queue()
-ReplyTextList = queue.Queue()
+QuestionList = queue.Queue()  # LLM回复问题
+QuestionName = queue.Queue()  
+AnswerList = queue.Queue()  #Ai回复队列
+MpvList = queue.Queue()   #语音播放队列
+EmoteList = queue.Queue()  #表情队列
+ReplyTextList = queue.Queue()   #Ai回复框文本队列
 history = []
 is_ai_ready = True  # 定义ai回复是否转换完成标志
 is_tts_ready = True  # 定义语音是否生成完成标志
@@ -198,7 +197,7 @@ print("--------------------")
 async def in_liveroom(event):
     user_name = event["data"]["data"]["uname"]  # 获取用户昵称
     time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
-    print(f"{time1}:粉丝\033[36m[{user_name}]\033[0m进入了直播间")
+    print(f"{time1}:粉丝[{user_name}]进入了直播间")
     # 直接放到语音合成处理
     # tts_say(f"欢迎{user_name}来到吟美的直播间")
     # wenhou=[f"{user_name}，恭喜发财，龙年大吉",f"{user_name}，2024年是青龙守财库哦，守住自己的钱包",
@@ -297,14 +296,10 @@ def msg_deal(query,user_name):
     """
     处理弹幕消息
     """
-    global QuestionList
-    global QuestionName
-    global LogsList
-
     query=filter(query,filterCh)
     print(f"[{user_name}]:{query}")  # 打印弹幕信息
 
-    #命令执行
+    # 命令执行
     status = cmd(query)  
     if status==1:
         print(f"执行命令：{query}")
@@ -362,6 +357,8 @@ def msg_deal(query,user_name):
     if num > 0:
         queryExtract = query[num : len(query)]  # 提取提问语句
         print("唱歌提示：" + queryExtract)
+        if queryExtract=="":
+           return
         song_json = {"prompt": queryExtract, "username": user_name}
         SongQueueList.put(song_json)
         return
@@ -369,10 +366,6 @@ def msg_deal(query,user_name):
     #询问LLM
     # QuestionName.put(user_name)  # 将用户名放入队列
     # QuestionList.put(query)  # 将弹幕消息放入队列
-
-    # time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # LogsList.put(f"[{time1}] [{user_name}]：{query}")
-    # print("\033[32mSystem>>\033[0m已将该条弹幕添加入问题队列")
 
 # 命令控制：优先
 def cmd(query):
@@ -472,8 +465,8 @@ def ai_response():
     # 加入回复列表，并且后续合成语音
     tts_say(f"{prompt}" + "," + answer)
     current_question_count = QuestionList.qsize()
-    print(f"\033[31m[AI回复]\033[0m{answer}")  # 打印AI回复信息
-    print(f"\033[32mSystem>>\033[0m[{user_name}]的回复已存入队列，当前剩余问题数:{current_question_count}")
+    print(f"[AI回复]{answer}")  # 打印AI回复信息
+    print(f"System>>[{user_name}]的回复已存入队列，当前剩余问题数:{current_question_count}")
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
 
@@ -820,14 +813,14 @@ def tts_generate():
     if contain > 0:
         # 欢迎语
         print(
-            f"\033[32mSystem>>\033[0m对[{response}]的回复已成功转换为语音并缓存为output{AudioCount}.mp3"
+            f"System>>对[{response}]的回复已成功转换为语音并缓存为output{AudioCount}.mp3"
         )
         # 表情加入:使用键盘控制VTube
         EmoteList.put(f"{response}")
     else:
         # 回复语
         name = response[begin_name + 2 : end_name]
-        print(f"\033[32mSystem>>\033[0m对[{name}]的回复已成功转换为语音并缓存为output{AudioCount}.mp3")
+        print(f"System>>对[{name}]的回复已成功转换为语音并缓存为output{AudioCount}.mp3")
         # 表情加入:使用键盘控制VTube
         emote = response[end_name : len(response)]
         EmoteList.put(f"{emote}")
@@ -1574,9 +1567,11 @@ def main():
         while True:
            time.sleep(10)
 
+# b站直播间监听
 def brun():
     sync(room.connect())
-    
+
+# http服务  
 def apprun():
     # 禁止输出日志
     app.logger.disabled = True
