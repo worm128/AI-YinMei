@@ -70,7 +70,7 @@
 #安装py包
 pip install -r requirements.txt
 #启动对接b站直播程序
-#一：1.b站直播间 2.api web 3.双开:
+#一：1.b站直播间 2.api web
 #二：0.对接后端text-generation-webui接口   1.当前加载LLM本地模型
 #三：输入你的B站直播间编号
 python bilibili-live-api.py
@@ -135,6 +135,7 @@ py nsfw_web.py
 ```
 
 5、(可选)启动唱歌服务 Auto-Convert-Music<br>
+原创开发者：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃<br>
 项目地址：https://github.com/MuBai-He/Auto-Convert-Music<br>
 
 6、(必选)皮肤启动，安装 steam，安装 VTube Studio<br>
@@ -160,7 +161,7 @@ py nsfw_web.py
   酒馆，强大的 AI 角色扮演，但是该项目没有公开接口调用，而且 TTS 语言合成很缓慢，暂未集成使用<br>
   https://github.com/SillyTavern/SillyTavern<br>
 - output【输出路径】：<br>
-  输出的文本 txt、语音 mp3 文件都在这里<br>3
+  输出的文本 txt、语音 mp3 文件都在这里<br>
 - ChatGLM2\ptuning【AI 训练】：<br>
   ChatGLM 官方训练例子<br>
 - ChatGLM2\ptuning\zero_nlp【AI 训练】：<br>
@@ -168,6 +169,7 @@ py nsfw_web.py
 
 ### 特别鸣谢
 
+- 语音合成：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃
 - LLM 模型：ChatGLM<br>
   https://github.com/THUDM/ChatGLM2-6B<br>
 - 聚合 LLM 调用模型：text-generation-webui<br>
