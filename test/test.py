@@ -65,7 +65,14 @@ def is_index_contain_string(string_array, target_string):
 # print(jsonstr)
 # print(SongQueueList.queue)
 
-user_name="test"
-wenhou=[f"{user_name}，恭喜发财，龙年大吉"]
-wenhou_num = random.randrange(0, len(wenhou))
-print(wenhou[wenhou_num])
+# user_name="test"
+# wenhou=[f"{user_name}，恭喜发财，龙年大吉"]
+# wenhou_num = random.randrange(0, len(wenhou))
+# print(wenhou[wenhou_num])
+
+
+jsonstr=[]
+press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+press = random.randrange(0, len(press_arry))
+jsonstr.append({"content":"happy","key":press_arry[press],"num":1})
+print(jsonstr)

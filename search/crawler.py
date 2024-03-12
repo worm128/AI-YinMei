@@ -35,7 +35,7 @@ def baidu_get_image_url_regx(data, max_number=10000, use_proxy=None):
         quote(keywords), quote(keywords))
     query_url = base_url + keywords_str
     init_url = query_url + f"&pn=0&rn={max_number}"
-    print(f"百度地址:{query_url}")
+    print(f"百度地址:{init_url}")
     
     proxies = None
     # if use_proxy:

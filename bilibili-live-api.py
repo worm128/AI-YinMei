@@ -16,7 +16,6 @@ import random
 import re
 import traceback
 import websocket
-
 import logging
 
 from search import crawler
@@ -24,11 +23,8 @@ from io import BytesIO
 from PIL import Image
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from bilibili_api import live, sync, Credential
-from pynput.keyboard import Key, Controller
 from duckduckgo_search import DDGS
 from threading import Thread
-from peft import PeftModel
-from transformers import AutoTokenizer, AutoModel, AutoConfig
 from urllib.parse import quote
 from flask import Flask, jsonify, request, render_template
 from flask_apscheduler import APScheduler
@@ -48,7 +44,7 @@ os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 sched1 = AsyncIOScheduler(timezone="Asia/Shanghai")
 #设置控制台日志
 today = datetime.date.today().strftime("%Y-%m-%d")
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(filename)s %(name)s %(message)s',handlers=[logging.StreamHandler(),logging.FileHandler(f"./logs/log_{today}.txt")])
+logging.basicConfig(level=logging.INFO, encoding="utf-8", format='%(asctime)s %(levelname)s %(filename)s %(name)s %(message)s',handlers=[logging.StreamHandler(),logging.FileHandler(filename=f"./logs/log_{today}.txt", encoding="utf-8")])
 # 定时器只输出error
 my_logging = logging.getLogger("apscheduler.executors.default")
 my_logging.setLevel('ERROR')
@@ -60,7 +56,7 @@ def print(*args, **kwargs):
     logging.info(*args, **kwargs)
 
 #1.b站直播间 2.api web 3.双开
-mode=int(input("1.b站直播间 2.api web：") or "2")
+mode=int(input("1.b站直播间 2.api web：") or "1")
 
 #代理
 proxies = {"http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806"}
@@ -83,29 +79,18 @@ is_tts_ready = True  # 定义语音是否生成完成标志
 is_mpv_ready = True  # 定义是否播放完成标志
 AudioCount = 0
 SayCount = 0
-enable_history = False  # 是否启用记忆
 history_count = 2  # 定义最大对话记忆轮数,请注意这个数值不包括扮演设置消耗的轮数，只有当enable_history为True时生效
 enable_role = False  # 是否启用扮演模式
 # ============================================
 
 # ============= 本地模型加载 =====================
-is_local_llm = int(input("是否使用本地LLM模型(1.是 0.否): ") or "0")
-tgwUrl = "192.168.2.58:5000"
-if is_local_llm == 1:
-    # AI基础模型路径
-    model_path = "ChatGLM2/THUDM/chatglm2-6b"
-    # 训练模型路径
-    checkpoint_path = ("LLaMA-Factory/saves/ChatGLM2-6B-Chat/lora/yinmei-20231123-ok-last")
-    tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
-    # 导入chatglm 你可以换你喜欢的版本模型. 量化int8： .quantize(8)
-    model = AutoModel.from_pretrained(model_path, trust_remote_code=True).cuda()
-    # lora加载训练模型
-    model = PeftModel.from_pretrained(
-        model,
-        checkpoint_path,
-    )
-    model = model.merge_and_unload()
-    model = model.eval()
+# 模型加载方式
+local_llm_type = int(input("本地LLM模型类型(1.fastapi 2.text-generation-webui): ") or "1")
+tgw_url = "192.168.2.58:5000"
+fastapi_url = "192.168.2.198:3000"
+fastapi_authorization="Bearer fastgpt-xyfnffZ3a72fwIQQHye7q4SOtnHEns347qyL4gMXIx5D0ziQfA6kHXMl"
+#qwen1.5:fastgpt-N7OOz19QWHdmvLhjjJmpXwybD0DTcMInKm3auu0O4AL6dinWf2GdBqCuTxV1H3nQu
+#glm3:fastgpt-xyfnffZ3a72fwIQQHye7q4SOtnHEns347qyL4gMXIx5D0ziQfA6kHXMl
 # ============================================
 
 # ============= 绘画参数 =====================
@@ -140,9 +125,9 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="1ced502b%2C1723631629%2C623dc%2A22CjA6SgwQcp5ff3r6qVhmtETy4JKuQHW9awMPfcWEW7X8JVfZNJIUIkFD10Ipab4a85gSVkppaEkycEZURXZVY3AtWUQ0NkVTb3pBRms5Yy0tTnlycXp2UnJtNEpMTXhIZjRzeThvaERZRWxsU05GVVRTRmpxQ0hqeG44VEt1UlFzV1p5eFBjdFZBIIEC",
+    sessdata="164fd24c%2C1725789406%2Cbdbf7%2A32CjCqC9lU-Uw0012D6oaUb6eRWQIvPy5gRu6Wiw-h8YuSSeBDOgXJjXKw2eewRFK7FEcSVjNOVFllZktOQVRKUVFKN2Z1T2N3TThUbE9SWVhRcWVKTXdzTS1NVU9ZNHluY1FjSm5HV2dBWVZCZFhDdHMtTWVfOWlDUG9lbnRndG5GOHMxdjdkQXNnIIEC",
     buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
-    bili_jct="697ca0da24de503645c90a4f70856271",
+    bili_jct="5d322d50f322b742fbc215c7077cccc0",
     dedeuserid="333472479",
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
@@ -210,13 +195,13 @@ async def in_liveroom(event):
     #tts_say(wenhou[wenhou_num])
     
     #判断游客的不进行绘画
-    text = ["bili"]
-    num = is_array_contain_string(text, user_name)
-    if num==0:
-        # 进入直播间根据用户名绘图
-        draw_json = {"prompt": user_name, "username": user_name}
-        # 加入绘画队列
-        DrawQueueList.put(draw_json)
+    # text = ["bili"]
+    # num = is_array_contain_string(text, user_name)
+    # if num==0:
+    #     # 进入直播间根据用户名绘图
+    #     draw_json = {"prompt": user_name, "username": user_name}
+    #     # 加入绘画队列
+    #     DrawQueueList.put(draw_json)
 
 # B站弹幕处理
 @room.on("DANMU_MSG")  # 弹幕消息事件回调函数
@@ -230,7 +215,7 @@ async def input_msg(event):
     query = event["data"]["info"][1]  # 获取弹幕内容
     user_name = event["data"]["info"][2][1]  # 获取用户昵称
     #消息处理分发
-    msg_deal(query,user_name)
+    msg_deal(query,uid,user_name)
 
 # 收到礼物
 @room.on('SEND_GIFT')
@@ -248,8 +233,9 @@ async def on_gift(event):
 def input_msg():
     data = request.json
     query = data["msg"]  # 获取弹幕内容
+    uid = data["uid"]  # 获取用户昵称
     user_name = data["username"]  # 获取用户昵称
-    msg_deal(query,user_name)
+    msg_deal(query,uid,user_name)
     return jsonify({"status": "成功"})
 
 # 聊天回复弹框处理
@@ -262,7 +248,7 @@ def chatreply():
     if not ReplyTextList.empty():
         text = ReplyTextList.get();
         status = "成功"
-    str = "({\"status\": \""+status+"\",\"content\": \""+text+"\"})"
+    str = "({\"status\": \""+status+"\",\"content\": \""+text.replace("\"","'").replace("\r"," ").replace("\n","<br/>")+"\"})"
     if CallBackForTest is not None:
         str=CallBackForTest+str
     return str
@@ -292,7 +278,7 @@ def songlist():
        temp = CallBackForTest+str
     return temp
 
-def msg_deal(query,user_name):
+def msg_deal(query,uid,user_name):
     """
     处理弹幕消息
     """
@@ -322,7 +308,7 @@ def msg_deal(query,user_name):
         # is_query = True
         if queryExtract=="":
            return
-        text_search_json = {"prompt": queryExtract, "username": user_name}
+        text_search_json = {"prompt": queryExtract, "uid": uid, "username": user_name}
         SearchTextList.put(text_search_json)
         return
 
@@ -364,8 +350,8 @@ def msg_deal(query,user_name):
         return
 
     #询问LLM
-    # QuestionName.put(user_name)  # 将用户名放入队列
-    # QuestionList.put(query)  # 将弹幕消息放入队列
+    llm_json = {"prompt": query, "uid": uid, "username": user_name}
+    QuestionList.put(llm_json)  # 将弹幕消息放入队列
 
 # 命令控制：优先
 def cmd(query):
@@ -396,16 +382,47 @@ def cmd(query):
         return 1
     return 0
 
+# fastapi知识库接口调用-LLM回复
+def chat_fastapi(content, uid, username):
+    url = f"http://{fastapi_url}/api/v1/chat/completions"
+    headers = {"Content-Type": "application/json","Authorization":fastapi_authorization}
+    timestamp = time.time()
+    data={
+            "chatId": timestamp,
+            "stream": False,
+            "detail": False,
+            "variables": {
+                "uid": uid,
+                "name": username
+            },
+            "messages": [
+                {
+                    "content": content,
+                    "role": "user"
+                }
+            ]
+    }
+    try:
+        response = requests.post(
+            url, headers=headers, json=data, verify=False, timeout=60
+        )
+    except Exception as e:
+        print(f"【{content}】信息回复异常")
+        return "我听不懂你说什么"
+    assistant_message = response.json()["choices"][0]["message"]["content"]
+    return assistant_message
+
+
 # text-generation-webui接口调用-LLM回复
 # mode:instruct/chat/chat-instruct  preset:Alpaca/Winlone(自定义)  character:角色卡Rengoku/Ninya
-def chat_tgw(content, character, mode, preset):
-    url = f"http://{tgwUrl}/v1/chat/completions"
+def chat_tgw(content, character, mode, preset,username):
+    url = f"http://{tgw_url}/v1/chat/completions"
     headers = {"Content-Type": "application/json"}
     history.append({"role": "user", "content": content})
     data = {
         "mode": mode,
         "character": character,
-        "your_name": "Winlone",
+        "your_name": username,
         "messages": history,
         "preset": preset,
         "do_sample": True,
@@ -445,30 +462,46 @@ def ai_response():
     """
     global is_ai_ready
     global QuestionList
-    global QuestionName
     global history
 
     is_ai_ready = False
-    prompt = QuestionList.get()
-    user_name = QuestionName.get()
+    llm_json = QuestionList.get()
+    prompt = llm_json["prompt"]
+    if "query" in llm_json:
+        query = llm_json["query"]
+    else:
+        query = None
+    uid = llm_json["uid"]
+    username = llm_json["username"]
 
+    # fastapi
+    if local_llm_type == 1:
+        response = chat_fastapi(prompt, uid, username)
     # text-generation-webui
-    if is_local_llm == 0:
-        response = chat_tgw(prompt, "Aileen Voracious", "chat", "Winlone")
-        response = response.replace("You", user_name)
-    # 本地LLM
-    elif is_local_llm == 1:
-        response, history = model.chat(tokenizer, prompt, history=[])
-    
+    elif local_llm_type == 2:
+        response = chat_tgw(prompt, "Aileen Voracious", "chat", "Winlone",username)
+        response = response.replace("You", username)
+    response = filter_html_tags(response)
+
     # 回复文本
-    answer = f"回复{user_name}：{response}"
-    # 加入回复列表，并且后续合成语音
-    tts_say(f"{prompt}" + "," + answer)
+    if query is not None:
+       #搜索语音
+       answer = f"{query},回复{username}：{response}"
+    else: 
+       #聊天语音
+       answer = f"{prompt},回复{username}：{response}"
+    # 日志
     current_question_count = QuestionList.qsize()
-    print(f"[AI回复]{answer}")  # 打印AI回复信息
-    print(f"System>>[{user_name}]的回复已存入队列，当前剩余问题数:{current_question_count}")
+    print(f"[AI回复]{answer}")
+    print(f"System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
+    # 加入回复列表，并且后续合成语音
+    tts_say(answer)
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
+#
+def filter_html_tags(text):
+    pattern = r'<.*?>'  # 匹配尖括号内的所有内容
+    return re.sub(pattern, '', text)
 
 # duckduckgo搜索引擎搜索
 textSearchNum=5
@@ -483,14 +516,8 @@ def web_search(query):
                 backend="api",
                 max_results=textSearchNum,
             )
-            i = 0
-            random_number = random.randrange(0, textSearchNum)
             for r in ddgs_text_gen:
-                if i == random_number:
-                    content = r["body"]
-                    print(f"搜索内容：{content},搜索关键字:{query}")
-                    break
-                i = i + 1
+                content = r["body"]+";"+content
         except Exception as e: 
             print(f"web_search信息回复异常{e}")
             logging.error(traceback.format_exc())
@@ -555,13 +582,20 @@ def check_text_search():
     global is_SearchText
     if not SearchTextList.empty() and is_SearchText == 2:
         is_SearchText = 1
-        img_text_json = SearchTextList.get()
-        prompt = img_text_json["prompt"]
-        username = img_text_json["username"]
+        text_search_json = SearchTextList.get()
+        prompt = text_search_json["prompt"]
+        uid = text_search_json["uid"]
+        username = text_search_json["username"]
+
+        #搜索引擎搜索
         searchStr = web_search(prompt)
-        out = f"回复{username}：我搜索到的内容如下：{searchStr}"
-        print(out)
-        tts_say(out)
+        #llm模型处理
+        llm_prompt = f'帮我在答案"{searchStr}"中提取"{prompt}"的信息'
+        print(f"重置提问:{llm_prompt}")
+        #询问LLM
+        llm_json = {"query": prompt, "prompt": llm_prompt, "uid": uid, "username": username}
+        QuestionList.put(llm_json)
+
         is_SearchText = 2  # 搜文完成
 
 # 搜图任务
@@ -780,7 +814,7 @@ def tts_say_do(text):
     ReplyTextList.put(text)
 
     # 播放声音
-    mpv_play(f".\output\{filename}.mp3",100)
+    mpv_play("mpv.exe", f".\output\{filename}.mp3", 100)
 
     # 执行命令行指令
     subprocess.run(f"del /f .\output\say{SayCount}.mp3 1>nul", shell=True)
@@ -837,39 +871,41 @@ def tts_generate():
 def emote_content(response):
     jsonstr = []
     # =========== 随机动作 ==============
-    text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "欢迎", "搜", "唱"]
-    num = is_array_contain_string(text, response)
-    if num > 0:
-        press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-        press = random.randrange(0, len(press_arry))
-        jsonstr.append({"content":"happy","key":press,"num":num})
+    # text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "欢迎", "搜", "唱"]
+    # num = is_array_contain_string(text, response)
+    # if num > 0:
+    #     press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+    #     press = random.randrange(0, len(press_arry))
+    #     jsonstr.append({"content":"happy","key":press_arry[press],"num":num})
     # ===============================
 
-    # # =========== 开心 ==============
-    # text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画"]
-    # num = is_array_contain_string(text, response)
-    # if num > 0:
-    #     jsonstr.append({"content":"happy","key":"开心","num":num})
-    # # =========== 招呼 ==============
-    # text = ["你好", "在吗", "干嘛", "名字", "欢迎", "搜"]
-    # num = is_array_contain_string(text, response)
-    # if num > 0:
-    #     jsonstr.append({"content":"call","key":"招呼","num":num})
-    # # =========== 生气 ==============
-    # text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "忘记"]
-    # num = is_array_contain_string(text, response)
-    # if num > 0:
-    #     jsonstr.append({"content":"angry","key":"生气","num":num})
-    # # =========== 尴尬 ==============
-    # text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋"]
-    # num = is_array_contain_string(text, response)
-    # if num > 0:
-    #     jsonstr.append({"content":"blush","key":"尴尬","num":num})
-    # # =========== 认同 ==============
-    # text = ["认同", "点头", "嗯", "哦", "女仆", "唱"]
-    # num = is_array_contain_string(text, response)
-    # if num > 0:
-    #     jsonstr.append({"content":"approve","key":"认同","num":num})
+    # =========== 开心 ==============
+    text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "搜"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+        jsonstr.append({"content":"happy","key":"开心","num":num})
+    # =========== 招呼 ==============
+    text = ["你好", "在吗", "干嘛", "名字", "欢迎"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+        press_arry = ["招呼","1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+        press = random.randrange(0, len(press_arry))
+        jsonstr.append({"content":"call","key":press_arry[press],"num":num})
+    # =========== 生气 ==============
+    text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "忘记"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+        jsonstr.append({"content":"angry","key":"生气","num":num})
+    # =========== 尴尬 ==============
+    text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+        jsonstr.append({"content":"blush","key":"尴尬","num":num})
+    # =========== 认同 ==============
+    text = ["认同", "点头", "嗯", "哦", "女仆", "唱"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+        jsonstr.append({"content":"approve","key":"认同","num":num})
     return jsonstr
 
 # 表情加入:使用键盘控制VTube
@@ -969,23 +1005,19 @@ def mpv_read():
 
         print(f"开始播放output{temp1}.mp3，当前待播语音数：{current_mpvlist_count}")
         # 播放声音
-        mpv_play(f".\output\output{temp1}.mp3",100)
+        mpv_play("mpv.exe", f".\output\output{temp1}.mp3",100)
 
         # 执行命令行指令
         subprocess.run(f"del /f .\output\output{temp1}.mp3 1>nul", shell=True)
     is_mpv_ready = True
 
-
 # 播放器播放
-def mpv_play(song_path,volume):
-    global is_mpv_ready
-    while is_mpv_ready:
-        # end：播放多少秒结束  volume：音量，最大100，最小0
-        subprocess.run(
-            f'song.exe -vo null --volume={volume} "{song_path}" 1>nul',
-            shell=True,
-        )
-        return
+def mpv_play(mpv_name, song_path, volume):
+    # end：播放多少秒结束  volume：音量，最大100，最小0
+    subprocess.run(
+        f'{mpv_name} -vo null --volume={volume} "{song_path}" 1>nul',
+        shell=True,
+    )
 
 
 # 唱歌线程
@@ -1142,8 +1174,8 @@ def play_song(is_created,songname,song_path,username,query):
             # =============== 结束-触发搜图 =================
             # 播报唱歌文字
             tts_say(f"回复{username}：我准备唱一首歌《{songname}》")
-            # 调用mpv播放器
-            mpv_play(song_path,80)
+            # 调用音乐播放器
+            mpv_play("song.exe", song_path, 80)
             return 1
         else:
             tip=f"已经跳过歌曲《{songname}》，请稍后再点播"

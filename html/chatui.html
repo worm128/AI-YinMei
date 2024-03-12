@@ -74,11 +74,13 @@
 						if(data["status"]=="成功")
 						{
 						    content = data["content"]
+							content = content.replaceAll("<br/>","\r\n");
 						    typewriter(content)
 						}
                     }
                 });
 			}
+            
 			// 每隔1000毫秒（1秒）
 			setInterval(function(){
 				refreshPage();
