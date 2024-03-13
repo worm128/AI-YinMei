@@ -70,13 +70,11 @@ say_lock = threading.Lock()
 QuestionList = queue.Queue()  # LLM回复问题
 QuestionName = queue.Queue()  
 AnswerList = queue.Queue()  #Ai回复队列
-MpvList = queue.Queue()   #语音播放队列
 EmoteList = queue.Queue()  #表情队列
 ReplyTextList = queue.Queue()   #Ai回复框文本队列
 history = []
 is_ai_ready = True  # 定义ai回复是否转换完成标志
 is_tts_ready = True  # 定义语音是否生成完成标志
-is_mpv_ready = True  # 定义是否播放完成标志
 AudioCount = 0
 SayCount = 0
 history_count = 2  # 定义最大对话记忆轮数,请注意这个数值不包括扮演设置消耗的轮数，只有当enable_history为True时生效
@@ -88,8 +86,9 @@ enable_role = False  # 是否启用扮演模式
 local_llm_type = int(input("本地LLM模型类型(1.fastapi 2.text-generation-webui): ") or "1")
 tgw_url = "192.168.2.58:5000"
 fastapi_url = "192.168.2.198:3000"
-fastapi_authorization="Bearer fastgpt-xyfnffZ3a72fwIQQHye7q4SOtnHEns347qyL4gMXIx5D0ziQfA6kHXMl"
-#qwen1.5:fastgpt-N7OOz19QWHdmvLhjjJmpXwybD0DTcMInKm3auu0O4AL6dinWf2GdBqCuTxV1H3nQu
+fastapi_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"
+#qwen1.5-7b:fastgpt-N7OOz19QWHdmvLhjjJmpXwybD0DTcMInKm3auu0O4AL6dinWf2GdBqCuTxV1H3nQu
+#qwen1.5-4b:fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr
 #glm3:fastgpt-xyfnffZ3a72fwIQQHye7q4SOtnHEns347qyL4gMXIx5D0ziQfA6kHXMl
 # ============================================
 
@@ -183,16 +182,6 @@ async def in_liveroom(event):
     user_name = event["data"]["data"]["uname"]  # 获取用户昵称
     time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
     print(f"{time1}:粉丝[{user_name}]进入了直播间")
-    # 直接放到语音合成处理
-    # tts_say(f"欢迎{user_name}来到吟美的直播间")
-    # wenhou=[f"{user_name}，恭喜发财，龙年大吉",f"{user_name}，2024年是青龙守财库哦，守住自己的钱包",
-    #         f"{user_name}，进来直播间把你的钱包交给我",
-    #         f"{user_name}，来吧，交出你的利是钱，不然休想走出直播间",
-    #         f"{user_name}，你来到吟美的直播间，2024年一定发大财",
-    #         f"{user_name}，吟美祝你2024年美梦成真，找到你的另一半",
-    #         f"{user_name}，吟美祝你2024年心想事成，如如得水"]
-    # wenhou_num = random.randrange(0, len(wenhou))
-    #tts_say(wenhou[wenhou_num])
     
     #判断游客的不进行绘画
     # text = ["bili"]
@@ -303,9 +292,6 @@ def msg_deal(query,uid,user_name):
     if num > 0:
         queryExtract = query[num : len(query)]  # 提取提问语句
         print("搜索词：" + queryExtract)
-        # prompt = f'帮我在答案"{searchStr}"中提取"{queryExtract}"的信息'
-        # print(f"重置提问:{prompt}")
-        # is_query = True
         if queryExtract=="":
            return
         text_search_json = {"prompt": queryExtract, "uid": uid, "username": user_name}
@@ -361,7 +347,6 @@ def cmd(query):
     global is_SearchImg
     global is_drawing
     global is_tts_ready
-    global is_mpv_ready
 
     # 停止所有任务
     if query=="\\stop":
@@ -371,7 +356,6 @@ def cmd(query):
         is_drawing = 3  # 1.绘画中 2.绘画完成 3.绘图任务结束
         is_ai_ready = True  # 定义ai回复是否转换完成标志
         is_tts_ready = True  # 定义语音是否生成完成标志
-        is_mpv_ready = True  # 定义是否播放完成标志
         return 1
     #下一首歌
     if query=="\\next":
@@ -494,11 +478,12 @@ def ai_response():
     current_question_count = QuestionList.qsize()
     print(f"[AI回复]{answer}")
     print(f"System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
-    # 加入回复列表，并且后续合成语音
-    tts_say(answer)
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
-#
+    # 加入回复列表，并且后续合成语音
+    AnswerList.put(answer)
+
+# 过滤html标签
 def filter_html_tags(text):
     pattern = r'<.*?>'  # 匹配尖括号内的所有内容
     return re.sub(pattern, '', text)
@@ -801,8 +786,8 @@ def tts_say_do(text):
     #     shell=True,
     # )
         
-    # bert_vits2合成语音
     status = bert_vits2(filename,text,emotion)
+    # bert_vits2合成语音
     if status == 0:
        return
 
@@ -825,46 +810,8 @@ def tts_say_do(text):
 def tts_generate():
     global is_tts_ready
     global AnswerList
-    global MpvList
-    global AudioCount
     response = AnswerList.get()
-    filename=f"output{AudioCount}"
-
-    # with open("./output/output.txt", "w", encoding="utf-8") as f:
-    #     f.write(f"{response}")  # 将要读的回复写入临时文件
-    # subprocess.run(
-    #     f"edge-tts --voice zh-CN-XiaoxiaoNeural --rate=+20% --f .\output\output.txt --write-media .\output\{filename}.mp3 2>nul",
-    #     shell=True,
-    # )
-    # bert_vits2合成语音
-    status = bert_vits2(filename,response,"happy")
-    if status ==0:
-       return
-    
-    begin_name = response.find("回复")
-    end_name = response.find("：")
-    contain = response.find("来到吟美的直播")
-    if contain > 0:
-        # 欢迎语
-        print(
-            f"System>>对[{response}]的回复已成功转换为语音并缓存为output{AudioCount}.mp3"
-        )
-        # 表情加入:使用键盘控制VTube
-        EmoteList.put(f"{response}")
-    else:
-        # 回复语
-        name = response[begin_name + 2 : end_name]
-        print(f"System>>对[{name}]的回复已成功转换为语音并缓存为output{AudioCount}.mp3")
-        # 表情加入:使用键盘控制VTube
-        emote = response[end_name : len(response)]
-        EmoteList.put(f"{emote}")
-    # 表情加入:使用键盘控制VTube
-    emote = response[end_name : len(response)]
-    EmoteList.put(f"{emote}")
-    
-    # 加入音频播放列表
-    MpvList.put(AudioCount)
-    AudioCount += 1
+    tts_say(response)
     is_tts_ready = True  # 指示TTS已经准备好回复下一个问题
 
 # 文本识别表情内容
@@ -965,51 +912,6 @@ def is_array_contain_string(string_array, target_string):
         if s in target_string:
             return i
     return 0
-
-
-# 播放器mpv线程
-def check_mpv():
-    """
-    若mpv已经播放完毕且播放列表中有数据 则创建一个播放音频的线程
-    :return:
-    """
-    global is_mpv_ready
-    global MpvList
-    if not MpvList.empty() and is_mpv_ready:
-        is_mpv_ready = False
-        tts_thread = threading.Thread(target=mpv_read)
-        tts_thread.start()
-
-
-# 播放器mpv播放任务
-def mpv_read():
-    """
-    按照MpvList内的名单播放音频直到播放完毕
-    :return:
-    """
-    global MpvList
-    global is_mpv_ready
-    while not MpvList.empty():
-        temp1 = MpvList.get()
-        current_mpvlist_count = MpvList.qsize()
-
-        #输出表情
-        response = EmoteList.get()
-
-        # 识别表情
-        jsonstr = emote_content(response)
-        print(f"输出表情{jsonstr}")
-        # 输出表情
-        emote_thread = Thread(target=emote_show,args=(jsonstr,))
-        emote_thread.start()
-
-        print(f"开始播放output{temp1}.mp3，当前待播语音数：{current_mpvlist_count}")
-        # 播放声音
-        mpv_play("mpv.exe", f".\output\output{temp1}.mp3",100)
-
-        # 执行命令行指令
-        subprocess.run(f"del /f .\output\output{temp1}.mp3 1>nul", shell=True)
-    is_mpv_ready = True
 
 # 播放器播放
 def mpv_play(mpv_name, song_path, volume):
@@ -1573,8 +1475,6 @@ def main():
         sched1.add_job(func=check_answer, trigger="interval", seconds=1, id=f"answer", max_instances=10)
         # tts语音合成
         sched1.add_job(func=check_tts, trigger="interval", seconds=1, id=f"tts", max_instances=10)
-        # MPV播放
-        sched1.add_job(func=check_mpv, trigger="interval", seconds=1, id=f"mpv", max_instances=50)
         # 绘画
         sched1.add_job(func=check_draw, trigger="interval", seconds=1, id=f"draw", max_instances=10)
         # 搜索资料

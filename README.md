@@ -6,17 +6,18 @@
 - B 站频道：程序猿的退休生活
 - B 站视频教程：https://www.bilibili.com/video/BV18b4y1V7Qm/
 - Q 群：27831318
-- 版本：1.5.1
+- 版本：1.6
 - 详细笔记：
   现在发现有道云笔记网页版本不能查看笔记图片，需要完整教案请进入 Q 群 27831318 获取 pdf 文档<br>
   https://note.youdao.com/s/1k0x7BLt<br>
 - 吟美 pdf 完整说明文档：
-  在百度网盘->人工智能->吟美说明文档->AI 虚拟主播 Vtuber 研发(N 卡版本)-v1.5.1.pdf<br>
+  在百度网盘->人工智能->吟美说明文档->AI 虚拟主播 Vtuber 研发(N 卡版本)-v1.6.pdf<br>
 - 旧版吟美项目【因集成过多内置第三方项目，已废弃】：https://github.com/worm128/AI-YinMei-backup
 
 ## **介绍**
 
-- 支持本地 LLM 模型 chatglm-6b 的 1 代~3 代的 AI 自然语言回复
+- 支持 fastgpt 知识库聊天对话
+- 支持 LLM 大语言模型的一整套解决方案：[fastgpt] + [one-api] + [Xinference]
 - 支持对接 bilibili 直播间弹幕回复和进入直播间欢迎语
 - 支持微软 edge-tts 语音合成
 - 支持聊天记忆模式和扮演卡,可以多角色切换
@@ -36,9 +37,9 @@
 - 语音播放器 mpv：语音播放、音乐播放使用
   在百度网盘->人工智能->软件->mpv.exe<br>
   注意：项目需要在根目录放两个播放器，分别是：mpv.exe【播放语音】、song.exe【播放音乐】
-- 虚拟声卡：虚拟人物口型输出音频
+- 虚拟声卡：虚拟人物口型输出音频<br>
   在百度网盘->人工智能->软件->虚拟声卡 Virtual Audio Cable v4.10 破解版<br>
-- ffmpeg：音频解码器，用于语音合成
+- ffmpeg：音频解码器，用于语音合成<br>
   在百度网盘->人工智能->软件->ffmpeg<br>
 
 ### 运行环境
@@ -67,7 +68,7 @@
 
 ### 启动方式
 
-1、(必选)启动应用层，在根目录
+#### 1、(必选)启动应用层，在根目录
 
 ```bash
 #进入虚拟环境
@@ -76,7 +77,7 @@
 pip install -r requirements.txt
 #启动对接b站直播程序
 #一：1.b站直播间 2.api web
-#二：0.对接后端text-generation-webui接口   1.当前加载LLM本地模型
+#二：1.fastgpt   1.text-generation-webui
 #三：输入你的B站直播间编号
 python bilibili-live-api.py
 ```
@@ -93,12 +94,20 @@ vtuber_authenticationToken="这个令牌从获取令牌接口获取"<br>
 唱歌服务 Auto-Convert-Music 地址：singUrl = "192.168.2.58:1717"<br>
 绘画服务 stable-diffusion-webui 地址：drawUrl = "192.168.2.58:7860"<br>
 聊天服务 text-generation-webui 地址：tgwUrl = "192.168.2.58:5000"<br>
-LLM 模型路径：model_path = "ChatGLM2/THUDM/chatglm2-6b"<br>
-LLM 训练模型路径：checkpoint_path = ("LLaMA-Factory/saves/ChatGLM2-6B-Chat/lora/yinmei-20231123-ok-last")<br>
+聊天服务 fastapi 知识库地址：fastapi_url = "192.168.2.198:3000"<br>
+fastapi 令牌：fastapi_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"<br>
 搜索服务代理：duckduckgo_proxies="socks5://127.0.0.1:10806"<br>
 搜图服务代理：proxies = {"http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806"}<br>
 
-2、(可选)启动 LLM 聊天服务 text-generation-webui<br>
+#### 2-1、(可选)启动 LLM 聊天服务 【fastgpt】+【one-api】+【Xinference】<br>
+
+fastgpt：https://github.com/labring/FastGPT
+one-api：https://github.com/songquanpeng/one-api
+Xinference：https://github.com/xorbitsai/inference
+启动：使用 window WSL 的 docker 启动，启动流程看教程文档第 23 点
+
+#### 2-2、(可选)启动 LLM 聊天服务 text-generation-webui<br>
+
 项目 github：https://github.com/oobabooga/text-generation-webui<br>
 
 ```bash
@@ -110,8 +119,23 @@ pip install -r requirements.txt
 ./start.bat
 ```
 
-3、(可选)启动绘画服务 stable-diffusion-webui<br>
-项目 github：https://github.com/AUTOMATIC1111/stable-diffusion-webui<br>
+window 的 bat 启动命令：
+
+```bash
+python server.py --trust-remote-code --listen-host 0.0.0.0 --listen-port 7866 --listen --api --api-port 5000 --model chatglm2-6b --load-in-8bit --bf16
+```
+
+API 访问：http://127.0.0.1:5000/
+
+#### 3、(必选)语音合成-Ai 发声<br>
+
+项目地址：https://github.com/fishaudio/Bert-VITS2
+启动：使用 Bert-VITS2-clap-novq-ui 里面的 start.bat 启动
+定制页面：hiyoriUI.py 包含中英日混合语音合成方法，需要放到对应项目，不一定兼容
+
+#### 4、(可选)启动绘画服务 stable-diffusion-webui<br>
+
+项目地址：https://github.com/AUTOMATIC1111/stable-diffusion-webui<br>
 
 ```bash
 #进入虚拟环境
@@ -129,8 +153,9 @@ call webui.bat
 ./webui-user.bat
 ```
 
-4、(可选)启动绘画鉴黄服务 public-NSFW-y-distinguish<br>
-项目 github：https://github.com/fd-freedom/public-NSFW-y-distinguish<br>
+#### 5、(可选)启动绘画鉴黄服务 public-NSFW-y-distinguish<br>
+
+项目地址：https://github.com/fd-freedom/public-NSFW-y-distinguish<br>
 
 ```bash
 运行环境（必要）：Python 3.6.13
@@ -139,23 +164,29 @@ pip install -r requirements.txt
 py nsfw_web.py
 ```
 
-5、(可选)启动唱歌服务 Auto-Convert-Music<br>
+#### 6、(可选)启动唱歌服务 Auto-Convert-Music<br>
+
 原创开发者：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃<br>
 项目地址：https://github.com/MuBai-He/Auto-Convert-Music<br>
 
-6、(必选)皮肤启动，安装 steam，安装 VTube Studio<br>
+#### 7、(必选)皮肤启动，安装 steam，安装 VTube Studio<br>
+
 这个自行下载 steam 平台，在平台里面有一个 VTube Studio 软件，它就是启动 live2D 的虚拟主播皮肤<br>
 
-7、(必选)虚拟声卡驱动<br>
+#### 8、(必选)虚拟声卡驱动<br>
+
 安装虚拟声卡：虚拟声卡驱动（Virtual Audio Cable）4.66 官方版<br>
 
-8、(可选)AI 回复框【HTML 插件】<br>
+#### 9、(可选)AI 回复框【HTML 插件】<br>
+
 把项目文件：ai-yinmei\html\chatui.html 放入 OBS 浏览器插件展示
 
-9、(可选)歌单显示【HTML 插件】<br>
+#### 10、(可选)歌单显示【HTML 插件】<br>
+
 把项目文件：ai-yinmei\html\songlist.html 放入 OBS 浏览器插件展示
 
-10、(可选)时间显示【HTML 插件】<br>
+#### 11、(可选)时间显示【HTML 插件】<br>
+
 把项目文件：ai-yinmei\html\time.html 放入 OBS 浏览器插件展示
 
 此外，需要在 text-generation-webui/models 路径放入 LLM 模型，我这里放的是 chatgml2 的模型，大家可以任意选择底层 LLM 模型，例如，千问、百川、chatglm、llama 等<br>
@@ -183,7 +214,13 @@ py nsfw_web.py
 
 ### 特别鸣谢
 
-- 语音合成：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃
+- 语音合成：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃<br>
+  项目地址：https://github.com/MuBai-He/Auto-Convert-Music<br>
+- 知识库：FastApi<br>
+  项目地址：https://github.com/labring/FastGPT<br>
+- 大语言模型框架：one-api + Xinference<br>
+  项目地址：https://github.com/songquanpeng/one-api<br>
+  项目地址：https://github.com/xorbitsai/inference<br>
 - LLM 模型：ChatGLM<br>
   https://github.com/THUDM/ChatGLM2-6B<br>
 - 聚合 LLM 调用模型：text-generation-webui<br>
