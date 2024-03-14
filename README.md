@@ -20,23 +20,21 @@
 - 支持 LLM 大语言模型的一整套解决方案：[fastgpt] + [one-api] + [Xinference]
 - 支持对接 bilibili 直播间弹幕回复和进入直播间欢迎语
 - 支持微软 edge-tts 语音合成
-- 支持聊天记忆模式和扮演卡,可以多角色切换
-- 支持 AI 训练 LLaMA-Factory
 - 支持表情控制 Vtuber Studio
 - 支持绘画 stable-diffusion-webui 输出 OBS 直播间
 - 支持绘画图片鉴黄 public-NSFW-y-distinguish
 - 支持搜索和搜图服务 duckduckgo（需要魔法上网）
 - 支持搜图服务 baidu 搜图（不需要魔法上网）
 - 支持 AI 回复聊天框【html 插件】
-- 支持 AI 唱歌
+- 支持 AI 唱歌 Auto-Convert-Music
 - 支持歌单【html 插件】
 
 ### 软件下载
 
 - 在百度网盘：https://pan.baidu.com/s/1wB1aNTpN5X2WSPCq3GADJw?pwd=1kz2
-- 语音播放器 mpv：语音播放、音乐播放使用
+- 语音播放器 mpv：语音播放、音乐播放使用<br>
   在百度网盘->人工智能->软件->mpv.exe<br>
-  注意：项目需要在根目录放两个播放器，分别是：mpv.exe【播放语音】、song.exe【播放音乐】
+  注意：项目需要在根目录放两个播放器，分别是：mpv.exe【播放语音】、song.exe【播放音乐】<br>
 - 虚拟声卡：虚拟人物口型输出音频<br>
   在百度网盘->人工智能->软件->虚拟声卡 Virtual Audio Cable v4.10 破解版<br>
 - ffmpeg：音频解码器，用于语音合成<br>
@@ -48,8 +46,8 @@
 
 ### 调用类库
 
-- 轻量安装（推荐-不包含 LLM 语言模型）：requirements.txt
-- 全量安装（包含 LLM 语言模型、LLM 训练模型等）：requirements-all.txt
+- 轻量安装（推荐-不包含 LLM 语言模型）：requirements.txt<br>
+- 全量安装（包含 LLM 语言模型、LLM 训练模型等）：requirements-all.txt<br>
 - 对应重要的 py 包<br>
   torch：2.1.0+cu121<br>
   peft：0.6.2<br>
@@ -101,10 +99,10 @@ fastapi 令牌：fastapi_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5T
 
 #### 2-1、(可选)启动 LLM 聊天服务 【fastgpt】+【one-api】+【Xinference】<br>
 
-fastgpt：https://github.com/labring/FastGPT
-one-api：https://github.com/songquanpeng/one-api
-Xinference：https://github.com/xorbitsai/inference
-启动：使用 window WSL 的 docker 启动，启动流程看教程文档第 23 点
+fastgpt：https://github.com/labring/FastGPT<br>
+one-api：https://github.com/songquanpeng/one-api<br>
+Xinference：https://github.com/xorbitsai/inference<br>
+启动：使用 window WSL 的 docker 启动，启动流程看教程文档第 23 点<br>
 
 #### 2-2、(可选)启动 LLM 聊天服务 text-generation-webui<br>
 
@@ -129,9 +127,9 @@ API 访问：http://127.0.0.1:5000/
 
 #### 3、(必选)语音合成-Ai 发声<br>
 
-项目地址：https://github.com/fishaudio/Bert-VITS2
-启动：使用 Bert-VITS2-clap-novq-ui 里面的 start.bat 启动
-定制页面：hiyoriUI.py 包含中英日混合语音合成方法，需要放到对应项目，不一定兼容
+项目地址：https://github.com/fishaudio/Bert-VITS2<br>
+启动：使用 Bert-VITS2-clap-novq-ui 里面的 start.bat 启动<br>
+定制页面：hiyoriUI.py 包含中英日混合语音合成方法，需要放到对应项目，不一定兼容<br>
 
 #### 4、(可选)启动绘画服务 stable-diffusion-webui<br>
 
@@ -168,6 +166,7 @@ py nsfw_web.py
 
 原创开发者：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃<br>
 项目地址：https://github.com/MuBai-He/Auto-Convert-Music<br>
+启动：使用 Auto-Convert-Music 里面的 start.bat 启动<br>
 
 #### 7、(必选)皮肤启动，安装 steam，安装 VTube Studio<br>
 
@@ -179,15 +178,15 @@ py nsfw_web.py
 
 #### 9、(可选)AI 回复框【HTML 插件】<br>
 
-把项目文件：ai-yinmei\html\chatui.html 放入 OBS 浏览器插件展示
+把项目文件：ai-yinmei\html\chatui.html 放入 OBS 浏览器插件展示<br>
 
 #### 10、(可选)歌单显示【HTML 插件】<br>
 
-把项目文件：ai-yinmei\html\songlist.html 放入 OBS 浏览器插件展示
+把项目文件：ai-yinmei\html\songlist.html 放入 OBS 浏览器插件展示<br>
 
 #### 11、(可选)时间显示【HTML 插件】<br>
 
-把项目文件：ai-yinmei\html\time.html 放入 OBS 浏览器插件展示
+把项目文件：ai-yinmei\html\time.html 放入 OBS 浏览器插件展示<br>
 
 此外，需要在 text-generation-webui/models 路径放入 LLM 模型，我这里放的是 chatgml2 的模型，大家可以任意选择底层 LLM 模型，例如，千问、百川、chatglm、llama 等<br>
 更多详细技术细节，请看技术文档：https://note.youdao.com/s/1k0x7BLt<br>
@@ -210,7 +209,7 @@ py nsfw_web.py
 - ChatGLM2\ptuning【AI 训练】：<br>
   ChatGLM 官方训练例子<br>
 - ChatGLM2\ptuning\zero_nlp【AI 训练】：<br>
-  ai 的 lora 训练模式
+  ai 的 lora 训练模式<br>
 
 ### 特别鸣谢
 
