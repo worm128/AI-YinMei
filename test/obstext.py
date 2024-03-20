@@ -36,9 +36,11 @@ ws.call(requests.SetInputSettings(
         "local_file": child_files[0],
     }
 ))
-ws.call(requests.TriggerMediaInputAction(inputName="video",mediaAction="OBS_WEBSOCKET_MEDIA_INPUT_ACTION_RESTART"))
+o = ws.call(requests.TriggerMediaInputAction(inputName="video",mediaAction="OBS_WEBSOCKET_MEDIA_INPUT_ACTION_RESTART"))
+print(o)
 status = ws.call(requests.GetMediaInputStatus(inputName="video"))
 print(status)
+print(status.datain["mediaState"])
 #ws.call(requests.SetMediaInputCursor(inputName="video",mediaCursor=50000))
 # ws.call(requests.SetInputSettings(
 #     inputName="video",
@@ -46,7 +48,8 @@ print(status)
 #         "mediaAction": "OBS_MEDIA_STATE_STOPPED",
 #     }
 # )) 
-ws.call(requests.TriggerMediaInputAction(inputName="video",mediaAction="OBS_WEBSOCKET_MEDIA_INPUT_ACTION_STOP"))
+ws.call(requests.TriggerMediaInputAction(inputName="video",mediaAction="OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PAUSE"))
+ws.call(requests.TriggerMediaInputAction(inputName="video",mediaAction="OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PLAY"))
 
 #图片输出
 # ws.call(requests.SetInputSettings(

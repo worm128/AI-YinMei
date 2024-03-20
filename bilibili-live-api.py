@@ -18,6 +18,9 @@ import traceback
 import websocket
 import logging
 
+from func.obs.obs_websocket import ObsWebSocket,VideoStatus,VideoControl
+from func.tools.file_util import FileUtil
+from func.tools.string_util import StringUtil
 from search import crawler
 from io import BytesIO
 from PIL import Image
@@ -124,9 +127,9 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="164fd24c%2C1725789406%2Cbdbf7%2A32CjCqC9lU-Uw0012D6oaUb6eRWQIvPy5gRu6Wiw-h8YuSSeBDOgXJjXKw2eewRFK7FEcSVjNOVFllZktOQVRKUVFKN2Z1T2N3TThUbE9SWVhRcWVKTXdzTS1NVU9ZNHluY1FjSm5HV2dBWVZCZFhDdHMtTWVfOWlDUG9lbnRndG5GOHMxdjdkQXNnIIEC",
+    sessdata="311efab5%2C1726380018%2Cb3d89%2A32CjCCleX3wJj5QFx9LOIk4P0Kb-lm6QTwuSYKJBzRnnSgVGizh5qfieFLvbwWv4FQ40cSVkdyM0pNVzVmZzRSd3l6ZUpveXktcUpqR0UyR0JyLUlfR3dGUXVmaGlzQVhfUjhaTGNMcHR1alVEU3ozYUxaNmM4V0xRRm12eHNBMFRvODd0Y3k4c3FBIIEC",
     buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
-    bili_jct="5d322d50f322b742fbc215c7077cccc0",
+    bili_jct="96e247f39c4149453eae7a0d1a710d75",
     dedeuserid="333472479",
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
@@ -156,7 +159,7 @@ vtuber_authenticationToken="4ae2f64ec9d1fe7bddc1b2edfb96292b28ab8b83554b50270a7f
 
 # ============= 鉴黄 =====================
 filterEn="huge breasts,open clothes,topless,voluptuous,breast,prostitution,erotic,armpit,milk,leaking,spraying,woman,cupless latex,latex,tits,boobs,lingerie,chest,seductive,poses,pose,leg,posture,alluring,milf,on bed,mature,slime,open leg,full body,bra,lace,bikini,full nude,nude,bare,one-piece,navel,cleavage,swimsuit,naked,adult,nudity,beautiful breasts,nipples,sex,Sexual,vaginal,penis,large penis,pantie,leotards,anal"
-filterCh="屁股,奶子,乳房,乳胶,劈叉,走光,女优,男优,嫖娼,淫荡,性感,性爱,做爱,裸体,赤裸,肛门"
+filterCh="奶子,乳房"
 progress_limit=1   #绘图大于多少百分比进行鉴黄
 nsfw_limit=0.2  #nsfw黄图值大于多少进行绘画屏蔽，值越大越是黄图
 nsfw_progress_limit=0.2 #nsfw黄图-绘画进度鉴黄
@@ -170,6 +173,19 @@ sdp_ratio=0.2  #SDP在合成时的占比，理论上此比率越高，合成的�
 noise=0.2 #控制感情变化程度，默认0.2
 noisew=0.9 #控制音节发音变化程度，默认0.9
 speed=1  #语速
+# ============================================
+
+# ============= OBS直播软件控制 =====================
+obs = ObsWebSocket(host="192.168.2.198",port=4455,password="123456")
+dance_path = 'J:\\ai\\跳舞视频\\横屏'
+dance_video = FileUtil.get_child_file_paths(dance_path)  #跳舞视频
+emote_path = 'H:\\人工智能\\ai\\跳舞视频\\表情'
+emote_font = 'H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号'
+emote_video = FileUtil.get_child_file_paths(emote_path)  #表情视频
+emote_list = FileUtil.get_subfolder_names(emote_font) #表情清单显示
+DanceQueueList = queue.Queue()  # 跳舞队列
+is_dance = 2  #1.正在跳舞 2.跳舞完成
+emote_video_lock = threading.Lock()
 # ============================================
 
 print("--------------------")
@@ -198,8 +214,8 @@ async def input_msg(event):
     # 发送者UID
     uid = event["data"]["info"][2][0]
     # 排除自己发送的弹幕
-    if uid == my_uid:
-        return
+    # if uid == my_uid:
+    #     return
     
     query = event["data"]["info"][1]  # 获取弹幕内容
     user_name = event["data"]["info"][2][1]  # 获取用户昵称
@@ -285,6 +301,34 @@ def msg_deal(query,uid,user_name):
     num = is_index_contain_string(text, query)  # 判断是不是需要搜索
     if num > 0:
         return
+    
+    #跳舞表情
+    text = ["#"]
+    num = is_index_contain_string(text, query)
+    if num > 0:
+        queryExtract = query[num : len(query)]  # 提取提问语句
+        print("跳舞表情：" + queryExtract)
+        eomte_path=""
+        if queryExtract=="rnd":
+            rnd_video = random.randrange(0, len(emote_video))
+            eomte_path = emote_video[rnd_video]
+        else:
+            matches_list = StringUtil.fuzzy_match_list(queryExtract,emote_video)
+            if len(matches_list)>0:
+               eomte_path = matches_list[0]
+        # 第一次播放
+        if eomte_path!="":
+            if is_dance==1:
+                emote_play_thread = Thread(target=emote_play,args=(eomte_path,))
+                emote_play_thread.start()
+            else:
+                emote_play_thread = Thread(target=emote_play_nodance,args=(eomte_path,))
+                emote_play_thread.start()
+        return
+    
+    #跳舞中不执行其他任务
+    if is_dance==1:
+       return
 
     # 搜索引擎查询
     text = ["查询", "查一下", "搜索"]
@@ -335,34 +379,100 @@ def msg_deal(query,uid,user_name):
         SongQueueList.put(song_json)
         return
 
+    # 跳舞
+    text = ["跳舞", "跳一下", "舞蹈"]
+    num = is_index_contain_string(text, query)
+    if num > 0:
+       queryExtract = query[num : len(query)]  # 提取提问语句
+       print("跳舞提示：" + queryExtract)
+       video_path=""
+       #提示语为空，随机视频
+       if queryExtract=="":
+           rnd_video = random.randrange(0, len(dance_video))
+           video_path = dance_video[rnd_video]
+       else:
+           matches_list = StringUtil.fuzzy_match_list(queryExtract,dance_video)
+           if len(matches_list)>0:
+              video_path = matches_list[0]
+       #加入跳舞队列
+       if video_path!="":
+          dance_json = {"prompt": queryExtract, "username": user_name, "video_path": video_path}
+          DanceQueueList.put(dance_json)
+          return
+       else:
+          print("跳舞视频不存在：" + queryExtract)
+          return
+
     #询问LLM
     llm_json = {"prompt": query, "uid": uid, "username": user_name}
     QuestionList.put(llm_json)  # 将弹幕消息放入队列
+
+#表情播放[不用停止跳舞]
+def emote_play_nodance(eomte_path):
+    emote_video_lock.acquire()
+    print(f"播放表情:{eomte_path}")
+    obs.play_video("表情",eomte_path)
+    time.sleep(1)
+    sec=20
+    while obs.get_video_status("表情")!=VideoStatus.END.value and sec>0:
+          time.sleep(1)
+          sec = sec - 1
+    time.sleep(1)
+    obs.control_video("表情",VideoControl.STOP.value)
+    emote_video_lock.release()
+
+#表情播放
+def emote_play(eomte_path):
+    emote_video_lock.acquire()
+    print(f"播放表情:{eomte_path}")
+    obs.control_video("video",VideoControl.PAUSE.value)
+    obs.play_video("表情",eomte_path)
+    time.sleep(1)
+    sec=20
+    while obs.get_video_status("表情")!=VideoStatus.END.value and sec>0:
+          time.sleep(1)
+          sec = sec - 1
+    time.sleep(1)
+    obs.control_video("表情",VideoControl.STOP.value)
+    obs.control_video("video",VideoControl.PLAY.value)
+    emote_video_lock.release()
+    
 
 # 命令控制：优先
 def cmd(query):
     global is_ai_ready
     global is_singing
     global is_creating_song
+    global is_SearchText
     global is_SearchImg
     global is_drawing
     global is_tts_ready
+    global is_dance
 
     # 停止所有任务
     if query=="\\stop":
         is_singing = 2  # 1.唱歌中 2.唱歌完成
-        is_creating_song = 2  # 1.生成中 2.生成完毕
+        # is_creating_song = 2  # 1.生成中 2.生成完毕
+        is_SearchText = 2 # 1.搜索中 2.搜索完毕
         is_SearchImg = 2  # 1.搜图中 2.搜图完成
         is_drawing = 3  # 1.绘画中 2.绘画完成 3.绘图任务结束
         is_ai_ready = True  # 定义ai回复是否转换完成标志
         is_tts_ready = True  # 定义语音是否生成完成标志
+        os.system('taskkill /T /F /IM song.exe')
+        os.system('taskkill /T /F /IM mpv.exe')
+        return 1
+    if query=="\\dance":
+        os.system('taskkill /T /F /IM song.exe')
+        os.system('taskkill /T /F /IM mpv.exe')
         return 1
     #下一首歌
     if query=="\\next":
         os.system('taskkill /T /F /IM song.exe')
         is_singing = 2  # 1.唱歌中 2.唱歌完成
-        # is_creating_song = 2  # 1.生成中 2.生成完毕
-        # is_ai_ready = True  # 定义ai回复是否转换完成标志
+        return 1
+    #停止跳舞
+    if query=="\\停止跳舞":
+        is_dance = 2  #1.正在跳舞 2.跳舞完成
         return 1
     return 0
 
@@ -583,6 +693,36 @@ def check_text_search():
 
         is_SearchText = 2  # 搜文完成
 
+# 跳舞任务
+def check_dance():
+    global is_dance
+    if not DanceQueueList.empty() and is_dance == 2:
+        is_dance = 1
+        # 停止所有定时任务
+        sched1.pause()
+        # 停止所有在执行的任务
+        cmd("\\dance")
+        tts_say("开始跳舞了，大家嗨起来")
+        dance_json = DanceQueueList.get()
+        # 开始搜图任务
+        dance(dance_json)
+        # 重启定时任务
+        sched1.resume()
+        is_dance = 2  # 跳舞完成
+
+# 跳舞操作
+def dance(dance_json):
+    prompt = dance_json["prompt"]
+    username = dance_json["username"]
+    video_path = dance_json["video_path"]
+    print(dance_json)
+    # 第一次播放
+    obs.play_video("video",video_path)
+    time.sleep(1)
+    while obs.get_video_status("video")!=VideoStatus.END.value and is_dance==1:
+          time.sleep(1)
+    obs.control_video("video",VideoControl.STOP.value)
+
 # 搜图任务
 def check_img_search():
     global is_SearchImg
@@ -732,8 +872,8 @@ def check_tts():
     global is_tts_ready
     if not AnswerList.empty() and is_tts_ready:
         is_tts_ready = False
-        tts_thread = Thread(target=tts_generate)
-        tts_thread.start()
+        tts_generate()
+        is_tts_ready = True  # 指示TTS已经准备好回复下一个问题
 
 
 '''
@@ -785,9 +925,9 @@ def tts_say_do(text):
     #     f"edge-tts --voice zh-CN-XiaoxiaoNeural --rate=+20% --f .\output\{filename}.txt --write-media .\output\{filename}.mp3 2>nul",
     #     shell=True,
     # )
-        
-    status = bert_vits2(filename,text,emotion)
+    
     # bert_vits2合成语音
+    status = bert_vits2(filename,text,emotion)
     if status == 0:
        return
 
@@ -808,11 +948,10 @@ def tts_say_do(text):
 
 # 从回复队列中提取一条，通过edge-tts生成语音对应AudioCount编号语音
 def tts_generate():
-    global is_tts_ready
     global AnswerList
     response = AnswerList.get()
     tts_say(response)
-    is_tts_ready = True  # 指示TTS已经准备好回复下一个问题
+    
 
 # 文本识别表情内容
 def emote_content(response):
@@ -1460,6 +1599,9 @@ def outCamera():
                 cam.sleep_until_next_frame()
                 time.sleep(1)
 
+# 表情说明
+def obs_font(inputname,content):
+    obs.show_text(inputname,content)
 
 def main():
     # ws服务心跳包
@@ -1469,7 +1611,18 @@ def main():
     # 唤起虚拟摄像头
     outCamera_thread = Thread(target=outCamera)
     outCamera_thread.start()
+    
+    #连接obs
+    obs.connect()
 
+    # 跳舞表情
+    content = ""
+    for str in emote_list:
+        content= content + str + ","
+    if content!="":
+        obs_font("表情说明","表情命令:#号添加表情名称,#rnd是随机表情>>")
+        obs_font("表情列表",content)
+    
     if mode==1 or mode==2:
         # LLM回复
         sched1.add_job(func=check_answer, trigger="interval", seconds=1, id=f"answer", max_instances=10)
@@ -1485,7 +1638,10 @@ def main():
         sched1.add_job(func=check_sing, trigger="interval", seconds=1, id=f"sing", max_instances=50)
         # 歌曲清单播放
         sched1.add_job(func=check_playSongMenuList, trigger="interval", seconds=1, id=f"playSongMenuList", max_instances=50)
+        # 跳舞
+        sched1.add_job(func=check_dance, trigger="interval", seconds=1, id=f"dance", max_instances=10)
         sched1.start()
+        
     
     if mode==1 or mode==2:
         # 开启web
