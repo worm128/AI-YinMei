@@ -28,6 +28,8 @@
 - 支持 AI 回复聊天框【html 插件】
 - 支持 AI 唱歌 Auto-Convert-Music
 - 支持歌单【html 插件】
+- 支持跳舞功能
+- 支持表情视频播放
 
 ### 软件下载
 
@@ -63,6 +65,7 @@
   Flask：3.0.0<br>
   Flask-APScheduler：1.13.1<br>
   duckduckgo_search：4.1.1<br>
+  obs-websocket-py：1.0<br>
 
 ### 启动方式
 
@@ -130,6 +133,7 @@ API 访问：http://127.0.0.1:5000/
 项目地址：https://github.com/fishaudio/Bert-VITS2<br>
 启动：使用 Bert-VITS2-clap-novq-ui 里面的 start.bat 启动<br>
 定制页面：hiyoriUI.py 包含中英日混合语音合成方法，需要放到对应项目，不一定兼容<br>
+效果：Ai 与用户的语音互动，包括：聊天、绘画提示、唱歌提示、跳舞提示等
 
 #### 4、(可选)启动绘画服务 stable-diffusion-webui<br>
 
@@ -151,6 +155,8 @@ call webui.bat
 ./webui-user.bat
 ```
 
+效果：输入“画画 xxx”，触发 Ai 使用 stable-diffusion 进行绘图<br>
+
 #### 5、(可选)启动绘画鉴黄服务 public-NSFW-y-distinguish<br>
 
 项目地址：https://github.com/fd-freedom/public-NSFW-y-distinguish<br>
@@ -167,6 +173,7 @@ py nsfw_web.py
 原创开发者：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃<br>
 项目地址：https://github.com/MuBai-He/Auto-Convert-Music<br>
 启动：使用 Auto-Convert-Music 里面的 start.bat 启动<br>
+效果：输入“唱歌 歌曲名称”，触发 Ai 从歌库学习唱歌<br>
 
 #### 7、(必选)皮肤启动，安装 steam，安装 VTube Studio<br>
 
@@ -175,14 +182,19 @@ py nsfw_web.py
 #### 8、(必选)虚拟声卡驱动<br>
 
 安装虚拟声卡：虚拟声卡驱动（Virtual Audio Cable）4.66 官方版<br>
+效果：Ai 主播的发声来源
 
 #### 9、(可选)AI 回复框【HTML 插件】<br>
 
 把项目文件：ai-yinmei\html\chatui.html 放入 OBS 浏览器插件展示<br>
+效果：Ai 的回复内容会在回复插件显示<br>
 
 #### 10、(可选)歌单显示【HTML 插件】<br>
 
 把项目文件：ai-yinmei\html\songlist.html 放入 OBS 浏览器插件展示<br>
+效果：用户点歌的歌单会在上面以列表形式显示：<br>
+'xxx 用户'点播《歌曲名称》[正在播放]<br>
+'xxx 用户 2'点播《歌曲名称》<br>
 
 #### 11、(可选)时间显示【HTML 插件】<br>
 
@@ -190,6 +202,18 @@ py nsfw_web.py
 
 此外，需要在 text-generation-webui/models 路径放入 LLM 模型，我这里放的是 chatgml2 的模型，大家可以任意选择底层 LLM 模型，例如，千问、百川、chatglm、llama 等<br>
 更多详细技术细节，请看技术文档：https://note.youdao.com/s/1k0x7BLt<br>
+
+#### 12、(可选)跳舞能力<br>
+
+跳舞视频的存放地址【支持子文件夹存放】： dance_path = 'J:\\ai\\跳舞视频\\横屏'<br>
+效果：输入跳舞，立即进行跳舞视频随机抽取播放<br>
+
+#### 13、(可选)弹出视频表情<br>
+
+表情视频的存放地址【支持子文件夹存放】： emote_path = 'H:\\人工智能\\ai\\跳舞视频\\表情'<br>
+效果：输入#rnd 或者 #表情视频文件名，立即进行表情视频播放，#rnd 为随机播放表情视频<br>
+表情视频的名称展示【支持子文件夹存放】： emote_font = 'H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号'<br>
+效果：表情名称会显示在 obs 的字体控件，提示用户可以输入这些表情名称<br>
 
 ### 目录说明
 
@@ -213,7 +237,7 @@ py nsfw_web.py
 
 ### 特别鸣谢
 
-- 语音合成：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃<br>
+- 语音合成：Auto-Convert-Music 开发者：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃<br>
   项目地址：https://github.com/MuBai-He/Auto-Convert-Music<br>
 - 知识库：FastApi<br>
   项目地址：https://github.com/labring/FastGPT<br>

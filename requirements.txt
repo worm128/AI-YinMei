@@ -12,3 +12,4 @@ websocket-client==1.7.0
 flask
 flask_apscheduler
 peft
+obs-websocket-py
