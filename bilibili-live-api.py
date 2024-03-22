@@ -127,9 +127,9 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="311efab5%2C1726380018%2Cb3d89%2A32CjCCleX3wJj5QFx9LOIk4P0Kb-lm6QTwuSYKJBzRnnSgVGizh5qfieFLvbwWv4FQ40cSVkdyM0pNVzVmZzRSd3l6ZUpveXktcUpqR0UyR0JyLUlfR3dGUXVmaGlzQVhfUjhaTGNMcHR1alVEU3ozYUxaNmM4V0xRRm12eHNBMFRvODd0Y3k4c3FBIIEC",
+    sessdata="d92b5358%2C1726652786%2Ca016c%2A32CjCsh_V6X7GyRF_7v6hipkoviO5kqDmzaOG5kiBsIW1Jm1nkHBVhdlk1amDlzdQW178SVmprOTNQeFI3QThxbTV5OVd3RXVtVlgtOHpuWGlTa0dwYlFGVVZtQ0czZnk5NEo1NVlaQzVZRl9DSnNTYzQwSGUwbnZKcFdQbk5fX2VWaVlZX1pZcV9BIIEC",
     buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
-    bili_jct="96e247f39c4149453eae7a0d1a710d75",
+    bili_jct="4e6128c383e97fff3d4f8935472fa202",
     dedeuserid="333472479",
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
@@ -186,6 +186,8 @@ emote_list = FileUtil.get_subfolder_names(emote_font) #表情清单显示
 DanceQueueList = queue.Queue()  # 跳舞队列
 is_dance = 2  #1.正在跳舞 2.跳舞完成
 emote_video_lock = threading.Lock()
+emote_now_path=""
+dance_now_path=""
 # ============================================
 
 print("--------------------")
@@ -308,21 +310,22 @@ def msg_deal(query,uid,user_name):
     if num > 0:
         queryExtract = query[num : len(query)]  # 提取提问语句
         print("跳舞表情：" + queryExtract)
-        eomte_path=""
+        video_path=""
         if queryExtract=="rnd":
             rnd_video = random.randrange(0, len(emote_video))
-            eomte_path = emote_video[rnd_video]
+            video_path = emote_video[rnd_video]
         else:
             matches_list = StringUtil.fuzzy_match_list(queryExtract,emote_video)
             if len(matches_list)>0:
-               eomte_path = matches_list[0]
+               rnd_video = random.randrange(0, len(matches_list))
+               video_path = matches_list[rnd_video]
         # 第一次播放
-        if eomte_path!="":
+        if video_path!="":
             if is_dance==1:
-                emote_play_thread = Thread(target=emote_play,args=(eomte_path,))
+                emote_play_thread = Thread(target=emote_play,args=(video_path,))
                 emote_play_thread.start()
             else:
-                emote_play_thread = Thread(target=emote_play_nodance,args=(eomte_path,))
+                emote_play_thread = Thread(target=emote_play_nodance,args=(video_path,))
                 emote_play_thread.start()
         return
     
@@ -393,7 +396,8 @@ def msg_deal(query,uid,user_name):
        else:
            matches_list = StringUtil.fuzzy_match_list(queryExtract,dance_video)
            if len(matches_list)>0:
-              video_path = matches_list[0]
+              rnd_video = random.randrange(0, len(matches_list))
+              video_path = matches_list[rnd_video]
        #加入跳舞队列
        if video_path!="":
           dance_json = {"prompt": queryExtract, "username": user_name, "video_path": video_path}
@@ -410,9 +414,17 @@ def msg_deal(query,uid,user_name):
 #表情播放[不用停止跳舞]
 def emote_play_nodance(eomte_path):
     emote_video_lock.acquire()
+    global emote_now_path
     print(f"播放表情:{eomte_path}")
-    obs.play_video("表情",eomte_path)
+    # 第一次播放
+    if eomte_path!=emote_now_path:
+       obs.play_video("表情",eomte_path)
+    else:
+       obs.control_video("表情",VideoControl.RESTART.value)
+    # 赋值当前表情视频
+    emote_now_path = eomte_path
     time.sleep(1)
+    # 20秒超时停止播放
     sec=20
     while obs.get_video_status("表情")!=VideoStatus.END.value and sec>0:
           time.sleep(1)
@@ -424,10 +436,18 @@ def emote_play_nodance(eomte_path):
 #表情播放
 def emote_play(eomte_path):
     emote_video_lock.acquire()
-    print(f"播放表情:{eomte_path}")
+    global emote_now_path
     obs.control_video("video",VideoControl.PAUSE.value)
-    obs.play_video("表情",eomte_path)
+    print(f"播放表情:{eomte_path}")
+    # 第一次播放
+    if eomte_path!=emote_now_path:
+       obs.play_video("表情",eomte_path)
+    else:
+       obs.control_video("表情",VideoControl.RESTART.value)
+    # 赋值当前表情视频
+    emote_now_path = eomte_path
     time.sleep(1)
+    # 20秒超时停止播放
     sec=20
     while obs.get_video_status("表情")!=VideoStatus.END.value and sec>0:
           time.sleep(1)
@@ -436,7 +456,6 @@ def emote_play(eomte_path):
     obs.control_video("表情",VideoControl.STOP.value)
     obs.control_video("video",VideoControl.PLAY.value)
     emote_video_lock.release()
-    
 
 # 命令控制：优先
 def cmd(query):
@@ -570,11 +589,11 @@ def ai_response():
     if username=="程序猿的退休生活":
        shenfen="吟美的老爸"
     else:
-       shenfen="粉丝"
+       shenfen=f"粉丝\"{username}\""
 
     if local_llm_type == 1:
         real_prompt=prompt.replace("我", f"他")
-        username_prompt = f"{shenfen}\"{username}\"和你说话：\"{real_prompt}\""
+        username_prompt = f"{shenfen}和你说话：\"{real_prompt}\""
         response = chat_fastapi(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
@@ -730,12 +749,18 @@ def check_dance():
 
 # 跳舞操作
 def dance(dance_json):
+    global dance_now_path
     prompt = dance_json["prompt"]
     username = dance_json["username"]
     video_path = dance_json["video_path"]
     print(dance_json)
     # 第一次播放
-    obs.play_video("video",video_path)
+    if video_path!=dance_now_path:
+       obs.play_video("video",video_path)
+    else:
+       obs.control_video("video",VideoControl.RESTART.value)
+    # 赋值当前跳舞视频
+    dance_now_path = video_path
     time.sleep(1)
     while obs.get_video_status("video")!=VideoStatus.END.value and is_dance==1:
           time.sleep(1)
