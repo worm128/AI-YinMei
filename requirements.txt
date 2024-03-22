@@ -1,5 +1,5 @@
-APScheduler
-bilibili-api-python
+APScheduler==3.10.4
+bilibili-api-python==16.1.1
 edge-tts
 pynput
 duckduckgo_search
@@ -9,7 +9,7 @@ numpy
 Pillow
 simplejson
 websocket-client==1.7.0
-flask
-flask_apscheduler
+Flask==3.0.0
+Flask-APScheduler==1.13.1
 peft
-obs-websocket-py
+obs-websocket-py==1.0
