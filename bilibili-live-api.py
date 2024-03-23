@@ -188,6 +188,7 @@ is_dance = 2  #1.正在跳舞 2.跳舞完成
 emote_video_lock = threading.Lock()
 emote_now_path=""
 dance_now_path=""
+singdance_now_path=""
 # ============================================
 
 print("--------------------")
@@ -1281,12 +1282,17 @@ def play_song(is_created,songname,song_path,username,query):
             searchimg_output_camera_thread = Thread(target=searchimg_output_camera,args=(img_search_json,))
             searchimg_output_camera_thread.start()
             # =============== 结束-触发搜图 =================
-            # 开始唱歌穿戴
+            # 开始唱歌服装穿戴
             emote_ws(1, 0.2, "唱歌")
             # 播报唱歌文字
             tts_say(f"回复{username}：我准备唱一首歌《{songname}》")
+            # 唱歌视频播放
+            sing_dance_thread = Thread(target=sing_dance, args=(query,))
+            sing_dance_thread.start()
             # 调用音乐播放器
             mpv_play("song.exe", song_path, 80)
+            # 停止唱歌视频播放
+            obs.control_video("唱歌视频",VideoControl.STOP.value)
             # 结束唱歌穿戴
             emote_ws(1, 0.2, "停止唱歌")
             return 1
@@ -1300,6 +1306,32 @@ def play_song(is_created,songname,song_path,username,query):
         print(f"《{songname}》play_song异常{e}")
         return 3
 
+# 唱歌跳舞
+def sing_dance(songname):
+    global singdance_now_path
+    #提示语为空，随机视频
+    video_path=""
+    if songname!="":
+        matches_list = StringUtil.fuzzy_match_list(songname,dance_video)
+        if len(matches_list)>0:
+           rnd_video = random.randrange(0, len(matches_list))
+           video_path = matches_list[rnd_video]
+    if video_path=="":
+       return 
+    # 第一次播放
+    if video_path!=singdance_now_path:
+       obs.play_video("唱歌视频",video_path)
+    else:
+       obs.control_video("唱歌视频",VideoControl.RESTART.value)
+    # 赋值当前表情视频
+    singdance_now_path = video_path
+    time.sleep(1)
+    while is_singing==1:
+          # 结束循环重新播放
+          if obs.get_video_status("唱歌视频")==VideoStatus.END.value:
+             obs.control_video("唱歌视频",VideoControl.RESTART.value)
+          time.sleep(1)
+    
 
 # 匹配已生成的歌曲，并返回字节流
 def check_down_song(songname):
@@ -1456,10 +1488,8 @@ def check_draw():
         draw_json = DrawQueueList.get()
         print(f"启动绘画:{draw_json}")
         # 开始绘画
-        answers_thread = Thread(
-            target=draw, args=(draw_json["prompt"], draw_json["username"])
-        )
-        answers_thread.start()
+        draw_thread = Thread(target=draw, args=(draw_json["prompt"], draw_json["username"]))
+        draw_thread.start()
 
 # 绘画
 def draw(prompt, username):
