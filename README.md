@@ -20,6 +20,7 @@
 - 支持 LLM 大语言模型的一整套解决方案：[fastgpt] + [one-api] + [Xinference]
 - 支持对接 bilibili 直播间弹幕回复和进入直播间欢迎语
 - 支持微软 edge-tts 语音合成
+- 支持 Bert-VITS2 语音合成
 - 支持表情控制 Vtuber Studio
 - 支持绘画 stable-diffusion-webui 输出 OBS 直播间
 - 支持绘画图片鉴黄 public-NSFW-y-distinguish
