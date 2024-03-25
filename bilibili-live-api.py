@@ -177,7 +177,7 @@ speed=1  #语速
 
 # ============= OBS直播软件控制 =====================
 obs = ObsWebSocket(host="192.168.2.198",port=4455,password="123456")
-dance_path = 'J:\\ai\\跳舞视频\\横屏'
+dance_path = 'H:\\人工智能\\ai\\跳舞视频\\横屏'
 dance_video = FileUtil.get_child_file_paths(dance_path)  #跳舞视频
 emote_path = 'H:\\人工智能\\ai\\跳舞视频\\表情'
 emote_font = 'H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号'
@@ -408,6 +408,17 @@ def msg_deal(query,uid,user_name):
           print("跳舞视频不存在：" + queryExtract)
           return
 
+    # 换装
+    text = ["换装", "换衣服"]
+    num = is_index_contain_string(text, query)
+    if num > 0:
+       queryExtract = query[num : len(query)]  # 提取提问语句
+       print("换装提示：" + queryExtract)
+       # 开始唱歌服装穿戴
+       emote_ws(1, 0, queryExtract)
+       emote_ws(1, 0, queryExtract)
+       return
+
     #询问LLM
     llm_json = {"prompt": query, "uid": uid, "username": user_name}
     QuestionList.put(llm_json)  # 将弹幕消息放入队列
@@ -590,15 +601,15 @@ def ai_response():
     if username=="程序猿的退休生活":
        shenfen="吟美的老爸"
     else:
-       shenfen=f"粉丝\"{username}\""
+       shenfen=f"\"{username}\"粉丝"
 
     if local_llm_type == 1:
         real_prompt=prompt.replace("我", f"他")
-        username_prompt = f"{shenfen}和你说话：\"{real_prompt}\""
+        username_prompt = f"{shenfen}对你说：\"{prompt}\"。\n###提示：不能模拟粉丝对话###"
         response = chat_fastapi(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
-        username_prompt = f"\"{shenfen}\"{username}\"和你说话：\"{prompt}\""
+        username_prompt = f"\"{shenfen}对你说：\"{prompt}\"。\n###提示：不能模拟粉丝对话###"
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     response = filter_html_tags(response)
@@ -1013,39 +1024,54 @@ def emote_content(response):
     text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "搜"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"happy","key":"开心","num":num,"timesleep":0})
+        jsonstr.append({"content":"happy","key":"开心","num":num,"timesleep":0,"donum":0})
     # =========== 招呼 ==============
     text = ["你好", "在吗", "干嘛", "名字", "欢迎"]
     num = is_array_contain_string(text, response)
     if num > 0:
         press_arry = ["招呼","1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
         press = random.randrange(0, len(press_arry))
-        jsonstr.append({"content":"call","key":press_arry[press],"num":num,"timesleep":0})
+        jsonstr.append({"content":"call","key":press_arry[press],"num":num,"timesleep":0,"donum":0})
     # =========== 生气 ==============
     text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "忘记"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"angry","key":"生气","num":num,"timesleep":0})
+        jsonstr.append({"content":"angry","key":"生气","num":num,"timesleep":0,"donum":0})
     # =========== 尴尬 ==============
     text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"blush","key":"尴尬","num":num,"timesleep":0})
+        jsonstr.append({"content":"blush","key":"尴尬","num":num,"timesleep":0,"donum":0})
     # =========== 认同 ==============
     text = ["认同", "点头", "嗯", "哦", "女仆"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"approve","key":"认同","num":num,"timesleep":0})
+        jsonstr.append({"content":"approve","key":"认同","num":num,"timesleep":0.002,"donum":5})
     # =========== 汗颜 ==============
     text = ["汗颜", "流汗", "郁闷", "笑死", "白痴"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"sweat","key":"汗颜","num":num,"timesleep":0})
+        jsonstr.append({"content":"sweat","key":"汗颜","num":num,"timesleep":0,"donum":0})
+    # =========== 晕 ==============
+    text = ["晕", "头晕", "晕死", "呕"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+        jsonstr.append({"content":"blush","key":"晕","num":num,"timesleep":0,"donum":0})
+    # =========== 吐血 ==============
+    text = ["吐血", "血"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+        jsonstr.append({"content":"blood","key":"血","num":num,"timesleep":0,"donum":0})
+    # =========== 可爱 ==============
+    text = ["可爱", "害羞"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+        jsonstr.append({"content":"love","key":"可爱","num":num,"timesleep":0,"donum":0})
     # =========== 摸摸头 ==============
     text = ["摸摸头", "乖"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"happy","key":"摸摸头","num":num,"timesleep":5})
+        jsonstr.append({"content":"happy","key":"摸摸头","num":num,"timesleep":5,"donum":1})
     return jsonstr
 
 # 表情加入:使用键盘控制VTube
@@ -1054,11 +1080,13 @@ def emote_show(emote_content):
         key = data["key"]
         num = data["num"]
         timesleep = data["timesleep"]
+        donum = data["donum"]
         emote_ws(num, 0.2, key)
         # 有需要结束的表情按钮
-        if timesleep>0:
+        while donum>0:
             time.sleep(timesleep)
             emote_ws(1, 0.2, key)
+            donum = donum - 1
 
 # 键盘触发-带按键时长
 def emote_do(text, response, keyboard, startTime, key):
@@ -1184,7 +1212,7 @@ def sing(songname, username):
         tts_say(outputTxt)
         is_created = 1
     # =============== 结束-判断本地是否有歌 =================
-    else:
+    else:       
     # =============== 开始-调用已经转换的歌曲 =================
     # 下载歌曲：这里网易歌库返回songname和用户的模糊搜索可能歌名不同
         downfile, is_created = check_down_song(songname)
@@ -1231,7 +1259,8 @@ def check_playSongMenuList():
         is_singing = 2  # 完成唱歌
         SongNowName = {} #当前播放歌单清空
         play_song_lock.release()
-        
+
+song_not_convert=["三国演义\d+"]  #不需要学习的歌曲【支持正则】
 #开始生成歌曲
 def create_song(songname,song_path,is_created,downfile):
     global is_creating_song
@@ -1239,9 +1268,26 @@ def create_song(songname,song_path,is_created,downfile):
         # =============== 开始生成歌曲 =================
         create_song_lock.acquire()
         is_creating_song = 1
-        # 生成歌曲接口
-        jsonStr = requests.get(url=f"http://{singUrl}/append_song/{songname}")
-        status_json = json.loads(jsonStr.text)
+        status_json={}
+        is_download=False
+        # =============== 开始-当前歌曲只下载不转换 =================
+        for song_regx in song_not_convert:
+            match = re.match(song_regx, songname)
+            if match:
+               print(f"当前歌曲只下载不转换《{songname}》")
+               jsonStr = requests.get(url=f"http://{singUrl}/download_song/{songname}")
+               status_json = json.loads(jsonStr.text)
+               is_download=True
+               break
+        # =============== 结束-当前歌曲只下载不转换 =================
+        
+        # =============== 开始-学习唱歌任务 =================
+        if is_download==False:
+            # 生成歌曲接口
+            jsonStr = requests.get(url=f"http://{singUrl}/append_song/{songname}")
+            status_json = json.loads(jsonStr.text)
+        # =============== 结束-学习唱歌任务 =================
+
         status = status_json["status"]  #status: "processing" "processed" "waiting"
         songname = status_json["songName"]
         print(f"准备生成歌曲内容：{status_json}")
@@ -1294,7 +1340,7 @@ def play_song(is_created,songname,song_path,username,query):
             # 停止唱歌视频播放
             obs.control_video("唱歌视频",VideoControl.STOP.value)
             # 结束唱歌穿戴
-            emote_ws(1, 0.2, "停止唱歌")
+            emote_ws(1, 0.2, "唱歌")
             return 1
         else:
             tip=f"已经跳过歌曲《{songname}》，请稍后再点播"
@@ -1723,7 +1769,6 @@ def main():
     for str in emote_list:
         content= content + str + ","
     if content!="":
-        obs_font("表情说明","表情命令:#号添加表情名称,#rnd是随机表情>>")
         obs_font("表情列表",content)
     
     if mode==1 or mode==2:
