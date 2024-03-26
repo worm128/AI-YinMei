@@ -601,15 +601,15 @@ def ai_response():
     if username=="程序猿的退休生活":
        shenfen="吟美的老爸"
     else:
-       shenfen=f"\"{username}\"粉丝"
+       shenfen=f"你的粉丝\"{username}\""
 
     if local_llm_type == 1:
         real_prompt=prompt.replace("我", f"他")
-        username_prompt = f"{shenfen}对你说：\"{prompt}\"。\n###提示：不能模拟粉丝对话###"
+        username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟粉丝对话###"
         response = chat_fastapi(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
-        username_prompt = f"\"{shenfen}对你说：\"{prompt}\"。\n###提示：不能模拟粉丝对话###"
+        username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟粉丝对话###"
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     response = filter_html_tags(response)
@@ -1021,24 +1021,44 @@ def emote_content(response):
     # ===============================
 
     # =========== 开心 ==============
-    text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "搜"]
+    text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "搜", "有趣"]
     num = is_array_contain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"happy","key":"开心","num":num,"timesleep":0,"donum":0})
     # =========== 招呼 ==============
-    text = ["你好", "在吗", "干嘛", "名字", "欢迎"]
+    text = ["你好", "在吗", "干嘛", "名字", "欢迎", "我在", "玩笑", "逗"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        press_arry = ["招呼","1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-        press = random.randrange(0, len(press_arry))
-        jsonstr.append({"content":"call","key":press_arry[press],"num":num,"timesleep":0,"donum":0})
+        press1 = random.randrange(1, 3)
+        if press1==1:
+           jsonstr.append({"content":"call","key":"捂嘴","num":num,"timesleep":0,"donum":0})
+        else:
+           jsonstr.append({"content":"call","key":"拿扇子","num":num,"timesleep":0,"donum":0})
+        press2 = random.randrange(1, 4)
+        if press2==1:
+           jsonstr.append({"content":"call","key":"星星眼","num":num,"timesleep":0,"donum":0})
+        elif press2==2:
+           jsonstr.append({"content":"call","key":"害羞","num":num,"timesleep":0,"donum":0})
+        elif press2==3:
+           jsonstr.append({"content":"call","key":"米米","num":num,"timesleep":0,"donum":0})
+    # =========== 温柔 ==============
+    text = ["温柔", "抚摸", "抚媚", "骚", "唱歌"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+        press1 = random.randrange(1, 3)
+        if press1==1:
+           jsonstr.append({"content":"call","key":"左眼闭合","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"头左倾","num":num,"timesleep":0,"donum":0})
+        else:
+           jsonstr.append({"content":"call","key":"右眼闭合","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"头右倾","num":num,"timesleep":0,"donum":0})
     # =========== 生气 ==============
-    text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "忘记"]
+    text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "可恶"]
     num = is_array_contain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"angry","key":"生气","num":num,"timesleep":0,"donum":0})
     # =========== 尴尬 ==============
-    text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋"]
+    text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋", "傻逼", "逗比", "逗逼", "忘记", "怎么可能", "调侃"]
     num = is_array_contain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"blush","key":"尴尬","num":num,"timesleep":0,"donum":0})
@@ -1048,7 +1068,7 @@ def emote_content(response):
     if num > 0:
         jsonstr.append({"content":"approve","key":"认同","num":num,"timesleep":0.002,"donum":5})
     # =========== 汗颜 ==============
-    text = ["汗颜", "流汗", "郁闷", "笑死", "白痴"]
+    text = ["汗颜", "流汗", "郁闷", "笑死", "白痴", "渣渣", "搞笑", "恶心"]
     num = is_array_contain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"sweat","key":"汗颜","num":num,"timesleep":0,"donum":0})
@@ -1063,15 +1083,16 @@ def emote_content(response):
     if num > 0:
         jsonstr.append({"content":"blood","key":"血","num":num,"timesleep":0,"donum":0})
     # =========== 可爱 ==============
-    text = ["可爱", "害羞"]
+    text = ["可爱", "害羞", "爱你", "天真", "搞笑", "喜欢", "全知全能"]
     num = is_array_contain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"love","key":"可爱","num":num,"timesleep":0,"donum":0})
     # =========== 摸摸头 ==============
-    text = ["摸摸头", "乖"]
+    text = ["摸摸头", "乖", "做得好"]
     num = is_array_contain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"happy","key":"摸摸头","num":num,"timesleep":5,"donum":1})
+        jsonstr.append({"content":"blush","key":"晕","num":num,"timesleep":0,"donum":0})
     return jsonstr
 
 # 表情加入:使用键盘控制VTube
@@ -1081,11 +1102,11 @@ def emote_show(emote_content):
         num = data["num"]
         timesleep = data["timesleep"]
         donum = data["donum"]
-        emote_ws(num, 0.2, key)
+        emote_ws(num, 0.4, key)
         # 有需要结束的表情按钮
         while donum>0:
             time.sleep(timesleep)
-            emote_ws(1, 0.2, key)
+            emote_ws(1, 0, key)
             donum = donum - 1
 
 # 键盘触发-带按键时长
