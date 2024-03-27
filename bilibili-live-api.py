@@ -191,6 +191,10 @@ dance_now_path=""
 singdance_now_path=""
 # ============================================
 
+# ============= 服装 =====================
+now_clothes=""
+# ============================================
+
 print("--------------------")
 print("AI虚拟主播-启动成功！")
 print("--------------------")
@@ -310,6 +314,7 @@ def msg_deal(query,uid,user_name):
     num = is_index_contain_string(text, query)
     if num > 0:
         queryExtract = query[num : len(query)]  # 提取提问语句
+        queryExtract = queryExtract.strip()
         print("跳舞表情：" + queryExtract)
         video_path=""
         if queryExtract=="rnd":
@@ -339,6 +344,7 @@ def msg_deal(query,uid,user_name):
     num = is_index_contain_string(text, query)  # 判断是不是需要搜索
     if num > 0:
         queryExtract = query[num : len(query)]  # 提取提问语句
+        queryExtract = queryExtract.strip()
         print("搜索词：" + queryExtract)
         if queryExtract=="":
            return
@@ -351,6 +357,7 @@ def msg_deal(query,uid,user_name):
     num = is_index_contain_string(text, query)  # 判断是不是需要搜索
     if num > 0:
         queryExtract = query[num : len(query)]  # 提取提问语句
+        queryExtract = queryExtract.strip()
         print("搜索图：" + queryExtract)
         if queryExtract=="":
            return
@@ -363,6 +370,7 @@ def msg_deal(query,uid,user_name):
     num = is_index_contain_string(text, query)
     if num > 0:
         queryExtract = query[num : len(query)]  # 提取提问语句
+        queryExtract = queryExtract.strip()
         print("绘画提示：" + queryExtract)
         if queryExtract=="":
            return
@@ -376,6 +384,7 @@ def msg_deal(query,uid,user_name):
     num = is_index_contain_string(text, query)
     if num > 0:
         queryExtract = query[num : len(query)]  # 提取提问语句
+        queryExtract = queryExtract.strip()
         print("唱歌提示：" + queryExtract)
         if queryExtract=="":
            return
@@ -388,6 +397,7 @@ def msg_deal(query,uid,user_name):
     num = is_index_contain_string(text, query)
     if num > 0:
        queryExtract = query[num : len(query)]  # 提取提问语句
+       queryExtract = queryExtract.strip()
        print("跳舞提示：" + queryExtract)
        video_path=""
        #提示语为空，随机视频
@@ -409,14 +419,17 @@ def msg_deal(query,uid,user_name):
           return
 
     # 换装
-    text = ["换装", "换衣服"]
+    global now_clothes
+    text = ["换装", "换衣服", "穿衣服"]
     num = is_index_contain_string(text, query)
     if num > 0:
        queryExtract = query[num : len(query)]  # 提取提问语句
+       queryExtract = queryExtract.strip()
        print("换装提示：" + queryExtract)
        # 开始唱歌服装穿戴
-       emote_ws(1, 0, queryExtract)
-       emote_ws(1, 0, queryExtract)
+       emote_ws(1, 0, now_clothes)  #解除当前衣服
+       emote_ws(1, 0, queryExtract)  #穿上新衣服
+       now_clothes = queryExtract
        return
 
     #询问LLM
@@ -601,15 +614,15 @@ def ai_response():
     if username=="程序猿的退休生活":
        shenfen="吟美的老爸"
     else:
-       shenfen=f"你的粉丝\"{username}\""
+       shenfen=f"'{username}'"
 
     if local_llm_type == 1:
         real_prompt=prompt.replace("我", f"他")
-        username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟粉丝对话###"
+        username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟'{username}'说话###"
         response = chat_fastapi(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
-        username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟粉丝对话###"
+        username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟'{username}'说话###"
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     response = filter_html_tags(response)
@@ -619,10 +632,10 @@ def ai_response():
     if "query" in llm_json:
        #搜索语音
        query = llm_json["query"]
-       answer = f"{query},回复{username}：{response}"
+       answer = f"{query},{response}"
     else: 
        #聊天语音
-       answer = f"{prompt},回复{username}：{response}"
+       answer = f"{prompt},{response}"
     # 日志输出
     current_question_count = QuestionList.qsize()
     print(f"[AI回复]{answer}")
@@ -1041,6 +1054,11 @@ def emote_content(response):
            jsonstr.append({"content":"call","key":"害羞","num":num,"timesleep":0,"donum":0})
         elif press2==3:
            jsonstr.append({"content":"call","key":"米米","num":num,"timesleep":0,"donum":0})
+    # =========== 有钱 ==============
+    text = ["钱", "money", "有米"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+       jsonstr.append({"content":"call","key":"米米","num":num,"timesleep":0,"donum":0})
     # =========== 温柔 ==============
     text = ["温柔", "抚摸", "抚媚", "骚", "唱歌"]
     num = is_array_contain_string(text, response)
@@ -1048,9 +1066,12 @@ def emote_content(response):
         press1 = random.randrange(1, 3)
         if press1==1:
            jsonstr.append({"content":"call","key":"左眼闭合","num":num,"timesleep":0,"donum":0})
-           jsonstr.append({"content":"call","key":"头左倾","num":num,"timesleep":0,"donum":0})
         else:
            jsonstr.append({"content":"call","key":"右眼闭合","num":num,"timesleep":0,"donum":0})
+        press2 = random.randrange(1, 3)
+        if press2==1:
+           jsonstr.append({"content":"call","key":"头左倾","num":num,"timesleep":0,"donum":0})
+        else:
            jsonstr.append({"content":"call","key":"头右倾","num":num,"timesleep":0,"donum":0})
     # =========== 生气 ==============
     text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "可恶"]
@@ -1785,6 +1806,12 @@ def main():
     # 连接obs
     obs.connect()
 
+    #初始化衣服
+    global now_clothes
+    emote_ws(1, 0, "初始化")  #解除当前衣服
+    emote_ws(1, 0, "便衣")  #穿上新衣服
+    now_clothes = "便衣"
+    
     # 跳舞表情
     content = ""
     for str in emote_list:
