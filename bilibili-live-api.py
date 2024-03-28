@@ -127,9 +127,9 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="d92b5358%2C1726652786%2Ca016c%2A32CjCsh_V6X7GyRF_7v6hipkoviO5kqDmzaOG5kiBsIW1Jm1nkHBVhdlk1amDlzdQW178SVmprOTNQeFI3QThxbTV5OVd3RXVtVlgtOHpuWGlTa0dwYlFGVVZtQ0czZnk5NEo1NVlaQzVZRl9DSnNTYzQwSGUwbnZKcFdQbk5fX2VWaVlZX1pZcV9BIIEC",
+    sessdata="f34ec7ca%2C1727099917%2C76182%2A32CjBQhxVSh8XQXSDx_a4koYVORANon5IAGxZ2hexz3PZ0cwpbvpuFb6Dsy_UA6deJpfYSVnlqM0pJZlRGTk9qNHppdEJMTmZMTFVGc2pFS1hwbi1ZUE91ZjQxaUM0dXVvY3p4QTl4WFhuNzZBNkdfLXB3d1lMWkxNQW40RGlIaU5JVDRrMlBCSEVRIIEC",
     buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
-    bili_jct="4e6128c383e97fff3d4f8935472fa202",
+    bili_jct="c8c22e28b2f5ed5e671e456d1c6293d1",
     dedeuserid="333472479",
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
@@ -998,7 +998,7 @@ def tts_say_do(text):
     status = bert_vits2(filename,text,emotion)
     if status == 0:
        return
-
+    
     # 输出表情
     emote_thread = Thread(target=emote_show,args=(jsonstr,))
     emote_thread.start()
@@ -1018,8 +1018,65 @@ def tts_say_do(text):
 def tts_generate():
     global AnswerList
     response = AnswerList.get()
+    # 循环摇摆动作
+    yaotou_thread = Thread(target=auto_yaobai)
+    yaotou_thread.start()
+    # 合成语音
     tts_say(response)
+
+# 摇摆
+yaobai_motion = 2  #1.摇摆中 2.停止摇摆
+auto_yaobai_lock = threading.Lock()
+def auto_yaobai():
+    auto_yaobai_lock.acquire()
+    global yaobai_motion
+    #设置开始摇摆: 停止摇摆+（唱歌中 或者 聊天中）= 可以设置摇摆动作
+    if yaobai_motion == 2 and (is_singing==1 or is_tts_ready==False):
+       print(f"进入摇摆状态:{yaobai_motion},{is_singing},{is_tts_ready}")
+       yaobai_motion = 1
+    else:
+       print(f"禁止摇摆状态:{yaobai_motion},{is_singing},{is_tts_ready}")
+       auto_yaobai_lock.release()
+       return
+    # 监听停止摇摆线程
+    stop_emote_thread = Thread(target=stop_motion)
+    stop_emote_thread.start()
+    auto_yaobai_lock.release()
+
+    # 循环摇摆：
+    while yaobai_motion == 1 and (is_singing==1 or is_tts_ready==False):
+        jsonstr = []
+        jsonstr.append({"content":"happy","key":"摇摆1","num":1,"timesleep":0,"donum":0,"endwait":24})
+        jsonstr.append({"content":"happy","key":"摇摆2","num":1,"timesleep":0,"donum":0,"endwait":21})
+        jsonstr.append({"content":"happy","key":"摇摆3","num":1,"timesleep":0,"donum":0,"endwait":25})
+        jsonstr.append({"content":"happy","key":"摇摆4","num":1,"timesleep":0,"donum":0,"endwait":19})
+        num = random.randrange(0, len(jsonstr))
+        emote_show_json = []
+        emote_show_json.append(jsonstr[num])
+        print(f"执行摇摆：{emote_show_json}")
+        emote_show_thread = Thread(target=emote_show,args=(emote_show_json,))
+        emote_show_thread.start()
+        # 当前表情等待结束时间
+        endwait = emote_show_json[0]["endwait"]
+        while endwait>0:
+           time.sleep(1)
+           endwait=endwait-1
+           print(f"摇摆：{yaobai_motion}")
+           # 唱歌完毕并且聊天完毕：停止摇摆动作
+           if is_singing==2 and is_tts_ready==True:
+              print(f"强制停止摇摆：{yaobai_motion}")
+              yaobai_motion=2
+              break
+        print(f"自然结束摇摆：{emote_show_json}")
     
+
+
+# 停止动作
+def stop_motion():
+    while yaobai_motion==1:
+        time.sleep(1)
+    print(f"静止：{yaobai_motion}")
+    emote_ws(1, 0, "静止")
 
 # 文本识别表情内容
 def emote_content(response):
@@ -1037,86 +1094,87 @@ def emote_content(response):
     text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "搜", "有趣"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"happy","key":"开心","num":num,"timesleep":0,"donum":0})
+        jsonstr.append({"content":"happy","key":"开心","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 招呼 ==============
     text = ["你好", "在吗", "干嘛", "名字", "欢迎", "我在", "玩笑", "逗"]
     num = is_array_contain_string(text, response)
     if num > 0:
         press1 = random.randrange(1, 3)
         if press1==1:
-           jsonstr.append({"content":"call","key":"捂嘴","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"捂嘴","num":num,"timesleep":0,"donum":0,"endwait":0})
         else:
-           jsonstr.append({"content":"call","key":"拿扇子","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"拿扇子","num":num,"timesleep":0,"donum":0,"endwait":0})
         press2 = random.randrange(1, 4)
         if press2==1:
-           jsonstr.append({"content":"call","key":"星星眼","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"星星眼","num":num,"timesleep":0,"donum":0,"endwait":0})
         elif press2==2:
-           jsonstr.append({"content":"call","key":"害羞","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"害羞","num":num,"timesleep":0,"donum":0,"endwait":0})
         elif press2==3:
-           jsonstr.append({"content":"call","key":"米米","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"米米","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 有钱 ==============
     text = ["钱", "money", "有米"]
     num = is_array_contain_string(text, response)
     if num > 0:
-       jsonstr.append({"content":"call","key":"米米","num":num,"timesleep":0,"donum":0})
+       jsonstr.append({"content":"call","key":"米米","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 温柔 ==============
     text = ["温柔", "抚摸", "抚媚", "骚", "唱歌"]
     num = is_array_contain_string(text, response)
     if num > 0:
         press1 = random.randrange(1, 3)
         if press1==1:
-           jsonstr.append({"content":"call","key":"左眼闭合","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"左眼闭合","num":num,"timesleep":0,"donum":0,"endwait":0})
         else:
-           jsonstr.append({"content":"call","key":"右眼闭合","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"右眼闭合","num":num,"timesleep":0,"donum":0,"endwait":0})
         press2 = random.randrange(1, 3)
         if press2==1:
-           jsonstr.append({"content":"call","key":"头左倾","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"头左倾","num":num,"timesleep":0,"donum":0,"endwait":0})
         else:
-           jsonstr.append({"content":"call","key":"头右倾","num":num,"timesleep":0,"donum":0})
+           jsonstr.append({"content":"call","key":"头右倾","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 生气 ==============
     text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "可恶"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"angry","key":"生气","num":num,"timesleep":0,"donum":0})
+        jsonstr.append({"content":"angry","key":"生气","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 尴尬 ==============
     text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋", "傻逼", "逗比", "逗逼", "忘记", "怎么可能", "调侃"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"blush","key":"尴尬","num":num,"timesleep":0,"donum":0})
+        jsonstr.append({"content":"blush","key":"尴尬","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 认同 ==============
     text = ["认同", "点头", "嗯", "哦", "女仆"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"approve","key":"认同","num":num,"timesleep":0.002,"donum":5})
+        jsonstr.append({"content":"approve","key":"认同","num":num,"timesleep":0.002,"donum":5,"endwait":0})
     # =========== 汗颜 ==============
     text = ["汗颜", "流汗", "郁闷", "笑死", "白痴", "渣渣", "搞笑", "恶心"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"sweat","key":"汗颜","num":num,"timesleep":0,"donum":0})
+        jsonstr.append({"content":"sweat","key":"汗颜","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 晕 ==============
     text = ["晕", "头晕", "晕死", "呕"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"blush","key":"晕","num":num,"timesleep":0,"donum":0})
+        jsonstr.append({"content":"blush","key":"晕","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 吐血 ==============
     text = ["吐血", "血"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"blood","key":"血","num":num,"timesleep":0,"donum":0})
+        jsonstr.append({"content":"blood","key":"血","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 可爱 ==============
     text = ["可爱", "害羞", "爱你", "天真", "搞笑", "喜欢", "全知全能"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"love","key":"可爱","num":num,"timesleep":0,"donum":0})
+        jsonstr.append({"content":"love","key":"可爱","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 摸摸头 ==============
     text = ["摸摸头", "乖", "做得好"]
     num = is_array_contain_string(text, response)
     if num > 0:
-        jsonstr.append({"content":"happy","key":"摸摸头","num":num,"timesleep":5,"donum":1})
-        jsonstr.append({"content":"blush","key":"晕","num":num,"timesleep":0,"donum":0})
+        jsonstr.append({"content":"happy","key":"摸摸头","num":num,"timesleep":5,"donum":1,"endwait":0})
+        jsonstr.append({"content":"blush","key":"晕","num":num,"timesleep":0,"donum":0,"endwait":0})
     return jsonstr
 
 # 表情加入:使用键盘控制VTube
+# key：表情按键  num:第几个字符开始执行表情 donum：循环表情次数 timesleep:和donum联动，等待n秒开始循环执行当前表情
 def emote_show(emote_content):
     for data in emote_content:
         key = data["key"]
@@ -1202,8 +1260,6 @@ def mpv_play(mpv_name, song_path, volume):
 
 # 唱歌线程
 def check_sing():
-    global is_singing
-    global SongQueueList
     if not SongQueueList.empty():
         song_json = SongQueueList.get()
         print(f"启动唱歌:{song_json}")
@@ -1228,7 +1284,6 @@ def singTry(songname, username):
 
 # 唱歌
 def sing(songname, username):
-    global is_singing
     global is_creating_song
     global SongMenuList
     is_created = 0  # 1.已经生成过 0.没有生成过 2.生成失败
@@ -1374,6 +1429,9 @@ def play_song(is_created,songname,song_path,username,query):
             emote_ws(1, 0.2, "唱歌")
             # 播报唱歌文字
             tts_say(f"回复{username}：我准备唱一首歌《{songname}》")
+            # 循环摇摆动作
+            auto_yaobai_thread = Thread(target=auto_yaobai)
+            auto_yaobai_thread.start()
             # 唱歌视频播放
             sing_dance_thread = Thread(target=sing_dance, args=(query,))
             sing_dance_thread.start()
@@ -1808,8 +1866,8 @@ def main():
 
     #初始化衣服
     global now_clothes
-    emote_ws(1, 0, "初始化")  #解除当前衣服
-    emote_ws(1, 0, "便衣")  #穿上新衣服
+    emote_ws(1, 0.2, "初始化")  #解除当前衣服
+    emote_ws(1, 0.2, "便衣")  #穿上新衣服
     now_clothes = "便衣"
     
     # 跳舞表情
