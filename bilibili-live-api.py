@@ -1061,13 +1061,12 @@ def auto_yaobai():
         while endwait>0:
            time.sleep(1)
            endwait=endwait-1
-           print(f"摇摆：{yaobai_motion}")
            # 唱歌完毕并且聊天完毕：停止摇摆动作
            if is_singing==2 and is_tts_ready==True:
-              print(f"强制停止摇摆：{yaobai_motion}")
               yaobai_motion=2
+              print(f"强制停止摇摆：{yaobai_motion}")
               break
-        print(f"自然结束摇摆：{emote_show_json}")
+        print(f"结束摇摆：{emote_show_json}")
     
 
 
@@ -1079,6 +1078,8 @@ def stop_motion():
     emote_ws(1, 0, "静止")
 
 # 文本识别表情内容
+# "content":语音情感,"key":按键名称,"num":执行,第几个字符开始执行表情,
+# "donum":循环表情次数 timesleep:和donum联动，等待n秒开始循环执行当前表情,"endwait":表情等待结束时间，一般和执行表情的时间一致
 def emote_content(response):
     jsonstr = []
     # =========== 随机动作 ==============
@@ -1095,6 +1096,11 @@ def emote_content(response):
     num = is_array_contain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"happy","key":"开心","num":num,"timesleep":0,"donum":0,"endwait":0})
+    # =========== 哭 ==============
+    text = ["哭", "悲伤", "伤心", "凄惨", "好惨", "呜呜", "悲哀"]
+    num = is_array_contain_string(text, response)
+    if num > 0:
+        jsonstr.append({"content":"sad","key":"哭","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 招呼 ==============
     text = ["你好", "在吗", "干嘛", "名字", "欢迎", "我在", "玩笑", "逗"]
     num = is_array_contain_string(text, response)
