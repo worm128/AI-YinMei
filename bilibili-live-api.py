@@ -86,10 +86,10 @@ enable_role = False  # 是否启用扮演模式
 
 # ============= 本地模型加载 =====================
 # 模型加载方式
-local_llm_type = int(input("本地LLM模型类型(1.fastapi 2.text-generation-webui): ") or "1")
+local_llm_type = int(input("本地LLM模型类型(1.fastgpt 2.text-generation-webui): ") or "1")
 tgw_url = "192.168.2.58:5000"
-fastapi_url = "192.168.2.198:3000"
-fastapi_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"
+fastgpt_url = "192.168.2.198:3000"
+fastgpt_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"
 #qwen1.5-7b:fastgpt-N7OOz19QWHdmvLhjjJmpXwybD0DTcMInKm3auu0O4AL6dinWf2GdBqCuTxV1H3nQu
 #qwen1.5-4b:fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr
 #glm3:fastgpt-xyfnffZ3a72fwIQQHye7q4SOtnHEns347qyL4gMXIx5D0ziQfA6kHXMl
@@ -520,10 +520,10 @@ def cmd(query):
         return 1
     return 0
 
-# fastapi知识库接口调用-LLM回复
-def chat_fastapi(content, uid, username):
-    url = f"http://{fastapi_url}/api/v1/chat/completions"
-    headers = {"Content-Type": "application/json","Authorization":fastapi_authorization}
+# fastgpt知识库接口调用-LLM回复
+def chat_fastgpt(content, uid, username):
+    url = f"http://{fastgpt_url}/api/v1/chat/completions"
+    headers = {"Content-Type": "application/json","Authorization":fastgpt_authorization}
     timestamp = time.time()
     data={
             "chatId": timestamp,
@@ -609,7 +609,7 @@ def ai_response():
     username = llm_json["username"]
     prompt = llm_json["prompt"]
 
-    # fastapi
+    # fastgpt
     shenfen=""
     if username=="程序猿的退休生活":
        shenfen="吟美的老爸"
@@ -619,7 +619,7 @@ def ai_response():
     if local_llm_type == 1:
         real_prompt=prompt.replace("我", f"他")
         username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟'{username}'说话###"
-        response = chat_fastapi(username_prompt, uid, username)
+        response = chat_fastgpt(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
         username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟'{username}'说话###"

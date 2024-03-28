@@ -99,8 +99,8 @@ vtuber_authenticationToken="这个令牌从获取令牌接口获取"<br>
 唱歌服务 Auto-Convert-Music 地址：singUrl = "192.168.2.58:1717"<br>
 绘画服务 stable-diffusion-webui 地址：drawUrl = "192.168.2.58:7860"<br>
 聊天服务 text-generation-webui 地址：tgwUrl = "192.168.2.58:5000"<br>
-聊天服务 fastapi 知识库地址：fastapi_url = "192.168.2.198:3000"<br>
-fastapi 令牌：fastapi_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"<br>
+聊天服务 fastgpt 知识库地址：fastgpt_url = "192.168.2.198:3000"<br>
+fastgpt 令牌：fastgpt_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"<br>
 搜索服务代理：duckduckgo_proxies="socks5://127.0.0.1:10806"<br>
 搜图服务代理：proxies = {"http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806"}<br>
 
@@ -243,7 +243,7 @@ py nsfw_web.py
 
 - 语音合成：Auto-Convert-Music 开发者：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃<br>
   项目地址：https://github.com/MuBai-He/Auto-Convert-Music<br>
-- 知识库：FastApi<br>
+- 知识库：fastgpt<br>
   项目地址：https://github.com/labring/FastGPT<br>
 - 大语言模型框架：one-api + Xinference<br>
   项目地址：https://github.com/songquanpeng/one-api<br>
