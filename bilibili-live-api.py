@@ -89,10 +89,9 @@ enable_role = False  # 是否启用扮演模式
 local_llm_type = int(input("本地LLM模型类型(1.fastgpt 2.text-generation-webui): ") or "1")
 tgw_url = "192.168.2.58:5000"
 fastgpt_url = "192.168.2.198:3000"
-fastgpt_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"
-#qwen1.5-7b:fastgpt-N7OOz19QWHdmvLhjjJmpXwybD0DTcMInKm3auu0O4AL6dinWf2GdBqCuTxV1H3nQu
-#qwen1.5-4b:fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr
-#glm3:fastgpt-xyfnffZ3a72fwIQQHye7q4SOtnHEns347qyL4gMXIx5D0ziQfA6kHXMl
+fastgpt_authorization="Bearer fastgpt-fZwTrnrJB5pFh1qPqJlTkeL0lhfKBbPZYBSU6nnBPx7polhUvoMr2"
+#ai吟美：fastgpt-fZwTrnrJB5pFh1qPqJlTkeL0lhfKBbPZYBSU6nnBPx7polhUvoMr2
+#openku-chatgpt3.5：fastgpt-mRy7VVF720ZQYAsnMzb1UCKzS7kguy7QZcSG0XuFpQLrjsqR9vwvStx0zbB
 # ============================================
 
 # ============= 绘画参数 =====================
@@ -617,8 +616,8 @@ def ai_response():
        shenfen=f"'{username}'"
 
     if local_llm_type == 1:
-        real_prompt=prompt.replace("我", f"他")
         username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟'{username}'说话###"
+        #username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。"
         response = chat_fastgpt(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
@@ -1226,9 +1225,8 @@ def emote_ws(num, interval, key):
         try:
             ws.send(data)
         except Exception as e:
-            print(f"【表情发送】发生了异常：{e}")
-            error = traceback.format_exc()
-            logging.error(error)
+            error = f"【表情发送】发生了异常：{e}"
+            print(error)
             if error in "Connection is already closed":
                 ws = websocket.WebSocketApp("ws://127.0.0.1:8001",on_open = on_open)
                 # ws服务心跳包
