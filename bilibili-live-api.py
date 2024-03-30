@@ -430,7 +430,18 @@ def msg_deal(query,uid,user_name):
        emote_ws(1, 0, queryExtract)  #穿上新衣服
        now_clothes = queryExtract
        return
-
+    
+    # 切换场景
+    text = ["切换", "进入"]
+    num = is_index_contain_string(text, query)
+    if num > 0:
+       queryExtract = query[num : len(query)]  # 提取提问语句
+       queryExtract = queryExtract.strip()
+       print("切换场景：" + queryExtract)
+       # 切换场景
+       obs.change_scene(queryExtract)
+       return
+    
     #询问LLM
     llm_json = {"prompt": query, "uid": uid, "username": user_name}
     QuestionList.put(llm_json)  # 将弹幕消息放入队列
@@ -608,6 +619,15 @@ def ai_response():
     username = llm_json["username"]
     prompt = llm_json["prompt"]
 
+    # 用户查询标题
+    title = prompt
+    if "query" in llm_json:
+       #搜索语音
+       title = llm_json["query"]
+       obs_font("吟美状态提示",f"吟美搜索问题\"{title}\"")
+    else:
+       obs_font("吟美状态提示",f"吟美思考问题\"{title}\"")
+
     # fastgpt
     shenfen=""
     if username=="程序猿的退休生活":
@@ -625,16 +645,12 @@ def ai_response():
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     response = filter_html_tags(response)
+    obs_font("吟美状态提示",f"吟美思考问题\"{title}\"完成")
 
     # 回复文本
     # query有值是搜索任务，没有值是聊天任务
-    if "query" in llm_json:
-       #搜索语音
-       query = llm_json["query"]
-       answer = f"{query},{response}"
-    else: 
-       #聊天语音
-       answer = f"{prompt},{response}"
+    answer = f"{title},{response}"
+
     # 日志输出
     current_question_count = QuestionList.qsize()
     print(f"[AI回复]{answer}")
@@ -830,8 +846,10 @@ def output_img_thead(img_search_json):
     username = img_search_json["username"]
     try:
         img_search_json = {"prompt": prompt, "username": username}
+        obs_font("吟美状态提示",f"吟美在搜图《{prompt}》")
         # 搜索并且输出图片到虚拟摄像头
         status = searchimg_output_camera(img_search_json)
+        obs_font("吟美状态提示",f"")
         if status==1:
             # 加入回复列表，并且后续合成语音
             tts_say(f"回复{username}：我给你搜了一张图《{prompt}》")
@@ -1029,13 +1047,11 @@ auto_yaobai_lock = threading.Lock()
 def auto_yaobai():
     auto_yaobai_lock.acquire()
     global yaobai_motion
-    #设置开始摇摆: 停止摇摆+（唱歌中 或者 聊天中）= 可以设置摇摆动作
+    # 触发器-设置开始摇摆: 停止摇摆+（唱歌中 或者 聊天中）= 可以设置摇摆动作
     if yaobai_motion == 2 and (is_singing==1 or is_tts_ready==False):
        print(f"进入摇摆状态:{yaobai_motion},{is_singing},{is_tts_ready}")
        yaobai_motion = 1
     else:
-       print(f"禁止摇摆状态:{yaobai_motion},{is_singing},{is_tts_ready}")
-       yaobai_motion = 2
        auto_yaobai_lock.release()
        return
     # 监听停止摇摆线程
@@ -1043,7 +1059,7 @@ def auto_yaobai():
     stop_emote_thread.start()
     auto_yaobai_lock.release()
 
-    # 循环摇摆：
+    # 执行器-循环摇摆：
     while yaobai_motion == 1 and (is_singing==1 or is_tts_ready==False):
         jsonstr = []
         jsonstr.append({"content":"happy","key":"摇摆1","num":1,"timesleep":0,"donum":0,"endwait":24})
@@ -1327,7 +1343,7 @@ def sing(songname, username):
 
     # =============== 开始：如果不存在歌曲，生成歌曲 =================
     if is_created == 0:
-        # 播报绘画
+        # 播报学习歌曲
         print(f"歌曲不存在，需要生成歌曲《{songname}》")
         outputTxt=f"回复{username}：吟美需要学唱歌曲《{songname}》，请耐心等待"
         tts_say(outputTxt)
@@ -1339,6 +1355,7 @@ def sing(songname, username):
     if is_created==2:
         print(f"生成歌曲失败《{songname}》")
         return
+    obs_font("吟美状态提示",f"吟美已经学会歌曲《{songname}》")
     # =============== 结束：如果不存在歌曲，生成歌曲 =================
 
     #等待播放
@@ -1409,6 +1426,7 @@ def create_song(songname,song_path,is_created,downfile):
                 i = i + 1
                 if i >= timout:
                     break
+                obs_font("吟美状态提示",f"当前吟美学唱歌曲《{songname}》第{i}秒")
                 print(f"生成《{songname}》歌曲第[{i}]秒,生成状态:{is_created}")
                 time.sleep(1)
         # =============== 结束生成歌曲 =================
@@ -1799,6 +1817,7 @@ def progress(prompt, username):
                             print(f"《{prompt}》进度{p}%发现黄图-nsfw:{nsfw},进度跳过")
                             continue
                         print(f"《{prompt}》进度{p}%绿色图片-nsfw:{nsfw},输出进度图")
+                        obs_font("吟美状态提示",f"吟美正在绘图《{prompt}》,进度{p}%")
                     else:
                         print(f"《{prompt}》输出进度：{p}%")
                 except Exception as e:
@@ -1819,6 +1838,7 @@ def progress(prompt, username):
             time.sleep(1)
         elif is_drawing >= 2:
             print(f"《{prompt}》输出进度：100%")
+            obs_font("吟美状态提示",f"吟美绘图《{prompt}》完成")
             break    
 
 # 鉴黄提示图片输出
@@ -1877,12 +1897,18 @@ def main():
     now_clothes = "便衣"
     
     # 跳舞表情
-    content = ""
-    for str in emote_list:
-        content= content + str + ","
-    if content!="":
-        obs_font("表情列表",content)
+    # content = ""
+    # for str in emote_list:
+    #     content= content + str + ","
+    # if content!="":
+    #     obs_font("表情列表",content)
     
+    # 切换场景:初始化
+    obs.change_scene("主舞台")
+    
+    # 吟美状态提示:初始化清空
+    obs_font("吟美状态提示","")
+
     if mode==1 or mode==2:
         # LLM回复
         sched1.add_job(func=check_answer, trigger="interval", seconds=1, id=f"answer", max_instances=10)
