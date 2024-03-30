@@ -1035,6 +1035,7 @@ def auto_yaobai():
        yaobai_motion = 1
     else:
        print(f"禁止摇摆状态:{yaobai_motion},{is_singing},{is_tts_ready}")
+       yaobai_motion = 2
        auto_yaobai_lock.release()
        return
     # 监听停止摇摆线程
@@ -1065,7 +1066,8 @@ def auto_yaobai():
               yaobai_motion=2
               print(f"强制停止摇摆：{yaobai_motion}")
               break
-        print(f"结束摇摆：{emote_show_json}")
+    yaobai_motion = 2
+    print(f"结束摇摆：{emote_show_json}")    
     
 
 
