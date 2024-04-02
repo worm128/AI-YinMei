@@ -126,10 +126,10 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="fb2ff6a8%2C1727488803%2C320e5%2A42CjA-bAKwa_WnRSZSRyRDe18vfkxHqJhyHpqyMcY1a8El3riKHXWX1RQ2u0czw5-r0DkSVmQxQXlYeGs5Ukw4QWZQUndSamZ0Rk9FbmUtYnBHR0I4Vm9ZMk1Pdl80OTZWamZsd2h6dkRHRDdfTWt4amdQanF0blF4RFdFbm1Wc3I0SlgwSTVwa0lnIIEC",
-    buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
-    bili_jct="daf4ac38c03e40f8f0a6be8d73b4de5e",
-    dedeuserid="333472479",
+    sessdata="",
+    buvid3="",
+    bili_jct="",
+    dedeuserid="",
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
@@ -636,12 +636,12 @@ def ai_response():
        shenfen=f"'{username}'"
 
     if local_llm_type == 1:
-        username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟'{username}'说话###"
+        username_prompt = f"{prompt}\n###'{shenfen}'对你说###"
         #username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。"
         response = chat_fastgpt(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
-        username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。\n###提示：不能模拟'{username}'说话###"
+        username_prompt = f"{prompt}\n###'{shenfen}'对你说###"
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     response = filter_html_tags(response)
