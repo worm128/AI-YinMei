@@ -32,8 +32,8 @@
             "volume_locked": false
         }
     },
-    "current_scene": "主舞台",
-    "current_program_scene": "主舞台",
+    "current_scene": "粉红房间",
+    "current_program_scene": "粉红房间",
     "scene_order": [
         {
             "name": "主舞台"
@@ -292,7 +292,7 @@
             "versioned_id": "group",
             "settings": {
                 "custom_size": true,
-                "cx": 4554,
+                "cx": 4566,
                 "cy": 2156,
                 "id_counter": 0,
                 "items": [
@@ -303,7 +303,7 @@
                         "locked": true,
                         "rot": 0.0,
                         "pos": {
-                            "x": 1562.66015625,
+                            "x": 1524.66015625,
                             "y": 0.0
                         },
                         "scale": {
@@ -342,7 +342,7 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 800.0186767578125,
+                            "x": 762.0186767578125,
                             "y": 161.20355224609375
                         },
                         "scale": {
@@ -381,7 +381,7 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 3524.017578125,
+                            "x": 3486.017578125,
                             "y": 52.122314453125
                         },
                         "scale": {
@@ -420,8 +420,8 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 1951.0,
-                            "y": 1209.0
+                            "x": 1924.0,
+                            "y": 1354.20361328125
                         },
                         "scale": {
                             "x": 1.7566666603088379,
@@ -459,8 +459,8 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 3519.0,
-                            "y": 935.0
+                            "x": 3366.8515625,
+                            "y": 890.68988037109375
                         },
                         "scale": {
                             "x": 1.7116667032241821,
@@ -499,11 +499,11 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 0.0,
-                            "y": 332.59326171875
+                            "y": 357.20361328125
                         },
                         "scale": {
-                            "x": 1.6203703880310059,
-                            "y": 1.6200979948043823
+                            "x": 1.5986769199371338,
+                            "y": 1.5982222557067871
                         },
                         "align": 5,
                         "bounds_type": 0,
@@ -620,7 +620,7 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 4108.02392578125,
+                            "x": 4108.0322265625,
                             "y": 1715.9998779296875
                         },
                         "scale": {
@@ -698,7 +698,7 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 3420.81201171875,
+                            "x": 3420.8125,
                             "y": 33.086967468261719
                         },
                         "scale": {
@@ -926,123 +926,6 @@
                 "id_counter": 0,
                 "items": [
                     {
-                        "name": "换装列表",
-                        "source_uuid": "09733c1a-becd-4a99-931a-793ccd929dbf",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 3025.00048828125,
-                            "y": 1963.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 160,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "换装说明",
-                        "source_uuid": "dc6e018a-4cb6-4c72-a9d4-f44c20e92ed9",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 2656.0,
-                            "y": 1960.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 161,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "跳舞说明",
-                        "source_uuid": "c20d455a-f550-463d-85bf-19a827feb4f5",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 1234.0,
-                            "y": 352.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 157,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
                         "name": "video",
                         "source_uuid": "b84e9367-253e-48ef-92e5-7fbd30652da2",
                         "visible": true,
@@ -1158,84 +1041,6 @@
                             "duration": 0
                         },
                         "private_settings": {}
-                    },
-                    {
-                        "name": "表情列表",
-                        "source_uuid": "6c90a839-3e12-4504-b382-da25434ec0c5",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 1188.0,
-                            "y": 1961.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 156,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "表情说明",
-                        "source_uuid": "f49b22c9-4d18-4eff-93d9-db3a9a24d0ae",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 139.0,
-                            "y": 1965.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 155,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
                     }
                 ]
             },
@@ -1251,22 +1056,12 @@
             "push-to-talk": false,
             "push-to-talk-delay": 0,
             "hotkeys": {
-                "libobs.show_scene_item.160": [],
-                "libobs.hide_scene_item.160": [],
-                "libobs.show_scene_item.161": [],
-                "libobs.hide_scene_item.161": [],
-                "libobs.show_scene_item.157": [],
-                "libobs.hide_scene_item.157": [],
                 "libobs.show_scene_item.150": [],
                 "libobs.hide_scene_item.150": [],
                 "libobs.show_scene_item.158": [],
                 "libobs.hide_scene_item.158": [],
                 "libobs.show_scene_item.153": [],
-                "libobs.hide_scene_item.153": [],
-                "libobs.show_scene_item.156": [],
-                "libobs.hide_scene_item.156": [],
-                "libobs.show_scene_item.155": [],
-                "libobs.hide_scene_item.155": []
+                "libobs.hide_scene_item.153": []
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
@@ -1477,8 +1272,8 @@
             "versioned_id": "group",
             "settings": {
                 "custom_size": true,
-                "cx": 3011,
-                "cy": 2125,
+                "cx": 2954,
+                "cy": 2105,
                 "id_counter": 0,
                 "items": [
                     {
@@ -1488,8 +1283,8 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 1005.0,
-                            "y": 2053.0
+                            "x": 948.0,
+                            "y": 2033.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -1508,45 +1303,6 @@
                         "crop_right": 0,
                         "crop_bottom": 0,
                         "id": 123,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "功能说明",
-                        "source_uuid": "387949cc-95c8-4ed1-abd8-81960a18ee75",
-                        "visible": false,
-                        "locked": false,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 1075.0,
-                            "y": 1161.0
-                        },
-                        "scale": {
-                            "x": 2.3495144844055176,
-                            "y": 2.3496932983398438
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 124,
                         "group_item_backup": false,
                         "scale_filter": "disable",
                         "blend_method": "default",
@@ -1653,12 +1409,329 @@
             "hotkeys": {
                 "libobs.show_scene_item.123": [],
                 "libobs.hide_scene_item.123": [],
-                "libobs.show_scene_item.124": [],
-                "libobs.hide_scene_item.124": [],
                 "libobs.show_scene_item.136": [],
                 "libobs.hide_scene_item.136": [],
                 "libobs.show_scene_item.137": [],
                 "libobs.hide_scene_item.137": []
+            },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 503382016,
+            "name": "操作说明",
+            "uuid": "9f737467-d52c-4911-a7dd-d7b3e384f88f",
+            "id": "group",
+            "versioned_id": "group",
+            "settings": {
+                "id_counter": 0,
+                "custom_size": true,
+                "cx": 2752,
+                "cy": 2099,
+                "items": [
+                    {
+                        "name": "跳舞说明",
+                        "source_uuid": "c20d455a-f550-463d-85bf-19a827feb4f5",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1523.6552734375,
+                            "y": 549.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 157,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "换装列表",
+                        "source_uuid": "09733c1a-becd-4a99-931a-793ccd929dbf",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1849.65576171875,
+                            "y": 385.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 160,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "换装说明",
+                        "source_uuid": "dc6e018a-4cb6-4c72-a9d4-f44c20e92ed9",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1523.6552734375,
+                            "y": 383.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 161,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "表情说明",
+                        "source_uuid": "f49b22c9-4d18-4eff-93d9-db3a9a24d0ae",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1523.6552734375,
+                            "y": 230.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 155,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "切换场景说明",
+                        "source_uuid": "fafcc66b-fe38-473b-b043-bb439d3d5efa",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1523.6552734375,
+                            "y": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 163,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "功能说明",
+                        "source_uuid": "387949cc-95c8-4ed1-abd8-81960a18ee75",
+                        "visible": false,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 1177.0
+                        },
+                        "scale": {
+                            "x": 2.3495144844055176,
+                            "y": 2.3496932983398438
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 124,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "吟美状态提示",
+                        "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 61.0,
+                            "y": 1202.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 164,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    }
+                ]
+            },
+            "mixers": 0,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {
+                "libobs.show_scene_item.157": [],
+                "libobs.hide_scene_item.157": [],
+                "libobs.show_scene_item.160": [],
+                "libobs.hide_scene_item.160": [],
+                "libobs.show_scene_item.161": [],
+                "libobs.hide_scene_item.161": [],
+                "libobs.show_scene_item.155": [],
+                "libobs.hide_scene_item.155": [],
+                "libobs.show_scene_item.163": [],
+                "libobs.hide_scene_item.163": [],
+                "libobs.show_scene_item.124": [],
+                "libobs.hide_scene_item.124": [],
+                "libobs.show_scene_item.164": [],
+                "libobs.hide_scene_item.164": []
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
@@ -1719,7 +1792,7 @@
             "versioned_id": "scene",
             "settings": {
                 "custom_size": false,
-                "id_counter": 162,
+                "id_counter": 166,
                 "items": [
                     {
                         "name": "背景图",
@@ -1767,7 +1840,7 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 2607.13525390625,
+                            "x": 2607.140625,
                             "y": 1089.1295166015625
                         },
                         "scale": {
@@ -1845,7 +1918,7 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 2171.0,
+                            "x": 2171.000244140625,
                             "y": 20.999996185302734
                         },
                         "scale": {
@@ -2313,7 +2386,7 @@
                     {
                         "name": "右上角说明",
                         "source_uuid": "bb91941f-2f86-439d-876f-ea75e461fffb",
-                        "visible": true,
+                        "visible": false,
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
@@ -2633,8 +2706,8 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 1187.9813232421875,
-                            "y": 1213.79638671875
+                            "x": 1198.9813232421875,
+                            "y": 1359.0
                         },
                         "scale": {
                             "x": 1.7566666603088379,
@@ -2672,8 +2745,8 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 2755.9814453125,
-                            "y": 939.79644775390625
+                            "x": 2641.8330078125,
+                            "y": 895.486328125
                         },
                         "scale": {
                             "x": 1.7116667032241821,
@@ -2711,12 +2784,12 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": -763.0186767578125,
-                            "y": 337.38970947265625
+                            "x": -725.0186767578125,
+                            "y": 362.00006103515625
                         },
                         "scale": {
-                            "x": 1.6203703880310059,
-                            "y": 1.6200979948043823
+                            "x": 1.5986769199371338,
+                            "y": 1.5982222557067871
                         },
                         "align": 5,
                         "bounds_type": 0,
@@ -2750,7 +2823,7 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": -763.0186767578125,
+                            "x": -725.0186767578125,
                             "y": 4.79644775390625
                         },
                         "scale": {
@@ -2785,14 +2858,53 @@
                         }
                     },
                     {
+                        "name": "跳舞说明",
+                        "source_uuid": "c20d455a-f550-463d-85bf-19a827feb4f5",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 2653.6552734375,
+                            "y": 568.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 157,
+                        "group_item_backup": true,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
                         "name": "换装列表",
                         "source_uuid": "09733c1a-becd-4a99-931a-793ccd929dbf",
                         "visible": true,
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 3025.00048828125,
-                            "y": 1963.0
+                            "x": 2979.65576171875,
+                            "y": 404.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -2830,8 +2942,8 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 2656.0,
-                            "y": 1960.0
+                            "x": 2653.6552734375,
+                            "y": 402.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -2863,14 +2975,14 @@
                         "private_settings": {}
                     },
                     {
-                        "name": "跳舞说明",
-                        "source_uuid": "c20d455a-f550-463d-85bf-19a827feb4f5",
+                        "name": "表情说明",
+                        "source_uuid": "f49b22c9-4d18-4eff-93d9-db3a9a24d0ae",
                         "visible": true,
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 1234.0,
-                            "y": 352.0
+                            "x": 2653.6552734375,
+                            "y": 249.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -2888,7 +3000,7 @@
                         "crop_top": 0,
                         "crop_right": 0,
                         "crop_bottom": 0,
-                        "id": 157,
+                        "id": 155,
                         "group_item_backup": true,
                         "scale_filter": "disable",
                         "blend_method": "default",
@@ -2900,6 +3012,164 @@
                             "duration": 0
                         },
                         "private_settings": {}
+                    },
+                    {
+                        "name": "切换场景说明",
+                        "source_uuid": "fafcc66b-fe38-473b-b043-bb439d3d5efa",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 2653.6552734375,
+                            "y": 19.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 163,
+                        "group_item_backup": true,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "功能说明",
+                        "source_uuid": "387949cc-95c8-4ed1-abd8-81960a18ee75",
+                        "visible": false,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1130.0,
+                            "y": 1196.0
+                        },
+                        "scale": {
+                            "x": 2.3495144844055176,
+                            "y": 2.3496932983398438
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 124,
+                        "group_item_backup": true,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "吟美状态提示",
+                        "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1191.0,
+                            "y": 1221.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 164,
+                        "group_item_backup": true,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "操作说明",
+                        "source_uuid": "9f737467-d52c-4911-a7dd-d7b3e384f88f",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1130.0,
+                            "y": 19.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 165,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {
+                            "collapsed": true
+                        }
                     },
                     {
                         "name": "video",
@@ -3019,84 +3289,6 @@
                         "private_settings": {}
                     },
                     {
-                        "name": "表情列表",
-                        "source_uuid": "6c90a839-3e12-4504-b382-da25434ec0c5",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 1188.0,
-                            "y": 1961.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 156,
-                        "group_item_backup": true,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "表情说明",
-                        "source_uuid": "f49b22c9-4d18-4eff-93d9-db3a9a24d0ae",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 139.0,
-                            "y": 1965.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 155,
-                        "group_item_backup": true,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
                         "name": "跳舞视频",
                         "source_uuid": "ed94ac31-287f-4829-900c-46286c32000e",
                         "visible": true,
@@ -3134,7 +3326,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     },
                     {
@@ -3144,8 +3336,8 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 1060.0,
-                            "y": 2088.0
+                            "x": 1003.0,
+                            "y": 2068.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -3164,45 +3356,6 @@
                         "crop_right": 0,
                         "crop_bottom": 0,
                         "id": 123,
-                        "group_item_backup": true,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "功能说明",
-                        "source_uuid": "387949cc-95c8-4ed1-abd8-81960a18ee75",
-                        "visible": false,
-                        "locked": false,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 1130.0,
-                            "y": 1196.0
-                        },
-                        "scale": {
-                            "x": 2.3495144844055176,
-                            "y": 2.3496932983398438
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 124,
                         "group_item_backup": true,
                         "scale_filter": "disable",
                         "blend_method": "default",
@@ -3331,8 +3484,47 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
+                    },
+                    {
+                        "name": "砸礼物",
+                        "source_uuid": "1b80b108-d222-4f1b-9a23-aa795702fdcf",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": -310.0,
+                            "y": 323.0
+                        },
+                        "scale": {
+                            "x": 1.0223958492279053,
+                            "y": 1.0222222805023193
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 166,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
                     }
                 ]
             },
@@ -3359,11 +3551,51 @@
                 "libobs.hide_scene_item.130": [],
                 "libobs.show_scene_item.118": [],
                 "libobs.hide_scene_item.118": [],
+                "libobs.show_scene_item.165": [],
+                "libobs.hide_scene_item.165": [],
                 "libobs.show_scene_item.151": [],
                 "libobs.hide_scene_item.151": [],
                 "libobs.show_scene_item.121": [],
-                "libobs.hide_scene_item.121": []
+                "libobs.hide_scene_item.121": [],
+                "libobs.show_scene_item.166": [],
+                "libobs.hide_scene_item.166": []
             },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 503382016,
+            "name": "切换场景说明",
+            "uuid": "fafcc66b-fe38-473b-b043-bb439d3d5efa",
+            "id": "text_gdiplus",
+            "versioned_id": "text_gdiplus_v2",
+            "settings": {
+                "outline": false,
+                "text": "切换场景：切换+场景名称\n主舞台、粉红房间",
+                "font": {
+                    "face": "微软雅黑",
+                    "style": "Bold",
+                    "size": 95,
+                    "flags": 1
+                },
+                "color": 4286578517,
+                "outline_size": 5,
+                "outline_color": 4294967295
+            },
+            "mixers": 0,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {},
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
             "monitoring_type": 0,
@@ -3403,13 +3635,48 @@
         },
         {
             "prev_ver": 503382016,
+            "name": "吟美状态提示",
+            "uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
+            "id": "text_gdiplus",
+            "versioned_id": "text_gdiplus_v2",
+            "settings": {
+                "outline": true,
+                "font": {
+                    "face": "微软雅黑",
+                    "style": "Bold",
+                    "size": 80,
+                    "flags": 1
+                },
+                "outline_size": 10,
+                "outline_color": 4278190080,
+                "text": "吟美思考问题\"救火啊，渣渣美\"完成"
+            },
+            "mixers": 0,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {},
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 503382016,
             "name": "唱歌视频",
             "uuid": "22d07de0-79f2-4348-8660-ff9a3992d485",
             "id": "ffmpeg_source",
             "versioned_id": "ffmpeg_source",
             "settings": {
-                "restart_on_activate": false,
-                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\真人\\小城夏天.mp4"
+                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\真人\\小城夏天.mp4",
+                "restart_on_activate": false
             },
             "mixers": 255,
             "sync": 0,
@@ -3478,7 +3745,7 @@
                     "id": "color_key_filter",
                     "versioned_id": "color_key_filter_v2",
                     "settings": {
-                        "opacity": 0.93679999999999997
+                        "opacity": 0.85919999999999996
                     },
                     "mixers": 0,
                     "sync": 0,
@@ -3585,8 +3852,8 @@
             "versioned_id": "browser_source",
             "settings": {
                 "url": "https://chat.bilisc.com/room/DD1M35C6L4HS9?roomKeyType=2&showGiftName=true&blockGiftDanmaku=false&lang=zh",
-                "width": 600,
-                "height": 600,
+                "width": 700,
+                "height": 680,
                 "webpage_control_level": 4,
                 "css": "@import url(\"https://fonts.googleapis.com/css?family=Nunito%20Sans\");\n@import url(\"https://fonts.googleapis.com/css?family=Imprima\");\n@import url(\"https://fonts.googleapis.com/css?family=Changa%20One\");\n\n/* Transparent background */\nyt-live-chat-renderer {\n  background-color: transparent !important;\n}\n\nyt-live-chat-ticker-renderer {\n  background-color: transparent !important;\n  box-shadow: none !important;\n}\n\nyt-live-chat-author-chip #author-name {\n  background-color: transparent !important;\n}\n\n/* Hide scrollbar */\nyt-live-chat-item-list-renderer #items {\n  overflow: hidden !important;\n}\n\nyt-live-chat-item-list-renderer #item-scroller {\n  overflow: hidden !important;\n}\n\nyt-live-chat-text-message-renderer #content,\nyt-live-chat-membership-item-renderer #content {\n  overflow: visible !important;\n}\n\n/* Hide header and input */\nyt-live-chat-header-renderer,\nyt-live-chat-message-input-renderer {\n  display: none !important;\n}\n\n/* Hide unimportant messages */\nyt-live-chat-text-message-renderer[is-deleted],\nyt-live-chat-membership-item-renderer[is-deleted] {\n  display: none !important;\n}\n\nyt-live-chat-mode-change-message-renderer, \nyt-live-chat-viewer-engagement-message-renderer, \nyt-live-chat-restricted-participation-renderer {\n  display: none !important;\n}\n\nyt-live-chat-text-message-renderer a,\nyt-live-chat-membership-item-renderer a {\n  text-decoration: none !important;\n}\n\n/* Reduce side padding */\nyt-live-chat-text-message-renderer {\n  padding-left: 4px !important;\n  padding-right: 4px !important;\n}\n\n/* Outlines */\nyt-live-chat-renderer * {\n  text-shadow: -2px -2px #000000, -2px -1px #000000, -2px 0px #000000, -2px 1px #000000, -2px 2px #000000, -1px -2px #000000, -1px -1px #000000, -1px 0px #000000, -1px 1px #000000, -1px 2px #000000, 0px -2px #000000, 0px -1px #000000, 0px 0px #000000, 0px 1px #000000, 0px 2px #000000, 1px -2px #000000, 1px -1px #000000, 1px 0px #000000, 1px 1px #000000, 1px 2px #000000, 2px -2px #000000, 2px -1px #000000, 2px 0px #000000, 2px 1px #000000, 2px 2px #000000;\n  font-family: \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE \\8F6F \\96C5 \\9ED1 \", SimHei, Arial, sans-serif;\n  font-size: 30px !important;\n  line-height: 30px !important;\n}\n\n/* Avatars */\nyt-live-chat-text-message-renderer #author-photo,\nyt-live-chat-text-message-renderer #author-photo img,\nyt-live-chat-paid-message-renderer #author-photo,\nyt-live-chat-paid-message-renderer #author-photo img,\nyt-live-chat-membership-item-renderer #author-photo,\nyt-live-chat-membership-item-renderer #author-photo img {\n  \n  width: 40px !important;\n  height: 40px !important;\n  border-radius: 40px !important;\n  margin-right: 10px !important;\n}\n\n/* Channel names */\nyt-live-chat-text-message-renderer #author-name[type=\"owner\"],\nyt-live-chat-text-message-renderer yt-live-chat-author-badge-renderer[type=\"owner\"] {\n  color: #ffd600 !important;\n}\n\nyt-live-chat-text-message-renderer #author-name[type=\"moderator\"],\nyt-live-chat-text-message-renderer yt-live-chat-author-badge-renderer[type=\"moderator\"] {\n  color: #5e84f1 !important;\n}\n\nyt-live-chat-text-message-renderer #author-name[type=\"member\"],\nyt-live-chat-text-message-renderer yt-live-chat-author-badge-renderer[type=\"member\"] {\n  color: #0f9d58 !important;\n}\n\nyt-live-chat-text-message-renderer #author-name {\n  \n  color: #cccccc !important;\n  font-family: \"Nunito Sans\", \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE \\8F6F \\96C5 \\9ED1 \", SimHei, Arial, sans-serif;\n  font-size: 32px !important;\n  line-height: 32px !important;\n}\n\n/* Show colon */\nyt-live-chat-text-message-renderer #author-name::after {\n  content: \":\";\n  margin-left: 2px;\n}\n\n/* Hide badges */\nyt-live-chat-text-message-renderer #chat-badges {\n  \n  vertical-align: text-top !important;\n}\n\n/* Messages */\nyt-live-chat-text-message-renderer #message,\nyt-live-chat-text-message-renderer #message * {\n  color: #ffffff !important;\n  font-family: \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE \\8F6F \\96C5 \\9ED1 \", SimHei, Arial, sans-serif;\n  font-size: 30px !important;\n  line-height: 30px !important;\n}\n\n\n\nyt-live-chat-text-message-renderer #message .emoji {\n  width: auto !important;\n  height: 25px !important;\n}\n\nyt-live-chat-text-message-renderer #message .emoji.blc-large-emoji {\n  height: 36px !important;\n}\n\n/* Timestamps */\nyt-live-chat-text-message-renderer #timestamp {\n  display: none !important;\n  color: #999999 !important;\n  font-family: \"Imprima\", \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE \\8F6F \\96C5 \\9ED1 \", SimHei, Arial, sans-serif;\n  font-size: 16px !important;\n  line-height: 16px !important;\n}\n\n/* Background colors */\nbody {\n  overflow: hidden;\n  background-color: rgba(0, 0, 0, 0);\n}\n\nyt-live-chat-text-message-renderer,\nyt-live-chat-text-message-renderer[is-highlighted] {\n  background-color: rgba(204, 204, 204, 0) !important;\n}\n\nyt-live-chat-text-message-renderer[author-type=\"owner\"],\nyt-live-chat-text-message-renderer[author-type=\"owner\"][is-highlighted] {\n  background-color: rgba(255, 214, 0, 0) !important;\n}\n\nyt-live-chat-text-message-renderer[author-type=\"moderator\"],\nyt-live-chat-text-message-renderer[author-type=\"moderator\"][is-highlighted] {\n  background-color: rgba(94, 132, 241, 0) !important;\n}\n\nyt-live-chat-text-message-renderer[author-type=\"member\"],\nyt-live-chat-text-message-renderer[author-type=\"member\"][is-highlighted] {\n  background-color: rgba(15, 157, 88, 0) !important;\n}\n\n/* SuperChat/Fan Funding Messages */\nyt-live-chat-paid-message-renderer {\n  margin: 4px 0 !important;\n}\n\nyt-live-chat-paid-message-renderer #author-name,\nyt-live-chat-paid-message-renderer #author-name *,\nyt-live-chat-membership-item-renderer #header-content-inner-column,\nyt-live-chat-membership-item-renderer #header-content-inner-column * {\n  color: #ffffff !important;\n  font-family: \"Changa One\", \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE \\8F6F \\96C5 \\9ED1 \", SimHei, Arial, sans-serif;\n  font-size: 28px !important;\n  line-height: 28px !important;\n}\n\nyt-live-chat-paid-message-renderer #purchase-amount,\nyt-live-chat-paid-message-renderer #purchase-amount *,\nyt-live-chat-membership-item-renderer #header-subtext,\nyt-live-chat-membership-item-renderer #header-subtext * {\n  color: #ffffff !important;\n  font-family: \"Imprima\", \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE \\8F6F \\96C5 \\9ED1 \", SimHei, Arial, sans-serif;\n  font-size: 28px !important;\n  line-height: 28px !important;\n}\n\nyt-live-chat-paid-message-renderer #content,\nyt-live-chat-paid-message-renderer #content * {\n  color: #ffffff !important;\n  font-family: \"Imprima\", \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE \\8F6F \\96C5 \\9ED1 \", SimHei, Arial, sans-serif;\n  font-size: 28px !important;\n  line-height: 28px !important;\n}\n\nyt-live-chat-membership-item-renderer #card,\nyt-live-chat-membership-item-renderer #header {\n  background-color: #0f9d58 !important;\n  margin: 4px 0 !important;\n}\n\nyt-live-chat-ticker-renderer {\n  display: none !important;\n}\n\n/* SuperChat Ticker */\nyt-live-chat-ticker-paid-message-item-renderer,\nyt-live-chat-ticker-paid-message-item-renderer *,\nyt-live-chat-ticker-sponsor-item-renderer,\nyt-live-chat-ticker-sponsor-item-renderer * {\n  color: #ffffff !important;\n  font-family: \"Imprima\", \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE \\8F6F \\96C5 \\9ED1 \", SimHei, Arial, sans-serif;\n}\n\n\n\n/* Animation */\n@keyframes anim {\n  0% { opacity: 0; }\n  100% { opacity: 1; transform: none; }\n}\n\nyt-live-chat-text-message-renderer,\nyt-live-chat-membership-item-renderer,\nyt-live-chat-paid-message-renderer {\n  animation: anim 200ms;\n  animation-fill-mode: both;\n}\n"
             },
@@ -3774,7 +4041,7 @@
                 "font": {
                     "face": "微软雅黑",
                     "style": "Bold",
-                    "size": 100,
+                    "size": 90,
                     "flags": 1
                 },
                 "color": 4294967295,
@@ -3807,7 +4074,7 @@
                     "settings": {
                         "speed_x": 118.0,
                         "limit_cx": true,
-                        "cx": 700
+                        "cx": 760
                     },
                     "mixers": 0,
                     "sync": 0,
@@ -3840,7 +4107,7 @@
                 "font": {
                     "face": "微软雅黑",
                     "style": "Bold",
-                    "size": 100,
+                    "size": 90,
                     "flags": 1
                 },
                 "outline_size": 10,
@@ -4003,32 +4270,6 @@
         },
         {
             "prev_ver": 503382016,
-            "name": "显示器采集 3",
-            "uuid": "992ca244-a1dc-47bf-abd2-912e5722305c",
-            "id": "monitor_capture",
-            "versioned_id": "monitor_capture",
-            "settings": {
-                "monitor_id": "\\\\?\\DISPLAY#IPS2700#5&2772ae5e&1&UID4355#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"
-            },
-            "mixers": 0,
-            "sync": 0,
-            "flags": 0,
-            "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {},
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 503382016,
             "name": "本地电脑",
             "uuid": "e7e22a1d-f444-4c1d-8d05-f3209acd0aeb",
             "id": "scene",
@@ -4162,7 +4403,7 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 2467.0,
-                            "y": 864.0
+                            "y": 985.0
                         },
                         "scale": {
                             "x": 1.1521499156951904,
@@ -4297,16 +4538,16 @@
             "id": "text_gdiplus",
             "versioned_id": "text_gdiplus_v2",
             "settings": {
+                "outline": true,
+                "text": "知识库优势：\n1、实时生效数据，并且不需要重启程序\n2、对于底层模型没有侵略性，内容输出可控稳定\n3、泛化能力很好，稳定可控\n4、支持大数据量的录入\n",
                 "font": {
                     "face": "微软雅黑",
                     "style": "Bold",
                     "size": 100,
                     "flags": 1
                 },
-                "outline": true,
                 "outline_size": 10,
-                "outline_color": 4286513407,
-                "text": "知识库优势：\n1、实时生效数据，并且不需要重启程序\n2、对于底层模型没有侵略性，内容输出可控稳定\n3、泛化能力很好，稳定可控\n4、支持大数据量的录入\n"
+                "outline_color": 4286513407
             },
             "mixers": 0,
             "sync": 0,
@@ -4327,21 +4568,58 @@
         },
         {
             "prev_ver": 503382016,
+            "name": "砸礼物",
+            "uuid": "1b80b108-d222-4f1b-9a23-aa795702fdcf",
+            "id": "browser_source",
+            "versioned_id": "browser_source",
+            "settings": {
+                "is_local_file": true,
+                "local_file": "J:/ai/ai-code/karasubonk_bilibili-win32 v1.09/karasubonk_bilibili-win32/resources/app/bonker.html",
+                "url": "J:\\ai\\ai-code\\karasubonk_bilibili-win32 v1.09\\karasubonk_bilibili-win32\\resources\\app\\bonker.html",
+                "width": 1920,
+                "height": 1080,
+                "shutdown": false
+            },
+            "mixers": 255,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {
+                "libobs.mute": [],
+                "libobs.unmute": [],
+                "libobs.push-to-mute": [],
+                "libobs.push-to-talk": [],
+                "ObsBrowser.Refresh": []
+            },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 503382016,
             "name": "程序版本",
             "uuid": "ec473682-0f20-44b5-bb6d-7b829f6d025b",
             "id": "text_gdiplus",
             "versioned_id": "text_gdiplus_v2",
             "settings": {
+                "text": "程序版本：1.7",
+                "outline": true,
                 "font": {
                     "face": "微软雅黑",
                     "style": "Bold",
                     "size": 80,
                     "flags": 1
                 },
-                "text": "程序版本：1.7",
-                "outline": true,
-                "outline_color": 4284338687,
-                "outline_size": 6
+                "outline_size": 6,
+                "outline_color": 4284338687
             },
             "mixers": 0,
             "sync": 0,
@@ -4367,48 +4645,9 @@
             "id": "scene",
             "versioned_id": "scene",
             "settings": {
-                "id_counter": 14,
+                "id_counter": 19,
                 "custom_size": false,
                 "items": [
-                    {
-                        "name": "显示器采集 3",
-                        "source_uuid": "992ca244-a1dc-47bf-abd2-912e5722305c",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 12,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
                     {
                         "name": "背景",
                         "source_uuid": "4bacb4b9-a107-405f-99a8-6cfa3f192baf",
@@ -4455,8 +4694,8 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 2848.0,
-                            "y": 0.0
+                            "x": 2641.833251953125,
+                            "y": 823.787841796875
                         },
                         "scale": {
                             "x": 1.7116667032241821,
@@ -4494,8 +4733,8 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 301.0,
-                            "y": 1457.333251953125
+                            "x": 128.0,
+                            "y": 1416.333251953125
                         },
                         "scale": {
                             "x": 1.7566666603088379,
@@ -4533,12 +4772,12 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 1188.0,
-                            "y": 337.3896484375
+                            "x": 694.0,
+                            "y": 284.0
                         },
                         "scale": {
-                            "x": 1.6203703880310059,
-                            "y": 1.6200979948043823
+                            "x": 1.6675854921340942,
+                            "y": 1.667555570602417
                         },
                         "align": 5,
                         "bounds_type": 0,
@@ -4759,6 +4998,320 @@
                             "duration": 0
                         },
                         "private_settings": {}
+                    },
+                    {
+                        "name": "歌曲列表",
+                        "source_uuid": "0a16f0b9-525a-4897-b6bd-71ed8ed94574",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 2659.0,
+                            "y": 59.787841796875
+                        },
+                        "scale": {
+                            "x": 0.95416665077209473,
+                            "y": 0.95499998331069946
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 15,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "吟美状态提示",
+                        "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1065.0,
+                            "y": 77.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 16,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "切换场景说明",
+                        "source_uuid": "fafcc66b-fe38-473b-b043-bb439d3d5efa",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 361.6552734375,
+                            "y": 210.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 17,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "video",
+                        "source_uuid": "b84e9367-253e-48ef-92e5-7fbd30652da2",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 1,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 3840.0,
+                            "y": 2160.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 150,
+                        "group_item_backup": true,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "唱歌视频",
+                        "source_uuid": "22d07de0-79f2-4348-8660-ff9a3992d485",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1993.0,
+                            "y": 1144.0
+                        },
+                        "scale": {
+                            "x": 0.94999998807907104,
+                            "y": 0.94999998807907104
+                        },
+                        "align": 0,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 158,
+                        "group_item_backup": true,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "表情",
+                        "source_uuid": "f4e5e149-f96b-45c0-97fa-17139568ba5a",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1585.6666259765625,
+                            "y": 829.333251953125
+                        },
+                        "scale": {
+                            "x": 1.0447916984558105,
+                            "y": 1.0444444417953491
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 153,
+                        "group_item_backup": true,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "跳舞视频",
+                        "source_uuid": "ed94ac31-287f-4829-900c-46286c32000e",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 19,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {
+                            "collapsed": true
+                        }
+                    },
+                    {
+                        "name": "砸礼物",
+                        "source_uuid": "1b80b108-d222-4f1b-9a23-aa795702fdcf",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1153.0,
+                            "y": 209.0
+                        },
+                        "scale": {
+                            "x": 1.0223958492279053,
+                            "y": 1.0222222805023193
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 18,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
                     }
                 ]
             },
@@ -4777,6 +5330,8 @@
                 "OBSBasic.SelectScene": [],
                 "libobs.show_scene_item.2": [],
                 "libobs.hide_scene_item.2": [],
+                "libobs.show_scene_item.14": [],
+                "libobs.hide_scene_item.14": [],
                 "libobs.show_scene_item.5": [],
                 "libobs.hide_scene_item.5": [],
                 "libobs.show_scene_item.6": [],
@@ -4789,12 +5344,18 @@
                 "libobs.hide_scene_item.9": [],
                 "libobs.show_scene_item.10": [],
                 "libobs.hide_scene_item.10": [],
-                "libobs.show_scene_item.12": [],
-                "libobs.hide_scene_item.12": [],
                 "libobs.show_scene_item.13": [],
                 "libobs.hide_scene_item.13": [],
-                "libobs.show_scene_item.14": [],
-                "libobs.hide_scene_item.14": []
+                "libobs.show_scene_item.15": [],
+                "libobs.hide_scene_item.15": [],
+                "libobs.show_scene_item.16": [],
+                "libobs.hide_scene_item.16": [],
+                "libobs.show_scene_item.17": [],
+                "libobs.hide_scene_item.17": [],
+                "libobs.show_scene_item.18": [],
+                "libobs.hide_scene_item.18": [],
+                "libobs.show_scene_item.19": [],
+                "libobs.hide_scene_item.19": []
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
@@ -4838,9 +5399,9 @@
                 "last_resolution": "3840x2160",
                 "last_video_device_id": "OBS Virtual Camera:",
                 "video_device_id": "OBS Virtual Camera:",
+                "resolution": "470x470",
                 "frame_interval": 333333,
-                "res_type": 0,
-                "resolution": "470x470"
+                "res_type": 0
             },
             "mixers": 255,
             "sync": 0,
@@ -5032,71 +5593,6 @@
         },
         {
             "prev_ver": 503382016,
-            "name": "表情列表",
-            "uuid": "6c90a839-3e12-4504-b382-da25434ec0c5",
-            "id": "text_gdiplus",
-            "versioned_id": "text_gdiplus_v2",
-            "settings": {
-                "text": "2019_套娃舞蹈,2019_小丑舞蹈,2019书记舞awsl_1,37 faces of Jim Carrey_跳舞变相怪杰,Big Black Baby Dancing,Croma key_5,Green Screen Part 3 _ All In One_19,Gypsy kid dancing at club can't be bothered. 1997.,P2 影 流 之 主 物 业 敲 门 19.9.28 00-35,Popular_ SS 1912_6,Popular_ SS 1912_7,Russian Kid Dancing In The Club Goin Up On A Tuesday Night,thhuglife snoopdog dance,This Is September,What Is Love (Jim Carrey Edition) [HD]三傻车里动次打次,企 业 文 化,伤心摇,奥特曼-怪物跳舞,奥特曼跳舞,影 流 之 主,手镯让人尬舞,折叠舞小孩,抢镜尬舞小孩,接着奏乐接着舞，没想到曹操能来啊-,接着奏乐，接着舞- 三国刘备热舞,撒钱尬舞,猛男舞团】影 流 之 主_,肯德基脱衣舞,跳舞的消防车,跳舞的红猩猩,跳舞的螃蟹,跳舞的黑猩猩,这 T M 就 叫 踩 点,镜头对准你,鸡你太美，蔡徐坤打篮球原版视频,Detective Pikachu dance,Pikachu Dance 皮卡丘舞蹈,女人的勾引1,女人的勾引2,女人的勾引3,女人的勾引4,女人的咬唇,女人的咬唇1,女人的眨眼,女人的眨眼1,小女孩勾引,抛媚眼1,抛媚眼2,抛媚眼3,抛媚眼4,抛媚眼5,抛媚眼6,猫咪眨眼,男人的勾引1,男人的眨眼,男人的眨眼1,男人的眨眼2,男人的眨眼3,giao,NICE,一个字绝,三十岁不结婚违法,为嘛不给我,九品芝麻宫徐锦江手势表情,九品芝麻宫我全都要,亮剑意大利炮画面,人家本来就傻你还逗人家,你一个人在这里干嘛？,你不要过来啊,你好骚啊,你放屁,你既然找死我成全你,你明白的开场,你有什么可好横的,你给我背,俺也一样,偷笑,切,刘德华我xxx（脏话）,包租婆比嗓门找死啊,厚颜无耻之人,可不敢胡说,员首的愤怒,周润发争一口气,哇 好帅啊,哦买嘎,哦买嘎2,唐8虎点秋香如花转头画面,喜剧之王吃惊表情,喜剧之王晕倒,嘎并不,回家的秀惑你好骚啊,土拨鼠啊,土拨鼠啊2,土拨鼠啊3,土拨鼠大叫,大傻暗示,奥特曼疼死了,姐妹疑问脸,娘炮你干嘛,孙悟空烦死了,孙红雷瓜包熟吗,宝强再也不会爱上,容嬷嬷扎针,小孩切语气,小孩哭着哭着伤心,小孩鬼脸表情,尴尬鼓掌,尼古拉斯凯奇憋笑,山羊魔性啊,干什么嘛,开枪,开车系01,开车系02,开车系03,开车系04,开车系05,张学友吃屎啦你,张家辉你知道这五年我是怎么过的吗,悄悄话,意外吗开心吗,我xxx（脏话）,我不是张震岳,我叫下冰雹,我是你爹,我有方便面,我看到保安了,我要开始装逼了,我还没上车,我顶你个肺,扶稳了,摇头晃脑嗨歌表情,文章笑抽,曹操笑哈哈,曾小贤大笑,李云龙开炮画面,李光洙,来啪啪啪,来将可留姓名,来打我啊,来点巴西的妞,武打,沈腾你过来啊,沈腾啊~,沈腾造孽啊,海豹啊,片尾合集,狂暴say no,狗笑,甄子丹要打十个,白展堂太漂亮了这,真香画面,砸电脑,砸电脑2,笑抽,素质高不骂人,经典大姐笑,罗永浩抽巴掌,美人鱼文章笑,臣妾做不到啊,让我们嗨起来好吗,这个就是爱情,金馆长的微笑,风云2你不要过来啊,飙车,骂骂咧咧猴子,魔性哭,魔性笑01,魔性笑02,魔性笑03,魔性笑giao,鸭子笑,鹅笑,黄渤飘柔表情,黄渤黑脸,黑人哦买嘎,黑人嗯哼,黑人拳击手猥琐微笑,黑人问号三连,黑人问号脸,Bork,cat,dj,fbi,fuck,just do it,ko,nani,nice,oh my god,thurston.mkv,tom,tom开门,trump with gun,windows错误死机,人民叫师,你已经死了,你确定吗,你被捕了,再来一个,别让小孩看,加载中,动漫线条,南美老头笑声,发现敌人,吐舌头,吐舌头2,吹喇叭,哇哦-,哈哈哈哈,哭,哭2,喜欢,大叫,大笑,太假了,好热,开门,怒吼的gamer,愤怒,慌张,我是谁,抽烟,摇摆,摇摆2,机枪特效,棒,正义铁拳,海绵宝宝,点赞,爆炸,爆炸2,爆炸3,爷们要战斗,特朗普开枪,猫咪叫,电击器,看电视,笑,笑2,等一下,答案,红眼,老鼠,老鼠2,老鼠3,肥宅点赞,蔡徐坤,蟹,蟹老板2,被激怒了,谢谢你,这很烦人,门,黑人小孩,黑人说唱,what？,你妈逼的,击穿,吕子乔肾宝广告,大王叫我来巡山,奥利给,奶糖哥,妮可妮可妮,弱爆了,派大星,蔡徐坤,非洲boy,",
-                "outline": true,
-                "font": {
-                    "face": "微软雅黑",
-                    "flags": 1,
-                    "size": 100,
-                    "style": "Bold"
-                },
-                "color": 4294901845,
-                "outline_size": 5
-            },
-            "mixers": 0,
-            "sync": 0,
-            "flags": 0,
-            "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {},
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {},
-            "filters": [
-                {
-                    "prev_ver": 503382016,
-                    "name": "滚动",
-                    "uuid": "d03172b0-6525-4682-b21d-8e30ffb200d7",
-                    "id": "scroll_filter",
-                    "versioned_id": "scroll_filter",
-                    "settings": {
-                        "limit_cx": true,
-                        "speed_x": 136,
-                        "cx": 1400
-                    },
-                    "mixers": 0,
-                    "sync": 0,
-                    "flags": 0,
-                    "volume": 1.0,
-                    "balance": 0.5,
-                    "enabled": true,
-                    "muted": false,
-                    "push-to-mute": false,
-                    "push-to-mute-delay": 0,
-                    "push-to-talk": false,
-                    "push-to-talk-delay": 0,
-                    "hotkeys": {},
-                    "deinterlace_mode": 0,
-                    "deinterlace_field_order": 0,
-                    "monitoring_type": 0,
-                    "private_settings": {}
-                }
-            ]
-        },
-        {
-            "prev_ver": 503382016,
             "name": "表情说明",
             "uuid": "f49b22c9-4d18-4eff-93d9-db3a9a24d0ae",
             "id": "text_gdiplus",
@@ -5110,7 +5606,7 @@
                     "size": 100,
                     "style": "Bold"
                 },
-                "color": 4294901845,
+                "color": 4286513407,
                 "outline_size": 5
             },
             "mixers": 0,
@@ -5137,8 +5633,8 @@
             "id": "ffmpeg_source",
             "versioned_id": "ffmpeg_source",
             "settings": {
-                "restart_on_activate": false,
-                "local_file": "H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号\\真人版表情包1\\黄渤黑脸.mp4"
+                "local_file": "H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号\\绿幕\\摇摆2.mp4",
+                "restart_on_activate": false
             },
             "mixers": 255,
             "sync": 0,
@@ -5206,15 +5702,15 @@
             "versioned_id": "text_gdiplus_v2",
             "settings": {
                 "outline": true,
+                "text": "输入“跳舞+舞蹈名称”即可进行跳舞：\n书记舞、科目三、女团舞、社会摇\n呱呱舞、马保国、二次元、涩涩\n蔡徐坤、江南style、Chipi\n直接输入“跳舞”两个字是随机跳舞",
                 "font": {
                     "face": "微软雅黑",
                     "style": "Bold",
-                    "size": 100,
+                    "size": 90,
                     "flags": 1
                 },
                 "outline_size": 5,
-                "outline_color": 4286513407,
-                "text": "输入“跳舞+舞蹈名称”即可进行跳舞：\n书记舞、科目三、女团舞、社会摇\n呱呱舞、马保国、二次元、涩涩\n蔡徐坤、江南style、Chipi\n直接输入“跳舞”两个字是随机跳舞"
+                "outline_color": 4286513407
             },
             "mixers": 0,
             "sync": 0,
@@ -5242,7 +5738,9 @@
                     "settings": {
                         "speed_y": 35.0,
                         "limit_cy": true,
-                        "cy": 200
+                        "limit_cx": false,
+                        "cx": 600,
+                        "cy": 260
                     },
                     "mixers": 0,
                     "sync": 0,
@@ -5369,7 +5867,7 @@
             "volume": 1.0,
             "balance": 0.5,
             "enabled": true,
-            "muted": false,
+            "muted": true,
             "push-to-mute": false,
             "push-to-mute-delay": 0,
             "push-to-talk": false,
@@ -5392,16 +5890,16 @@
             "id": "text_gdiplus",
             "versioned_id": "text_gdiplus_v2",
             "settings": {
+                "text": "Ai吟美",
+                "outline": true,
                 "font": {
                     "face": "微软雅黑",
                     "style": "Bold",
                     "size": 130,
                     "flags": 1
                 },
-                "text": "Ai吟美",
-                "outline": true,
-                "outline_color": 4286513407,
-                "outline_size": 5
+                "outline_size": 5,
+                "outline_color": 4286513407
             },
             "mixers": 0,
             "sync": 0,
@@ -5495,7 +5993,7 @@
             "settings": {
                 "looping": false,
                 "restart_on_activate": false,
-                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\涩涩\\20.mp4"
+                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\二次元MMD  4k\\二次元人物发货\\74.mp4"
             },
             "mixers": 255,
             "sync": 0,
