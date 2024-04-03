@@ -97,10 +97,11 @@ fastgpt_authorization="Bearer fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBW
 # ============= 绘画参数 =====================
 drawUrl = "192.168.2.58:7860"
 is_drawing = 3  # 1.绘画中 2.绘画完成 3.绘画任务结束
-width = 730  # 图片宽度
-height = 470  # 图片高度
+width = 980  # 图片宽度
+height = 500  # 图片高度
 CameraOutList = queue.Queue()  # 输出图片队列
 DrawQueueList = queue.Queue()  # 画画队列
+physical_save_folder="J:\\ai\\ai-yinmei\\porn\\"  #绘画保存图片物理路径
 # ============================================
 
 # ============= 搜图参数 =====================
@@ -829,7 +830,12 @@ def searchimg_output_camera(img_search_json):
             image = output_search_img(imgUrl,prompt,username)
             # 虚拟摄像头输出
             if image is not None:
-                CameraOutList.put(image)
+                # 保存图片
+                timestamp = time.time()
+                path = f"{physical_save_folder}{prompt}_{username}_{timestamp}.jpg"
+                image.save(path)
+                obs.show_image("绘画图片",path)
+                # CameraOutList.put(image)
                 return 1
         return 0
     except Exception as e:
@@ -840,8 +846,6 @@ def searchimg_output_camera(img_search_json):
 
 # 搜索引擎-搜图任务
 def output_img_thead(img_search_json):
-    global is_SearchImg
-    global CameraOutList
     prompt = img_search_json["prompt"]
     username = img_search_json["username"]
     try:
@@ -890,10 +894,10 @@ def output_search_img(imgUrl,prompt,username):
     img = Image.open(BytesIO(img_data))
     img = img.resize((width, height), Image.LANCZOS)
     # 字节流转换为cv2图片对象
-    image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+    # image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
     # 转换为RGB：由于 cv2 读出来的图片默认是 BGR，因此需要转换成 RGB
-    image = image[:, :, [2, 1, 0]]
-    return image
+    # image = image[:, :, [2, 1, 0]]
+    return img
 
 # 鉴黄：1.通过 0.禁止 -1.异常
     #===============图片鉴黄====================
@@ -923,7 +927,7 @@ def nsfw_fun(imgb64,prompt,username,retryCount,tip,nsfw_limit):
         if status=="成功" and nsfw>nsfw_limit:
             print(f"《{prompt}》【nsfw】{tip}完成，发现黄图:{nsfw},马上退出")
             # 摄像头显示禁止黄图标识
-            nsfw_stop_image()
+            obs.show_image("绘画图片","J:\\ai\\ai-yinmei\\images\\黄图950.jpg")
             # 保存用户的黄图，留底观察
             img = Image.open(io.BytesIO(base64.b64decode(imgb64)))
             timestamp = time.time()
@@ -1769,18 +1773,20 @@ def draw(prompt, username):
         img = img.resize((width, height), Image.LANCZOS)
         # 保存图片-留底观察
         timestamp = time.time()
-        img.save(f"./porn/{drawName}_{username}_{nsfw}_{timestamp}.jpg")
+        path = f"{physical_save_folder}{drawName}_{username}_{nsfw}_{timestamp}.jpg"
+        img.save(path)
         # ================= end =================
 
         # ============== cv2图片对象 ==============
         # 字节流转换为cv2图片对象
-        image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        # image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         # 转换为RGB：由于 cv2 读出来的图片默认是 BGR，因此需要转换成 RGB
-        image = image[:, :, [2, 1, 0]]
+        # image = image[:, :, [2, 1, 0]]
         # ================= end =================
 
         # 虚拟摄像头输出
-        CameraOutList.put(image)
+        # CameraOutList.put(image)
+        obs.show_image("绘画图片",path)
         # 播报绘画
         outputTxt=f"回复{username}：我给你画了一张画《{drawName}》"
         print(outputTxt)
@@ -1830,11 +1836,16 @@ def progress(prompt, username):
                 # 拉伸图片
                 img = img.resize((width, height), Image.LANCZOS)
                 # 字节流转换为cv2图片对象
-                image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+                # image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
                 # 转换为RGB：由于 cv2 读出来的图片默认是 BGR，因此需要转换成 RGB
-                image = image[:, :, [2, 1, 0]]
+                # image = image[:, :, [2, 1, 0]]
                 # 虚拟摄像头输出
-                CameraOutList.put(image)
+                # CameraOutList.put(image)
+                # 保存图片
+                timestamp = time.time()
+                path = f"{physical_save_folder}{prompt}_{username}_{nsfw}_{timestamp}.jpg"
+                img.save(path)
+                obs.show_image("绘画图片",path)
             time.sleep(1)
         elif is_drawing >= 2:
             print(f"《{prompt}》输出进度：100%")
@@ -1853,7 +1864,7 @@ def nsfw_stop_image():
     image = image[:, :, [2, 1, 0]]
     # 虚拟摄像头输出
     CameraOutList.put(image)
-
+ 
 # 鉴黄
 def nsfw_deal(imgb64):
     headers = {"Content-Type": "application/json"}
@@ -1874,14 +1885,28 @@ def outCamera():
                 cam.sleep_until_next_frame()
                 time.sleep(1)
 
+# 时间判断场景
+def check_scene_time():
+    now_time = time.strftime("%H:%M:%S", time.localtime())
+    # 判断时间
+    if "06:00:00" <= now_time <= "18:00:00":
+        print("现在是白天") 
+        obs.show_image("海岸花坊背景","J:\\ai\\vup背景\\海岸花坊\\白昼.jpg")
+        obs.play_video("神社背景","J:\\ai\\vup背景\\神社白天\\日动态.mp4")
+        
+    if "18:00:00" < now_time <= "24:00:00" or "00:00:00" < now_time < "06:00:00":
+        print("现在是晚上") 
+        obs.show_image("海岸花坊背景","J:\\ai\\vup背景\\海岸花坊\\夜晚.jpg")
+        obs.play_video("神社背景","J:\\ai\\vup背景\\神社夜晚\\夜动态.mp4")
+
 def main():
     # ws表情服务心跳包
     run_forever_thread = Thread(target=run_forever)
     run_forever_thread.start()
 
     # 唤起虚拟摄像头
-    outCamera_thread = Thread(target=outCamera)
-    outCamera_thread.start()
+    # outCamera_thread = Thread(target=outCamera)
+    # outCamera_thread.start()
     
     # 连接obs
     obs.connect()
@@ -1900,7 +1925,7 @@ def main():
     #     obs.show_text("表情列表",content)
     
     # 切换场景:初始化
-    obs.change_scene("主舞台")
+    obs.change_scene("神社")
     
     # 吟美状态提示:初始化清空
     obs.show_text("吟美状态提示","")
@@ -1922,8 +1947,9 @@ def main():
         sched1.add_job(func=check_playSongMenuList, trigger="interval", seconds=1, id=f"playSongMenuList", max_instances=50)
         # 跳舞
         sched1.add_job(func=check_dance, trigger="interval", seconds=1, id=f"dance", max_instances=10)
+        # 时间判断场景[白天黑夜切换]
+        sched1.add_job(func=check_scene_time, trigger="cron", hour='6,18', id=f"scene_time")
         sched1.start()
-        
     
     if mode==1 or mode==2:
         # 开启web
