@@ -127,10 +127,10 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="fb2ff6a8%2C1727488803%2C320e5%2A42CjA-bAKwa_WnRSZSRyRDe18vfkxHqJhyHpqyMcY1a8El3riKHXWX1RQ2u0czw5-r0DkSVmQxQXlYeGs5Ukw4QWZQUndSamZ0Rk9FbmUtYnBHR0I4Vm9ZMk1Pdl80OTZWamZsd2h6dkRHRDdfTWt4amdQanF0blF4RFdFbm1Wc3I0SlgwSTVwa0lnIIEC",
-    buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
-    bili_jct="daf4ac38c03e40f8f0a6be8d73b4de5e",
-    dedeuserid="333472479",
+    sessdata="",
+    buvid3="",
+    bili_jct="",
+    dedeuserid="",
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
@@ -192,8 +192,16 @@ singdance_now_path=""
 # ============================================
 
 # ============= 服装 =====================
-now_clothes=""
-# ============================================
+now_clothes=""  #当前服装穿着
+# ========================================
+
+# ============= 场景 =====================
+song_background={"海岸花坊":"J:\\ai\\背景音乐\\海岸花坊.rm",
+                 "神社":"J:\\ai\\背景音乐\\神社.mp3",
+                 "清晨房间":"J:\\ai\\背景音乐\\清晨房间.mp3",
+                 "粉色房间":"J:\\ai\\背景音乐\\粉色房间.rm",
+                 "花房":"J:\\ai\\背景音乐\\花房.mp3"}
+# ========================================
 
 print("--------------------")
 print("AI虚拟主播-启动成功！")
@@ -439,13 +447,36 @@ def msg_deal(query,uid,user_name):
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
        print("切换场景：" + queryExtract)
-       # 切换场景
-       obs.change_scene(queryExtract)
+       if allow_scene(queryExtract)==True:
+          # 切换场景
+          obs.change_scene(queryExtract)
+          # 背景乐切换
+          if queryExtract in song_background:
+             song = song_background[queryExtract]
+             if obs.get_video_status("背景音乐")==VideoStatus.PAUSE.value:
+                obs.play_video("背景音乐",song)
+                time.sleep(1)
+                obs.control_video("背景音乐",VideoControl.PAUSE.value)
+             else:
+                obs.play_video("背景音乐",song)
+       else:
+          AnswerList.put(f"晚上吟美不敢过去{queryExtract}")
        return
     
     #询问LLM
     llm_json = {"prompt": query, "uid": uid, "username": user_name}
     QuestionList.put(llm_json)  # 将弹幕消息放入队列
+
+# 判断每一种时间段允许移动的场景
+def allow_scene(queryExtract):
+    now_time = time.strftime("%H:%M:%S", time.localtime())
+    # 晚上允许进入的场景
+    night = ["神社", "粉色房间", "海岸花坊"]
+    if "18:00:00" <= now_time <= "24:00:00" or "00:00:00" < now_time < "06:00:00":
+        num = is_index_contain_string(night, queryExtract)
+        if num <= 0:
+           return False
+    return True
 
 #表情播放[不用停止跳舞]
 def emote_play_nodance(eomte_path):
@@ -632,17 +663,17 @@ def ai_response():
     # fastgpt
     shenfen=""
     if username=="程序猿的退休生活":
-       shenfen="吟美的老爸"
+       shenfen="老爸"
     else:
-       shenfen=f"'{username}'"
+       shenfen=f"\"{username}\""
 
     if local_llm_type == 1:
-        username_prompt = f"{prompt}\n###'{shenfen}'对你说###"
+        username_prompt = f"{shenfen}说:{prompt}"
         #username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。"
         response = chat_fastgpt(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
-        username_prompt = f"{prompt}\n###'{shenfen}'对你说###"
+        username_prompt = f"{shenfen}说:{prompt}"
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     response = filter_html_tags(response)
@@ -791,10 +822,10 @@ def check_dance():
 # 跳舞操作
 def dance(dance_json):
     global dance_now_path
-    prompt = dance_json["prompt"]
-    username = dance_json["username"]
     video_path = dance_json["video_path"]
     print(dance_json)
+    obs.control_video("背景音乐",VideoControl.PAUSE.value)
+    # ============== 跳舞视频 ==============
     # 第一次播放
     if video_path!=dance_now_path:
        obs.play_video("video",video_path)
@@ -806,6 +837,8 @@ def dance(dance_json):
     while obs.get_video_status("video")!=VideoStatus.END.value and is_dance==1:
           time.sleep(1)
     obs.control_video("video",VideoControl.STOP.value)
+    # ============== end ==============
+    obs.control_video("背景音乐",VideoControl.PLAY.value)
 
 # 搜图任务
 def check_img_search():
@@ -931,7 +964,7 @@ def nsfw_fun(imgb64,prompt,username,retryCount,tip,nsfw_limit):
             # 保存用户的黄图，留底观察
             img = Image.open(io.BytesIO(base64.b64decode(imgb64)))
             timestamp = time.time()
-            img.save(f"./porn/{prompt}_{username}_{nsfw}_{timestamp}.jpg")
+            img.save(f"./porn/{prompt}_{username}_porn_{nsfw}_{timestamp}.jpg")
             return 0,nsfw
         elif status=="成功":
             return 1,nsfw
@@ -1378,13 +1411,15 @@ def check_playSongMenuList():
         SongNowName = mlist  #赋值当前歌曲名称
         is_singing = 1  # 开始唱歌
         # =============== 开始：播放歌曲 =================
+        obs.control_video("背景音乐",VideoControl.PAUSE.value)
         play_song(mlist["is_created"],mlist["songname"],mlist["song_path"],mlist["username"],mlist["query"])
+        obs.control_video("背景音乐",VideoControl.PLAY.value)
         # =============== 结束：播放歌曲 =================
         is_singing = 2  # 完成唱歌
         SongNowName = {} #当前播放歌单清空
         play_song_lock.release()
 
-song_not_convert=["三国演义\d+"]  #不需要学习的歌曲【支持正则】
+song_not_convert=["三国演义\d+","粤剧","京剧","易经"]  #不需要学习的歌曲【支持正则】
 #开始生成歌曲
 def create_song(songname,song_path,is_created,downfile):
     global is_creating_song
@@ -1889,14 +1924,26 @@ def outCamera():
 def check_scene_time():
     now_time = time.strftime("%H:%M:%S", time.localtime())
     # 判断时间
-    if "06:00:00" <= now_time <= "18:00:00":
+    # 白天
+    if "06:00:00" <= now_time <= "16:59:59":
         print("现在是白天") 
         obs.show_image("海岸花坊背景","J:\\ai\\vup背景\\海岸花坊\\白昼.jpg")
+        obs.show_image("粉色房间背景","J:\\ai\\vup背景\\粉色房间\\白天.jpg")
+        obs.show_image("粉色房间桌面","J:\\ai\\vup背景\\粉色房间\\白天桌子.png")
         obs.play_video("神社背景","J:\\ai\\vup背景\\神社白天\\日动态.mp4")
-        
-    if "18:00:00" < now_time <= "24:00:00" or "00:00:00" < now_time < "06:00:00":
+    
+    # 黄昏
+    if "17:00:00" <= now_time <= "17:59:59":
+        print("现在是黄昏") 
+        obs.show_image("粉色房间背景","J:\\ai\\vup背景\\粉色房间\\黄昏.jpg")
+        obs.show_image("粉色房间桌面","J:\\ai\\vup背景\\粉色房间\\黄昏桌子.png")
+
+    # 晚上
+    if "18:00:00" <= now_time <= "24:00:00" or "00:00:00" < now_time < "06:00:00":
         print("现在是晚上") 
         obs.show_image("海岸花坊背景","J:\\ai\\vup背景\\海岸花坊\\夜晚.jpg")
+        obs.show_image("粉色房间背景","J:\\ai\\vup背景\\粉色房间\\晚上开灯.jpg")
+        obs.show_image("粉色房间桌面","J:\\ai\\vup背景\\粉色房间\\晚上开灯桌子.png")
         obs.play_video("神社背景","J:\\ai\\vup背景\\神社夜晚\\夜动态.mp4")
 
 def main():
@@ -1925,8 +1972,17 @@ def main():
     #     obs.show_text("表情列表",content)
     
     # 切换场景:初始化
-    obs.change_scene("神社")
-    
+    scene_name = "海岸花坊"
+    obs.change_scene(scene_name)
+    # 背景乐切换
+    if scene_name in song_background:
+       song = song_background[scene_name]
+       obs.play_video("背景音乐",song)
+       time.sleep(1)
+       obs.control_video("背景音乐",VideoControl.RESTART.value)
+    # 场景[白天黑夜]判断
+    check_scene_time()
+
     # 吟美状态提示:初始化清空
     obs.show_text("吟美状态提示","")
 
@@ -1948,7 +2004,7 @@ def main():
         # 跳舞
         sched1.add_job(func=check_dance, trigger="interval", seconds=1, id=f"dance", max_instances=10)
         # 时间判断场景[白天黑夜切换]
-        sched1.add_job(func=check_scene_time, trigger="cron", hour='6,18', id=f"scene_time")
+        sched1.add_job(func=check_scene_time, trigger="cron", hour="6,17,18", id=f"scene_time")
         sched1.start()
     
     if mode==1 or mode==2:
