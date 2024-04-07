@@ -11,7 +11,7 @@
   现在发现有道云笔记网页版本不能查看笔记图片，需要完整教案请进入 Q 群 27831318 获取 pdf 文档<br>
   https://note.youdao.com/s/1k0x7BLt<br>
 - 吟美 pdf 完整说明文档：
-  在百度网盘->人工智能->吟美说明文档->AI 虚拟主播 Vtuber 研发(N 卡版本)-v1.6.pdf<br>
+  在百度网盘->人工智能->吟美说明文档->AI 虚拟主播 Vtuber 研发(N 卡版本)-v1.7.pdf<br>
 - 旧版吟美项目【因集成过多内置第三方项目，已废弃】：https://github.com/worm128/AI-YinMei-backup
 
 ## **介绍**
@@ -47,6 +47,10 @@
   在百度网盘->人工智能->软件->虚拟声卡 Virtual Audio Cable v4.10 破解版<br>
 - ffmpeg：音频解码器，用于语音合成<br>
   在百度网盘->人工智能->软件->ffmpeg<br>
+- mongodb 连接工具-NoSQLBooster for MongoDB
+  人工智能>软件>nosqlbooster4mongo-8.1.7.exe
+- fastgpt 的 docker-compose 配置
+  人工智能>软件>docker 知识库
 
 ### 运行环境
 

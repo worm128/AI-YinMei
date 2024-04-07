@@ -127,10 +127,10 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="",
-    buvid3="",
-    bili_jct="",
-    dedeuserid="",
+    sessdata="e7297ffd%2C1728021262%2C9d352%2A42CjByluo8_3cAYLGSzYP-jg-_Hb4Fo1vWVW1mnDRXqV4IVt6oNaiDhT356_eyAshEbCkSVkU1M2JscVhZdE9LWlBfZDR5VHVXRHFvX2lld1ozdDdvcTBVWnozTXdyMGVGWV9BdVJMbkk2WGxIeUdqNGdNeHY4MjNsVzQ5UnAwZG5oNGZUZWQtZk1RIIEC",
+    buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
+    bili_jct="1a9126ed6a0e1548905aa3710e254f75",
+    dedeuserid="333472479",
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
