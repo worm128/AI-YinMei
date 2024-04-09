@@ -127,10 +127,10 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="",
-    buvid3="",
-    bili_jct="",
-    dedeuserid="",
+    sessdata="e7297ffd%2C1728021262%2C9d352%2A42CjByluo8_3cAYLGSzYP-jg-_Hb4Fo1vWVW1mnDRXqV4IVt6oNaiDhT356_eyAshEbCkSVkU1M2JscVhZdE9LWlBfZDR5VHVXRHFvX2lld1ozdDdvcTBVWnozTXdyMGVGWV9BdVJMbkk2WGxIeUdqNGdNeHY4MjNsVzQ5UnAwZG5oNGZUZWQtZk1RIIEC",
+    buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
+    bili_jct="1a9126ed6a0e1548905aa3710e254f75",
+    dedeuserid="333472479",
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
@@ -203,6 +203,10 @@ song_background={"海岸花坊":"J:\\ai\\背景音乐\\海岸花坊.rm",
                  "花房":"J:\\ai\\背景音乐\\花房.mp3"}
 # ========================================
 
+# ============= 欢迎列表 =====================
+WelcomeList = []  # welcome欢迎列表
+# ========================================
+
 print("--------------------")
 print("AI虚拟主播-启动成功！")
 print("--------------------")
@@ -213,15 +217,8 @@ async def in_liveroom(event):
     user_name = event["data"]["data"]["uname"]  # 获取用户昵称
     time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
     print(f"{time1}:粉丝[{user_name}]进入了直播间")
-    
-    #判断游客的不进行绘画
-    # text = ["bili"]
-    # num = is_array_contain_string(text, user_name)
-    # if num==0:
-    #     # 进入直播间根据用户名绘图
-    #     draw_json = {"prompt": user_name, "username": user_name}
-    #     # 加入绘画队列
-    #     DrawQueueList.put(draw_json)
+    # 加入欢迎列表
+    WelcomeList.append(user_name)
 
 # B站弹幕处理
 @room.on("DANMU_MSG")  # 弹幕消息事件回调函数
@@ -247,6 +244,25 @@ async def on_gift(event):
     print(text)
     tts_say_thread = Thread(target=tts_say,args=(text,))
     tts_say_thread.start()
+
+# http唱歌接口处理
+@app.route("/http_sing", methods=["GET"])
+def http_sing():
+    songname = request.args["songname"]
+    username = request.args["username"]
+    print(f"http唱歌接口处理：\"{username}\"点播歌曲《{songname}》")
+    song_json = {"prompt": songname, "username": username}
+    SongQueueList.put(song_json)
+
+# http绘画接口处理
+@app.route("/http_draw", methods=["GET"])
+def http_draw():
+    drawname = request.args["drawname"]
+    drawcontent = request.args["drawcontent"]
+    username = request.args["username"]
+    print(f"http绘画接口处理：\"{username}\"绘画《{drawname}》，{drawcontent}")
+    draw_json = {"prompt": drawname, "drawcontent":drawcontent, "username": username, "isExtend": False}
+    DrawQueueList.put(draw_json)
 
 # http接口处理
 @app.route("/msg", methods=["POST"])
@@ -374,7 +390,7 @@ def msg_deal(query,uid,user_name):
         return
 
     # 绘画
-    text = ["画画", "画一个", "画一下", "画个"]
+    text = ["画画"]
     num = is_index_contain_string(text, query)
     if num > 0:
         queryExtract = query[num : len(query)]  # 提取提问语句
@@ -382,13 +398,13 @@ def msg_deal(query,uid,user_name):
         print("绘画提示：" + queryExtract)
         if queryExtract=="":
            return
-        draw_json = {"prompt": queryExtract, "username": user_name}
+        draw_json = {"prompt": queryExtract, "drawcontent":"", "username": user_name, "isExtend": True}
         # 加入绘画队列
         DrawQueueList.put(draw_json)
         return
 
     # 唱歌
-    text = ["唱一下", "唱一首", "唱歌", "点歌"]
+    text = ["唱歌"]
     num = is_index_contain_string(text, query)
     if num > 0:
         queryExtract = query[num : len(query)]  # 提取提问语句
@@ -663,17 +679,19 @@ def ai_response():
     # fastgpt
     shenfen=""
     if username=="程序猿的退休生活":
-       shenfen="老爸"
+       shenfen="老爸说:"
+    elif uid==0:
+       shenfen=""
     else:
-       shenfen=f"\"{username}\""
+       shenfen=f"\"{username}\"说:"
 
     if local_llm_type == 1:
-        username_prompt = f"{shenfen}说:{prompt}"
+        username_prompt = f"{shenfen}{prompt}"
         #username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。"
         response = chat_fastgpt(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
-        username_prompt = f"{shenfen}说:{prompt}"
+        username_prompt = f"{shenfen}{prompt}"
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     response = filter_html_tags(response)
@@ -681,7 +699,7 @@ def ai_response():
 
     # 回复文本
     # query有值是搜索任务，没有值是聊天任务
-    answer = f"{title},{response}"
+    answer = f"{response}"
 
     # 日志输出
     current_question_count = QuestionList.qsize()
@@ -1348,23 +1366,29 @@ def sing(songname, username):
     is_created = 0  # 1.已经生成过 0.没有生成过 2.生成失败
     
     query = songname # 查询内容
+    
     # =============== 开始-获取真实歌曲名称 =================
     musicJson = requests.get(url=f"http://{singUrl}/musicInfo/{songname}")
     music_json = json.loads(musicJson.text)
     id = music_json["id"]
+    songname = music_json["songName"]
+    # 前置信息说明
+    font_text=""
+    if query!=songname:
+       font_text = f"根据\"{query}\"的信息，"
+
     if id==0:
-        outputTxt=f"歌库不存在《{songname}》这首歌曲哦"
+        outputTxt=f"{font_text}歌库不存在《{query}》这首歌曲哦"
         print(outputTxt)
         tts_say(outputTxt)
         return 
-    songname = music_json["songName"]
     song_path = f"./output/{songname}.wav"
     # =============== 结束-获取真实歌曲名称 =================
 
     # =============== 开始-判断本地是否有歌 =================
     if os.path.exists(song_path):
         print(f"找到存在本地歌曲:{song_path}")
-        outputTxt=f"回复{username}：吟美会唱《{songname}》这首歌曲哦"
+        outputTxt=f"回复{username}：{font_text}吟美会唱《{songname}》这首歌曲哦"
         tts_say(outputTxt)
         is_created = 1
     # =============== 结束-判断本地是否有歌 =================
@@ -1382,7 +1406,7 @@ def sing(songname, username):
     if is_created == 0:
         # 播报学习歌曲
         print(f"歌曲不存在，需要生成歌曲《{songname}》")
-        outputTxt=f"回复{username}：吟美需要学唱歌曲《{songname}》，请耐心等待"
+        outputTxt=f"回复{username}：{font_text}吟美需要学唱歌曲《{songname}》，请耐心等待"
         tts_say(outputTxt)
         # 其他歌曲在生成的时候等待
         while is_creating_song == 1:
@@ -1641,7 +1665,7 @@ def draw_prompt(query,offset,limit):
         if count>limit:
             hits=hits[:limit]
 
-        steps = 35
+        steps = 25
         sampler="DPM++ SDE Karras"
         seed=-1
         cfgScale=7
@@ -1697,11 +1721,11 @@ def check_draw():
         draw_json = DrawQueueList.get()
         print(f"启动绘画:{draw_json}")
         # 开始绘画
-        draw_thread = Thread(target=draw, args=(draw_json["prompt"], draw_json["username"]))
+        draw_thread = Thread(target=draw, args=(draw_json["prompt"], draw_json["drawcontent"], draw_json["username"], draw_json["isExtend"]))
         draw_thread.start()
 
 # 绘画
-def draw(prompt, username):
+def draw(prompt, drawcontent, username, isExtend):
     global is_drawing
     global CameraOutList
     
@@ -1716,9 +1740,18 @@ def draw(prompt, username):
     jsonPrompt=""
     flag = 1 # 1.默认 2.特殊模型
     try:
-        trans_json = translate(prompt)  #翻译
-        if has_field(trans_json,"translated"):
-            prompt = trans_json["translated"]
+        # 绘画标题
+        if prompt!="":
+            trans_json = translate(prompt)  #翻译
+            if has_field(trans_json,"translated"):
+                prompt = trans_json["translated"]
+        # 绘画详细描述
+        if drawcontent!="":
+            trans_json2 = translate(drawcontent)  #翻译
+            if has_field(trans_json2,"translated"):
+                drawcontent = trans_json2["translated"]
+
+        if isExtend==True:
             #C站抽取提示词：扩展提示词-扩大Ai想象力
             jsonPrompt = draw_prompt(prompt,0,50)
             if jsonPrompt=="":
@@ -1752,12 +1785,15 @@ def draw(prompt, username):
             # 默认模型
             checkpoint = "realvisxlV30Turbo_v30TurboBakedvae"
             if jsonPrompt!="":
-                prompt = f"(({prompt})),"+jsonPrompt["prompt"]+","+f"<lora:{prompt}>"
+                prompt = f"(({prompt},{drawcontent})),"+jsonPrompt["prompt"]+","+f"<lora:{prompt}>"
                 negativePrompt = isNone(jsonPrompt["negativePrompt"])
                 cfgScale = jsonPrompt["cfgScale"]
                 steps = jsonPrompt["steps"]
                 sampler = jsonPrompt["sampler"]
                 # seed = jsonPrompt["seed"]
+            else:
+                prompt = f"{prompt},{drawcontent}"+f"<lora:{prompt}>"
+                negativePrompt = filterEn
 
         payload = {
             "prompt": prompt,
@@ -1920,6 +1956,20 @@ def outCamera():
                 cam.sleep_until_next_frame()
                 time.sleep(1)
 
+# 进入直播间欢迎语
+def check_welcome_room():
+    count = len(WelcomeList)
+    numstr = ""
+    if count>1:
+        numstr = f"{count}位"
+    userlist = str(WelcomeList).replace("['","").replace("']","")
+    if len(WelcomeList) > 0:
+        text = f"欢迎一下\"{userlist}\"{numstr}同学来到直播间,跪求关注一下我的直播间"
+        WelcomeList.clear()
+        #询问LLM
+        llm_json = {"prompt": text, "uid": 0, "username": "吟美"}
+        QuestionList.put(llm_json)  # 将弹幕消息放入队列
+
 # 时间判断场景
 def check_scene_time():
     now_time = time.strftime("%H:%M:%S", time.localtime())
@@ -2005,6 +2055,8 @@ def main():
         sched1.add_job(func=check_dance, trigger="interval", seconds=1, id=f"dance", max_instances=10)
         # 时间判断场景[白天黑夜切换]
         sched1.add_job(func=check_scene_time, trigger="cron", hour="6,17,18", id=f"scene_time")
+        # 欢迎语
+        sched1.add_job(func=check_welcome_room, trigger="interval", seconds=8, id=f"welcome_room", max_instances=10)
         sched1.start()
     
     if mode==1 or mode==2:

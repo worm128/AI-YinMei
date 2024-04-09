@@ -73,6 +73,7 @@ def is_index_contain_string(string_array, target_string):
 
 jsonstr=[]
 press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-press = random.randrange(0, len(press_arry))
-jsonstr.append({"content":"happy","key":press_arry[press],"num":1})
+userlist = str(press_arry).replace("['","").replace("']","")
+# press = random.randrange(0, len(press_arry))
+# jsonstr.append({"content":"happy","key":press_arry[press],"num":1})
 print(jsonstr)
