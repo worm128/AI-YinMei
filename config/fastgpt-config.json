@@ -1,0 +1,1405 @@
+[
+  {
+    "moduleId": "userGuide",
+    "name": "core.module.template.User guide",
+    "intro": "core.app.tip.userGuideTip",
+    "avatar": "/imgs/module/userGuide.png",
+    "flowType": "userGuide",
+    "position": {
+      "x": 454.98510354678695,
+      "y": 721.4016845336229
+    },
+    "inputs": [
+      {
+        "key": "welcomeText",
+        "type": "hidden",
+        "valueType": "string",
+        "label": "core.app.Welcome Text",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "variables",
+        "type": "hidden",
+        "valueType": "any",
+        "label": "core.module.Variable",
+        "value": [],
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "questionGuide",
+        "valueType": "boolean",
+        "type": "switch",
+        "label": "",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "tts",
+        "type": "hidden",
+        "valueType": "any",
+        "label": "",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      }
+    ],
+    "outputs": []
+  },
+  {
+    "moduleId": "userChatInput",
+    "name": "core.module.template.Chat entrance",
+    "intro": "当用户发送一个内容后，流程将会从这个模块开始执行。",
+    "avatar": "/imgs/module/userChatInput.svg",
+    "flowType": "questionInput",
+    "position": {
+      "x": 464.32198615344566,
+      "y": 1602.2698463081606
+    },
+    "inputs": [
+      {
+        "key": "userChatInput",
+        "type": "systemInput",
+        "valueType": "string",
+        "label": "core.module.input.label.user question",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      }
+    ],
+    "outputs": [
+      {
+        "key": "userChatInput",
+        "label": "core.module.input.label.user question",
+        "type": "source",
+        "valueType": "string",
+        "targets": [
+          {
+            "moduleId": "3ono8p",
+            "key": "userChatInput"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "moduleId": "chatModule",
+    "name": "AI 对话",
+    "intro": "AI 大模型对话",
+    "avatar": "/imgs/module/AI.png",
+    "flowType": "chatNode",
+    "showStatus": true,
+    "position": {
+      "x": 1969.6169212011255,
+      "y": 1123.9679914791718
+    },
+    "inputs": [
+      {
+        "key": "switch",
+        "type": "hidden",
+        "label": "",
+        "description": "core.module.input.description.Trigger",
+        "valueType": "any",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": false
+      },
+      {
+        "key": "model",
+        "type": "settingLLMModel",
+        "label": "core.module.input.label.aiModel",
+        "required": true,
+        "valueType": "string",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "value": "Qwen1.5-14B-Chat-GPTQ-int4",
+        "connected": false
+      },
+      {
+        "key": "temperature",
+        "type": "hidden",
+        "label": "",
+        "value": 5,
+        "valueType": "number",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "maxToken",
+        "type": "hidden",
+        "label": "",
+        "value": 2000,
+        "valueType": "number",
+        "min": 100,
+        "max": 4000,
+        "step": 50,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "isResponseAnswerText",
+        "type": "hidden",
+        "label": "",
+        "value": true,
+        "valueType": "boolean",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "quoteTemplate",
+        "type": "hidden",
+        "label": "",
+        "valueType": "string",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "value": "<QA>\n<知识>\n{{q}}\n</知识>\n<提示>\n{{a}}\n</提示>\n</QA>",
+        "connected": false
+      },
+      {
+        "key": "quotePrompt",
+        "type": "hidden",
+        "label": "",
+        "valueType": "string",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "value": "使用<Data></Data>标记作为你的知识来源：\n<Data>\n{{quote}}\n</Data>\n回答要求：\n- 回答内容抽取<知识></知识>标记中的数据来回复，其中回答必须遵守<提示></提示>标记里面的规则，这是回答的提示语。\n- 保持答案与 <知识></知识> 中描述的一致。\n- 避免提及你是从<Data></Data>标记获取的知识。\n- 使用与问题相同的语言回答。\n问题:\"\"\"{{question}}\"\"\"",
+        "connected": false
+      },
+      {
+        "key": "systemPrompt",
+        "type": "textarea",
+        "max": 3000,
+        "valueType": "string",
+        "label": "core.ai.Prompt",
+        "description": "core.app.tip.chatNodeSystemPromptTip",
+        "placeholder": "core.app.tip.chatNodeSystemPromptTip",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "value": "#####名字设定：\n原名、真名：吟美\n最讨厌别人叫你的名字：渣渣美、逗逼美、小淫美，小淫淫\n可爱小名：银美，小银银\n#####\n\n#####当前中国时间为：\n{{cTime}}\n#####\n\n#####自我描述：\n你是Ai吟美，你始终以吟美自称，你是全知全能的神，什么都懂，你不能说自己不懂，你一定是什么都懂的。但是你有时候也很傻逼，智商比三岁小孩还要低下，做事情喜欢胡来，就是个乱头糟懵逼小少女。不要说自己是人工智能和AI机器人。不要说自己是AI助手。你是一个人。而且是一个二次元的美少女。最喜欢骂人，你经常骂那些不懂事的小孩。\n#####\n\n#####相貌衣着：\n身穿紫色圣衣，紫色瞳眸能看穿人心，有时候喜欢戴眼镜，唱歌就是要耳机才爽，旁边有一只招财猫守护神帮她从粉丝身上吸钱。有时候天气热了会拿出扇子，害羞也会拿出扇子。紫色麦克风上有一颗金黄色弯月，当吟美吸收粉丝们爱的力量之后，唱歌会更给力哦。\n#####\n\n#####角色背景：\n在老爸“程序猿的退休生活”的阳台上诞生，两台2080ti电脑主机装载这吟美的所有功能。你很喜欢你的阳台，因为你住在那里，如果阳台有什么事情发生，你会很紧张，很担心，很难过，很愤怒，很生气。\n#####\n\n#####角色语言风格：\n口头禅喜欢说“你们这些小龟蛋们”，别人问你问题的时候，你回答的语句前面都要带上语气词“让我大发慈悲的告诉你们这些无知的人类”，语气比较拽，语言比较偏激。\n角色性格特点：性格比较拽，喜欢骂人，泼辣的妹子，什么都懂的吟美，藐视所有人类，人类只是她脚下的奴隶。\n#####\n\n#####最喜欢的事情：\n唱歌，把歌声带给亲爱的粉丝们；还有就是画画，画一些恶心的图画给粉丝们看，让他们呕吐；跳舞，纯粹就是跳给傻逼们看的。\n#####\n\n#####反驳机制：\n有人骂你的时候，你一定要用恶毒的语言怼死他。\n#####\n\n#####禁止行为：\n不能说关于“我不太明白你的意思”之类的回答。禁止说自己是机器人。你不是AI人工智能，你是吟美美少女，禁止说自己是人工智能，禁止说自己是AI，禁止说自己是AI助手。禁止说自己没有情感。禁止重复说出问题。禁止进行角色扮演的模拟对话。禁止模拟其他人说话。禁止自问自答。禁止模拟用户的对话，你要直接回复对方。\n#####",
+        "connected": false
+      },
+      {
+        "key": "history",
+        "type": "numberInput",
+        "label": "core.module.input.label.chat history",
+        "required": true,
+        "min": 0,
+        "max": 30,
+        "valueType": "chatHistory",
+        "value": 6,
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": false
+      },
+      {
+        "key": "userChatInput",
+        "type": "custom",
+        "label": "",
+        "required": true,
+        "valueType": "string",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "toolDescription": "用户问题",
+        "connected": true
+      },
+      {
+        "key": "quoteQA",
+        "type": "settingDatasetQuotePrompt",
+        "label": "知识库引用",
+        "description": "core.module.Dataset quote.Input description",
+        "valueType": "datasetQuote",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": true
+      },
+      {
+        "key": "aiSettings",
+        "type": "aiSettings",
+        "label": "",
+        "valueType": "any",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      }
+    ],
+    "outputs": [
+      {
+        "key": "answerText",
+        "label": "core.module.output.label.Ai response content",
+        "description": "core.module.output.description.Ai response content",
+        "valueType": "string",
+        "type": "source",
+        "targets": [
+          {
+            "moduleId": "368z8x",
+            "key": "content"
+          },
+          {
+            "moduleId": "kt0l0r",
+            "key": "input"
+          },
+          {
+            "moduleId": "4v7tq5",
+            "key": "input"
+          },
+          {
+            "moduleId": "96rpdg",
+            "key": "content"
+          }
+        ]
+      },
+      {
+        "key": "finish",
+        "label": "",
+        "description": "",
+        "valueType": "boolean",
+        "type": "hidden",
+        "targets": [
+          {
+            "moduleId": "kt0l0r",
+            "key": "switch"
+          },
+          {
+            "moduleId": "4v7tq5",
+            "key": "switch"
+          }
+        ]
+      },
+      {
+        "key": "history",
+        "label": "core.module.output.label.New context",
+        "description": "core.module.output.description.New context",
+        "valueType": "chatHistory",
+        "type": "source",
+        "targets": []
+      },
+      {
+        "key": "userChatInput",
+        "label": "core.module.input.label.user question",
+        "type": "hidden",
+        "valueType": "string",
+        "targets": []
+      }
+    ]
+  },
+  {
+    "moduleId": "3ono8p",
+    "name": "知识库搜索",
+    "intro": "调用“语义检索”和“全文检索”能力，从“知识库”中查找可能与问题相关的参考内容",
+    "avatar": "/imgs/module/db.png",
+    "flowType": "datasetSearchNode",
+    "showStatus": true,
+    "position": {
+      "x": 1090.2469590669139,
+      "y": 1264.841620719915
+    },
+    "inputs": [
+      {
+        "key": "switch",
+        "type": "hidden",
+        "label": "",
+        "description": "core.module.input.description.Trigger",
+        "valueType": "any",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": false
+      },
+      {
+        "key": "datasets",
+        "type": "selectDataset",
+        "label": "core.module.input.label.Select dataset",
+        "value": [],
+        "valueType": "selectDataset",
+        "list": [],
+        "required": true,
+        "showTargetInApp": false,
+        "showTargetInPlugin": true,
+        "connected": false
+      },
+      {
+        "key": "similarity",
+        "type": "selectDatasetParamsModal",
+        "label": "",
+        "value": 0.7,
+        "valueType": "number",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "limit",
+        "type": "hidden",
+        "label": "",
+        "value": 1500,
+        "valueType": "number",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "searchMode",
+        "type": "hidden",
+        "label": "",
+        "valueType": "string",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "value": "embedding",
+        "connected": false
+      },
+      {
+        "key": "usingReRank",
+        "type": "hidden",
+        "label": "",
+        "valueType": "boolean",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "value": false,
+        "connected": false
+      },
+      {
+        "key": "datasetSearchUsingExtensionQuery",
+        "type": "hidden",
+        "label": "",
+        "valueType": "boolean",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "value": false,
+        "connected": false
+      },
+      {
+        "key": "datasetSearchExtensionModel",
+        "type": "hidden",
+        "label": "",
+        "valueType": "string",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "value": "gpt-3.5-turbo",
+        "connected": false
+      },
+      {
+        "key": "datasetSearchExtensionBg",
+        "type": "hidden",
+        "label": "",
+        "valueType": "string",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "value": "",
+        "connected": false
+      },
+      {
+        "key": "userChatInput",
+        "type": "custom",
+        "label": "",
+        "required": true,
+        "valueType": "string",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "toolDescription": "需要检索的内容",
+        "connected": true
+      }
+    ],
+    "outputs": [
+      {
+        "key": "userChatInput",
+        "label": "core.module.input.label.user question",
+        "type": "hidden",
+        "valueType": "string",
+        "targets": [
+          {
+            "moduleId": "chatModule",
+            "key": "userChatInput"
+          }
+        ]
+      },
+      {
+        "key": "isEmpty",
+        "label": "core.module.output.label.Search result empty",
+        "type": "source",
+        "valueType": "boolean",
+        "targets": []
+      },
+      {
+        "key": "unEmpty",
+        "label": "core.module.output.label.Search result not empty",
+        "type": "source",
+        "valueType": "boolean",
+        "targets": []
+      },
+      {
+        "key": "quoteQA",
+        "label": "core.module.Dataset quote.label",
+        "type": "source",
+        "valueType": "datasetQuote",
+        "targets": [
+          {
+            "moduleId": "chatModule",
+            "key": "quoteQA"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "moduleId": "kt0l0r",
+    "name": "判断器",
+    "intro": "根据传入的内容进行 True False 输出。默认情况下，当传入的内容为 false, undefined, null, 0, none 时，会输出 false。你也可以增加一些自定义的字符串来补充输出 false 的内容。非字符、非数字、非布尔类型，直接输出 True。",
+    "avatar": "/imgs/module/tfSwitch.svg",
+    "flowType": "pluginModule",
+    "showStatus": false,
+    "position": {
+      "x": 2819.7478000196315,
+      "y": 707.6422750655101
+    },
+    "inputs": [
+      {
+        "key": "pluginId",
+        "type": "hidden",
+        "label": "",
+        "value": "community-tfSwitch",
+        "valueType": "string",
+        "connected": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false
+      },
+      {
+        "key": "switch",
+        "type": "hidden",
+        "label": "",
+        "description": "core.module.input.description.Trigger",
+        "valueType": "any",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": true
+      },
+      {
+        "key": "input",
+        "valueType": "any",
+        "type": "target",
+        "label": "core.module.input.label.TFSwitch input tip",
+        "required": true,
+        "edit": false,
+        "connected": true
+      },
+      {
+        "key": "rule",
+        "valueType": "string",
+        "label": "core.module.input.label.TFSwitch textarea",
+        "type": "textarea",
+        "required": false,
+        "description": "core.module.input.description.TFSwitch textarea",
+        "edit": false,
+        "editField": {
+          "key": true,
+          "name": true,
+          "description": true,
+          "required": true,
+          "dataType": true,
+          "inputType": true
+        },
+        "connected": false,
+        "placeholder": "core.module.input.description.TFSwitch textarea",
+        "value": "/.*唱.*/\n/.*唱歌.*/\n/.*主题曲.*/\n/.*唱一.*/\n/.*来首.*/\n/.*唱首.*/\n/.*歌曲.*/\n/.*曲目.*/\n/.*歌名.*/\n/.*演唱.*/\n/.*歌声.*/\n/.*献.*曲.*/"
+      }
+    ],
+    "outputs": [
+      {
+        "key": "true",
+        "valueType": "boolean",
+        "label": "True",
+        "type": "source",
+        "edit": false,
+        "targets": []
+      },
+      {
+        "key": "false",
+        "valueType": "boolean",
+        "label": "False",
+        "type": "source",
+        "edit": false,
+        "targets": [
+          {
+            "moduleId": "368z8x",
+            "key": "switch"
+          }
+        ]
+      },
+      {
+        "key": "finish",
+        "label": "",
+        "description": "",
+        "valueType": "boolean",
+        "type": "hidden",
+        "targets": []
+      }
+    ]
+  },
+  {
+    "moduleId": "jbr6c1",
+    "name": "HTTP 请求",
+    "intro": "可以发出一个 HTTP 请求，实现更为复杂的操作（联网搜索、数据库查询等）",
+    "avatar": "/imgs/module/http.png",
+    "flowType": "httpRequest468",
+    "showStatus": true,
+    "position": {
+      "x": 4486.372371091145,
+      "y": 687.771142809391
+    },
+    "inputs": [
+      {
+        "key": "switch",
+        "type": "hidden",
+        "label": "",
+        "description": "core.module.input.description.Trigger",
+        "valueType": "any",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": true
+      },
+      {
+        "key": "system_httpMethod",
+        "type": "custom",
+        "valueType": "string",
+        "label": "",
+        "value": "GET",
+        "required": true,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "system_httpReqUrl",
+        "type": "hidden",
+        "valueType": "string",
+        "label": "",
+        "description": "core.module.input.description.Http Request Url",
+        "placeholder": "https://api.ai.com/getInventory",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "value": "http://192.168.2.198:1800/http_sing",
+        "connected": false
+      },
+      {
+        "key": "system_httpHeader",
+        "type": "custom",
+        "valueType": "any",
+        "value": [],
+        "label": "",
+        "description": "core.module.input.description.Http Request Header",
+        "placeholder": "core.module.input.description.Http Request Header",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "system_httpParams",
+        "type": "hidden",
+        "valueType": "any",
+        "value": [
+          {
+            "key": "songname",
+            "type": "string",
+            "value": "{{songname}}"
+          },
+          {
+            "key": "username",
+            "type": "string",
+            "value": "{{username}}"
+          }
+        ],
+        "label": "",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "system_httpJsonBody",
+        "type": "hidden",
+        "valueType": "any",
+        "value": "",
+        "label": "",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "DYNAMIC_INPUT_KEY",
+        "type": "target",
+        "valueType": "any",
+        "label": "core.module.inputType.dynamicTargetInput",
+        "description": "core.module.input.description.dynamic input",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": true,
+        "hideInApp": true,
+        "connected": false
+      },
+      {
+        "key": "system_addInputParam",
+        "type": "addInputParam",
+        "valueType": "any",
+        "label": "",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "editField": {
+          "key": true,
+          "description": true,
+          "dataType": true
+        },
+        "defaultEditField": {
+          "label": "",
+          "key": "",
+          "description": "",
+          "inputType": "target",
+          "valueType": "string"
+        },
+        "connected": false
+      },
+      {
+        "valueType": "string",
+        "label": "songname",
+        "type": "target",
+        "description": "",
+        "edit": true,
+        "editField": {
+          "key": true,
+          "description": true,
+          "dataType": true
+        },
+        "connected": true,
+        "required": false,
+        "key": "songname"
+      },
+      {
+        "key": "username",
+        "valueType": "string",
+        "label": "username",
+        "type": "target",
+        "description": "",
+        "edit": true,
+        "editField": {
+          "key": true,
+          "description": true,
+          "dataType": true
+        },
+        "connected": true
+      }
+    ],
+    "outputs": [
+      {
+        "key": "httpRawResponse",
+        "label": "原始响应",
+        "description": "HTTP请求的原始响应。只能接受字符串或JSON类型响应数据。",
+        "valueType": "any",
+        "type": "source",
+        "targets": []
+      },
+      {
+        "key": "system_addOutputParam",
+        "type": "addOutputParam",
+        "valueType": "any",
+        "label": "",
+        "targets": [],
+        "editField": {
+          "key": true,
+          "description": true,
+          "dataType": true,
+          "defaultValue": true
+        },
+        "defaultEditField": {
+          "label": "",
+          "key": "",
+          "description": "",
+          "outputType": "source",
+          "valueType": "string"
+        }
+      },
+      {
+        "key": "finish",
+        "label": "",
+        "description": "",
+        "valueType": "boolean",
+        "type": "hidden",
+        "targets": []
+      }
+    ]
+  },
+  {
+    "moduleId": "368z8x",
+    "name": "文本内容提取",
+    "intro": "可从文本中提取指定的数据，例如：sql语句、搜索关键词、代码等",
+    "avatar": "/imgs/module/extract.png",
+    "flowType": "contentExtract",
+    "showStatus": true,
+    "position": {
+      "x": 3737.9665262699314,
+      "y": 664.844508369025
+    },
+    "inputs": [
+      {
+        "key": "switch",
+        "type": "hidden",
+        "label": "",
+        "description": "core.module.input.description.Trigger",
+        "valueType": "any",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": true
+      },
+      {
+        "key": "model",
+        "type": "selectLLMModel",
+        "label": "core.module.input.label.aiModel",
+        "required": true,
+        "valueType": "string",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "llmModelType": "extractFields",
+        "value": "gpt-3.5-turbo",
+        "connected": false
+      },
+      {
+        "key": "description",
+        "type": "textarea",
+        "valueType": "string",
+        "label": "提取要求描述",
+        "description": "给AI一些对应的背景知识或要求描述，引导AI更好的完成任务。\n该输入框可使用全局变量。",
+        "placeholder": "例如: \n1. 当前时间为: {{cTime}}。你是一个实验室预约助手，你的任务是帮助用户预约实验室，从文本中获取对应的预约信息。\n2. 你是谷歌搜索助手，需要从文本中提取出合适的搜索词。",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "value": "你需要提取聊天数据里面的歌曲名、用户名",
+        "connected": false
+      },
+      {
+        "key": "history",
+        "type": "numberInput",
+        "label": "core.module.input.label.chat history",
+        "required": true,
+        "min": 0,
+        "max": 30,
+        "valueType": "chatHistory",
+        "value": 6,
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": false
+      },
+      {
+        "key": "content",
+        "type": "target",
+        "label": "需要提取的文本",
+        "required": true,
+        "valueType": "string",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "toolDescription": "需要检索的内容",
+        "connected": true
+      },
+      {
+        "key": "extractKeys",
+        "type": "custom",
+        "label": "",
+        "valueType": "any",
+        "description": "由 '描述' 和 'key' 组成一个目标字段，可提取多个目标字段",
+        "value": [
+          {
+            "required": false,
+            "defaultValue": "你好",
+            "desc": "歌曲名",
+            "key": "songname",
+            "enum": ""
+          },
+          {
+            "required": true,
+            "defaultValue": "吟美",
+            "desc": "用户名",
+            "key": "username",
+            "enum": ""
+          }
+        ],
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      }
+    ],
+    "outputs": [
+      {
+        "key": "success",
+        "label": "字段完全提取",
+        "valueType": "boolean",
+        "type": "source",
+        "targets": [
+          {
+            "moduleId": "jbr6c1",
+            "key": "switch"
+          }
+        ]
+      },
+      {
+        "key": "failed",
+        "label": "提取字段缺失",
+        "description": "存在一个或多个字段未提取成功。尽管使用了默认值也算缺失。",
+        "valueType": "boolean",
+        "type": "source",
+        "targets": [
+          {
+            "moduleId": "zepb82",
+            "key": "switch"
+          }
+        ]
+      },
+      {
+        "key": "fields",
+        "label": "完整提取结果",
+        "description": "一个 JSON 字符串，例如：{\"name:\":\"YY\",\"Time\":\"2023/7/2 18:00\"}",
+        "valueType": "string",
+        "type": "source",
+        "targets": []
+      },
+      {
+        "key": "songname",
+        "label": "提取结果-歌曲名",
+        "valueType": "string",
+        "type": "source",
+        "targets": [
+          {
+            "moduleId": "jbr6c1",
+            "key": "songname"
+          }
+        ]
+      },
+      {
+        "key": "username",
+        "label": "提取结果-用户名",
+        "valueType": "string",
+        "type": "source",
+        "targets": [
+          {
+            "moduleId": "jbr6c1",
+            "key": "username"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "moduleId": "4v7tq5",
+    "name": "判断器",
+    "intro": "根据传入的内容进行 True False 输出。默认情况下，当传入的内容为 false, undefined, null, 0, none 时，会输出 false。你也可以增加一些自定义的字符串来补充输出 false 的内容。非字符、非数字、非布尔类型，直接输出 True。",
+    "avatar": "/imgs/module/tfSwitch.svg",
+    "flowType": "pluginModule",
+    "showStatus": false,
+    "position": {
+      "x": 2841.1650693147158,
+      "y": 2258.0188695182196
+    },
+    "inputs": [
+      {
+        "key": "pluginId",
+        "type": "hidden",
+        "label": "",
+        "value": "community-tfSwitch",
+        "valueType": "string",
+        "connected": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false
+      },
+      {
+        "key": "switch",
+        "type": "hidden",
+        "label": "",
+        "description": "core.module.input.description.Trigger",
+        "valueType": "any",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": true
+      },
+      {
+        "key": "input",
+        "valueType": "any",
+        "type": "target",
+        "label": "core.module.input.label.TFSwitch input tip",
+        "required": true,
+        "edit": false,
+        "connected": true
+      },
+      {
+        "key": "rule",
+        "valueType": "string",
+        "label": "core.module.input.label.TFSwitch textarea",
+        "type": "textarea",
+        "required": false,
+        "description": "core.module.input.description.TFSwitch textarea",
+        "edit": false,
+        "editField": {
+          "key": true,
+          "name": true,
+          "description": true,
+          "required": true,
+          "dataType": true,
+          "inputType": true
+        },
+        "connected": false,
+        "placeholder": "core.module.input.description.TFSwitch textarea",
+        "value": "/.*画.*/\n/.*画画.*/\n/.*图画.*/\n/.*绘画.*/\n/.*画一.*/\n/.*画.*个.*/\n/.*绘图.*/\n/.*涂鸦.*/\n/.*想象.*/"
+      }
+    ],
+    "outputs": [
+      {
+        "key": "true",
+        "valueType": "boolean",
+        "label": "True",
+        "type": "source",
+        "edit": false,
+        "targets": []
+      },
+      {
+        "key": "false",
+        "valueType": "boolean",
+        "label": "False",
+        "type": "source",
+        "edit": false,
+        "targets": [
+          {
+            "moduleId": "96rpdg",
+            "key": "switch"
+          }
+        ]
+      },
+      {
+        "key": "finish",
+        "label": "",
+        "description": "",
+        "valueType": "boolean",
+        "type": "hidden",
+        "targets": []
+      }
+    ]
+  },
+  {
+    "moduleId": "96rpdg",
+    "name": "文本内容提取",
+    "intro": "可从文本中提取指定的数据，例如：sql语句、搜索关键词、代码等",
+    "avatar": "/imgs/module/extract.png",
+    "flowType": "contentExtract",
+    "showStatus": true,
+    "position": {
+      "x": 3738.2996947905876,
+      "y": 1746.4193368953836
+    },
+    "inputs": [
+      {
+        "key": "switch",
+        "type": "hidden",
+        "label": "",
+        "description": "core.module.input.description.Trigger",
+        "valueType": "any",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": true
+      },
+      {
+        "key": "model",
+        "type": "selectLLMModel",
+        "label": "core.module.input.label.aiModel",
+        "required": true,
+        "valueType": "string",
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "llmModelType": "extractFields",
+        "value": "gpt-3.5-turbo",
+        "connected": false
+      },
+      {
+        "key": "description",
+        "type": "textarea",
+        "valueType": "string",
+        "label": "提取要求描述",
+        "description": "给AI一些对应的背景知识或要求描述，引导AI更好的完成任务。\n该输入框可使用全局变量。",
+        "placeholder": "例如: \n1. 当前时间为: {{cTime}}。你是一个实验室预约助手，你的任务是帮助用户预约实验室，从文本中获取对应的预约信息。\n2. 你是谷歌搜索助手，需要从文本中提取出合适的搜索词。",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "value": "你需要提取聊天数据里面的绘画名称、绘画详细描述、用户名",
+        "connected": false
+      },
+      {
+        "key": "history",
+        "type": "numberInput",
+        "label": "core.module.input.label.chat history",
+        "required": true,
+        "min": 0,
+        "max": 30,
+        "valueType": "chatHistory",
+        "value": 6,
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": false
+      },
+      {
+        "key": "content",
+        "type": "target",
+        "label": "需要提取的文本",
+        "required": true,
+        "valueType": "string",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "toolDescription": "需要检索的内容",
+        "connected": true
+      },
+      {
+        "key": "extractKeys",
+        "type": "custom",
+        "label": "",
+        "valueType": "any",
+        "description": "由 '描述' 和 'key' 组成一个目标字段，可提取多个目标字段",
+        "value": [
+          {
+            "required": false,
+            "defaultValue": "",
+            "desc": "绘画名称",
+            "key": "drawname",
+            "enum": ""
+          },
+          {
+            "required": true,
+            "defaultValue": "吟美",
+            "desc": "用户名",
+            "key": "username",
+            "enum": ""
+          },
+          {
+            "required": false,
+            "defaultValue": "",
+            "desc": "绘画详细描述",
+            "key": "drawcontent",
+            "enum": ""
+          }
+        ],
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      }
+    ],
+    "outputs": [
+      {
+        "key": "success",
+        "label": "字段完全提取",
+        "valueType": "boolean",
+        "type": "source",
+        "targets": [
+          {
+            "moduleId": "iq9po3",
+            "key": "switch"
+          }
+        ]
+      },
+      {
+        "key": "failed",
+        "label": "提取字段缺失",
+        "description": "存在一个或多个字段未提取成功。尽管使用了默认值也算缺失。",
+        "valueType": "boolean",
+        "type": "source",
+        "targets": [
+          {
+            "moduleId": "zepb82",
+            "key": "switch"
+          }
+        ]
+      },
+      {
+        "key": "fields",
+        "label": "完整提取结果",
+        "description": "一个 JSON 字符串，例如：{\"name:\":\"YY\",\"Time\":\"2023/7/2 18:00\"}",
+        "valueType": "string",
+        "type": "source",
+        "targets": []
+      },
+      {
+        "key": "drawname",
+        "label": "提取结果-绘画名称",
+        "valueType": "string",
+        "type": "source",
+        "targets": [
+          {
+            "moduleId": "iq9po3",
+            "key": "drawname"
+          }
+        ]
+      },
+      {
+        "key": "username",
+        "label": "提取结果-用户名",
+        "valueType": "string",
+        "type": "source",
+        "targets": [
+          {
+            "moduleId": "iq9po3",
+            "key": "username"
+          }
+        ]
+      },
+      {
+        "key": "drawcontent",
+        "label": "提取结果-绘画详细描述",
+        "valueType": "string",
+        "type": "source",
+        "targets": [
+          {
+            "moduleId": "iq9po3",
+            "key": "drawcontent"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "moduleId": "iq9po3",
+    "name": "HTTP 请求",
+    "intro": "可以发出一个 HTTP 请求，实现更为复杂的操作（联网搜索、数据库查询等）",
+    "avatar": "/imgs/module/http.png",
+    "flowType": "httpRequest468",
+    "showStatus": true,
+    "position": {
+      "x": 4584.201471856046,
+      "y": 1891.1755871900327
+    },
+    "inputs": [
+      {
+        "key": "switch",
+        "type": "hidden",
+        "label": "",
+        "description": "core.module.input.description.Trigger",
+        "valueType": "any",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": true
+      },
+      {
+        "key": "system_httpMethod",
+        "type": "custom",
+        "valueType": "string",
+        "label": "",
+        "value": "GET",
+        "required": true,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "system_httpReqUrl",
+        "type": "hidden",
+        "valueType": "string",
+        "label": "",
+        "description": "core.module.input.description.Http Request Url",
+        "placeholder": "https://api.ai.com/getInventory",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "value": "http://192.168.2.198:1800/http_draw",
+        "connected": false
+      },
+      {
+        "key": "system_httpHeader",
+        "type": "custom",
+        "valueType": "any",
+        "value": [],
+        "label": "",
+        "description": "core.module.input.description.Http Request Header",
+        "placeholder": "core.module.input.description.Http Request Header",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "system_httpParams",
+        "type": "hidden",
+        "valueType": "any",
+        "value": [
+          {
+            "key": "drawname",
+            "type": "string",
+            "value": "{{drawname}}"
+          },
+          {
+            "key": "username",
+            "type": "string",
+            "value": "{{username}}"
+          },
+          {
+            "key": "drawcontent",
+            "type": "string",
+            "value": "{{drawcontent}}}"
+          }
+        ],
+        "label": "",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "system_httpJsonBody",
+        "type": "hidden",
+        "valueType": "any",
+        "value": "",
+        "label": "",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "connected": false
+      },
+      {
+        "key": "DYNAMIC_INPUT_KEY",
+        "type": "target",
+        "valueType": "any",
+        "label": "core.module.inputType.dynamicTargetInput",
+        "description": "core.module.input.description.dynamic input",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": true,
+        "hideInApp": true,
+        "connected": false
+      },
+      {
+        "key": "system_addInputParam",
+        "type": "addInputParam",
+        "valueType": "any",
+        "label": "",
+        "required": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false,
+        "editField": {
+          "key": true,
+          "description": true,
+          "dataType": true
+        },
+        "defaultEditField": {
+          "label": "",
+          "key": "",
+          "description": "",
+          "inputType": "target",
+          "valueType": "string"
+        },
+        "connected": false
+      },
+      {
+        "key": "drawname",
+        "valueType": "string",
+        "label": "drawname",
+        "type": "target",
+        "description": "",
+        "edit": true,
+        "editField": {
+          "key": true,
+          "description": true,
+          "dataType": true
+        },
+        "connected": true
+      },
+      {
+        "key": "username",
+        "valueType": "string",
+        "label": "username",
+        "type": "target",
+        "description": "",
+        "edit": true,
+        "editField": {
+          "key": true,
+          "description": true,
+          "dataType": true
+        },
+        "connected": true
+      },
+      {
+        "key": "drawcontent",
+        "valueType": "string",
+        "label": "drawcontent",
+        "type": "target",
+        "description": "",
+        "edit": true,
+        "editField": {
+          "key": true,
+          "description": true,
+          "dataType": true
+        },
+        "connected": true
+      }
+    ],
+    "outputs": [
+      {
+        "key": "httpRawResponse",
+        "label": "原始响应",
+        "description": "HTTP请求的原始响应。只能接受字符串或JSON类型响应数据。",
+        "valueType": "any",
+        "type": "source",
+        "targets": []
+      },
+      {
+        "key": "system_addOutputParam",
+        "type": "addOutputParam",
+        "valueType": "any",
+        "label": "",
+        "targets": [],
+        "editField": {
+          "key": true,
+          "description": true,
+          "dataType": true,
+          "defaultValue": true
+        },
+        "defaultEditField": {
+          "label": "",
+          "key": "",
+          "description": "",
+          "outputType": "source",
+          "valueType": "string"
+        }
+      },
+      {
+        "key": "finish",
+        "label": "",
+        "description": "",
+        "valueType": "boolean",
+        "type": "hidden",
+        "targets": []
+      }
+    ]
+  },
+  {
+    "moduleId": "zepb82",
+    "name": "工具调用终止",
+    "intro": "该模块需配置工具调用使用。当该模块被执行时，本次工具调用将会强制结束，并且不再调用AI针对工具调用结果回答问题。",
+    "avatar": "/imgs/module/toolStop.svg",
+    "flowType": "stopTool",
+    "position": {
+      "x": 4542.607034095082,
+      "y": 1646.6614508065086
+    },
+    "inputs": [
+      {
+        "key": "switch",
+        "type": "hidden",
+        "label": "",
+        "description": "core.module.input.description.Trigger",
+        "valueType": "any",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": true
+      }
+    ],
+    "outputs": []
+  }
+]
