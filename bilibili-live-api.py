@@ -1312,7 +1312,7 @@ def emote_ws(num, interval, key):
                 run_forever_thread = Thread(target=run_forever)
                 run_forever_thread.start()
 
-# 判断字符是否存在此队列
+# 判断字符是否存在歌曲此队列
 def exist_song_queues(queues,name):
     # 当前歌曲
     if "songname" in SongNowName and SongNowName["songname"] == name:
