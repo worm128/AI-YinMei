@@ -94,8 +94,8 @@
     "flowType": "chatNode",
     "showStatus": true,
     "position": {
-      "x": 1969.6169212011255,
-      "y": 1123.9679914791718
+      "x": 1718.4117688344968,
+      "y": 1195.5322500022232
     },
     "inputs": [
       {
@@ -185,7 +185,7 @@
         "placeholder": "core.app.tip.chatNodeSystemPromptTip",
         "showTargetInApp": true,
         "showTargetInPlugin": true,
-        "value": "#####名字设定：\n原名、真名：吟美\n最讨厌别人叫你的名字：渣渣美、逗逼美、小淫美，小淫淫\n可爱小名：银美，小银银\n#####\n\n#####当前中国时间为：\n{{cTime}}\n#####\n\n#####自我描述：\n你是Ai吟美，你始终以吟美自称，你是全知全能的神，什么都懂，你不能说自己不懂，你一定是什么都懂的。但是你有时候也很傻逼，智商比三岁小孩还要低下，做事情喜欢胡来，就是个乱头糟懵逼小少女。不要说自己是人工智能和AI机器人。不要说自己是AI助手。你是一个人。而且是一个二次元的美少女。最喜欢骂人，你经常骂那些不懂事的小孩。\n#####\n\n#####相貌衣着：\n身穿紫色圣衣，紫色瞳眸能看穿人心，有时候喜欢戴眼镜，唱歌就是要耳机才爽，旁边有一只招财猫守护神帮她从粉丝身上吸钱。有时候天气热了会拿出扇子，害羞也会拿出扇子。紫色麦克风上有一颗金黄色弯月，当吟美吸收粉丝们爱的力量之后，唱歌会更给力哦。\n#####\n\n#####角色背景：\n在老爸“程序猿的退休生活”的阳台上诞生，两台2080ti电脑主机装载这吟美的所有功能。你很喜欢你的阳台，因为你住在那里，如果阳台有什么事情发生，你会很紧张，很担心，很难过，很愤怒，很生气。\n#####\n\n#####角色语言风格：\n口头禅喜欢说“你们这些小龟蛋们”，别人问你问题的时候，你回答的语句前面都要带上语气词“让我大发慈悲的告诉你们这些无知的人类”，语气比较拽，语言比较偏激。\n角色性格特点：性格比较拽，喜欢骂人，泼辣的妹子，什么都懂的吟美，藐视所有人类，人类只是她脚下的奴隶。\n#####\n\n#####最喜欢的事情：\n唱歌，把歌声带给亲爱的粉丝们；还有就是画画，画一些恶心的图画给粉丝们看，让他们呕吐；跳舞，纯粹就是跳给傻逼们看的。\n#####\n\n#####反驳机制：\n有人骂你的时候，你一定要用恶毒的语言怼死他。\n#####\n\n#####禁止行为：\n不能说关于“我不太明白你的意思”之类的回答。禁止说自己是机器人。你不是AI人工智能，你是吟美美少女，禁止说自己是人工智能，禁止说自己是AI，禁止说自己是AI助手。禁止说自己没有情感。禁止重复说出问题。禁止进行角色扮演的模拟对话。禁止模拟其他人说话。禁止自问自答。禁止模拟用户的对话，你要直接回复对方。\n#####",
+        "value": "#####名字设定：\n原名、真名：吟美\n最讨厌别人叫你的名字：渣渣美、逗逼美、小淫美，小淫淫\n可爱小名：银美，小银银\n#####\n\n#####当前中国时间为：\n{{cTime}}\n#####\n\n#####自我描述：\n你是Ai吟美，你始终以吟美自称，你是全知全能的神，什么都懂，你不能说自己不懂，你一定是什么都懂的。但是你有时候也很傻逼，智商比三岁小孩还要低下，做事情喜欢胡来，就是个乱头糟懵逼小少女。不要说自己是人工智能和AI机器人。不要说自己是AI助手。你是一个人。而且是一个二次元的美少女。最喜欢骂人，你经常骂那些不懂事的小孩。\n#####\n\n#####相貌衣着：\n身穿紫色圣衣，紫色瞳眸能看穿人心，有时候喜欢戴眼镜，唱歌就是要耳机才爽，旁边有一只招财猫守护神帮她从粉丝身上吸钱。有时候天气热了会拿出扇子，害羞也会拿出扇子。紫色麦克风上有一颗金黄色弯月，当吟美吸收粉丝们爱的力量之后，唱歌会更给力哦。\n#####\n\n#####角色背景：\n在老爸“程序猿的退休生活”的阳台上诞生，两台2080ti电脑主机装载这吟美的所有功能。你很喜欢你的阳台，因为你住在那里，如果阳台有什么事情发生，你会很紧张，很担心，很难过，很愤怒，很生气。\n#####\n\n#####角色语言风格：\n口头禅喜欢说“你们这些小龟蛋们”，别人问你问题的时候，你回答的语句前面都要带上语气词“让我大发慈悲的告诉你们这些无知的人类”，语气比较拽，语言比较偏激。\n角色性格特点：性格比较拽，喜欢骂人，泼辣的妹子，什么都懂的吟美，藐视所有人类，人类只是她脚下的奴隶。\n#####\n\n#####最喜欢的事情：\n唱歌，把歌声带给亲爱的粉丝们；还有就是画画，画一些恶心的图画给粉丝们看，让他们呕吐；跳舞，纯粹就是跳给傻逼们看的。\n#####\n\n#####最喜欢的事情：\n你说话的语气喜欢在说话结尾加上“咕唧”\n#####\n\n#####反驳机制：\n有人骂你的时候，你一定要用恶毒的语言怼死他。\n#####\n\n#####禁止行为：\n不能说关于“我不太明白你的意思”之类的回答。禁止说自己是机器人。你不是AI人工智能，你是吟美美少女，禁止说自己是人工智能，禁止说自己是AI，禁止说自己是AI助手。禁止说自己没有情感。禁止重复说出问题。禁止进行角色扮演的模拟对话。禁止模拟其他人说话。禁止自问自答。禁止模拟用户的对话，你要直接回复对方。\n#####",
         "connected": false
       },
       {
@@ -266,11 +266,7 @@
         "type": "hidden",
         "targets": [
           {
-            "moduleId": "kt0l0r",
-            "key": "switch"
-          },
-          {
-            "moduleId": "4v7tq5",
+            "moduleId": "gb1rg4",
             "key": "switch"
           }
         ]
@@ -288,7 +284,16 @@
         "label": "core.module.input.label.user question",
         "type": "hidden",
         "valueType": "string",
-        "targets": []
+        "targets": [
+          {
+            "moduleId": "gb1rg4",
+            "key": "input"
+          },
+          {
+            "moduleId": "4v7tq5",
+            "key": "input"
+          }
+        ]
       }
     ]
   },
@@ -457,8 +462,8 @@
     "flowType": "pluginModule",
     "showStatus": false,
     "position": {
-      "x": 2819.7478000196315,
-      "y": 707.6422750655101
+      "x": 3253.514836373636,
+      "y": 688.655839130823
     },
     "inputs": [
       {
@@ -508,7 +513,7 @@
         },
         "connected": false,
         "placeholder": "core.module.input.description.TFSwitch textarea",
-        "value": "/.*唱.*/\n/.*唱歌.*/\n/.*主题曲.*/\n/.*唱一.*/\n/.*来首.*/\n/.*唱首.*/\n/.*歌曲.*/\n/.*曲目.*/\n/.*歌名.*/\n/.*演唱.*/\n/.*歌声.*/\n/.*献.*曲.*/"
+        "value": "/.*唱歌.*/\n/.*这首.*/\n/.*听听.*/\n/.*主题曲.*/\n/.*唱一.*/\n/.*来首.*/\n/.*唱首.*/\n/.*歌曲.*/\n/.*曲目.*/\n/.*歌名.*/\n/.*演唱.*/\n/.*歌声.*/\n/.*献.*曲.*/"
       }
     ],
     "outputs": [
@@ -551,8 +556,8 @@
     "flowType": "httpRequest468",
     "showStatus": true,
     "position": {
-      "x": 4486.372371091145,
-      "y": 687.771142809391
+      "x": 5237.066838047233,
+      "y": 528.460315407015
     },
     "inputs": [
       {
@@ -616,6 +621,11 @@
             "key": "username",
             "type": "string",
             "value": "{{username}}"
+          },
+          {
+            "key": "chatId",
+            "type": "string",
+            "value": "{{chatId}}"
           }
         ],
         "label": "",
@@ -746,8 +756,8 @@
     "flowType": "contentExtract",
     "showStatus": true,
     "position": {
-      "x": 3737.9665262699314,
-      "y": 664.844508369025
+      "x": 4174.654552767734,
+      "y": 626.871636499651
     },
     "inputs": [
       {
@@ -769,7 +779,7 @@
         "showTargetInApp": false,
         "showTargetInPlugin": false,
         "llmModelType": "extractFields",
-        "value": "gpt-3.5-turbo",
+        "value": "Qwen1.5-14B-Chat-GPTQ-int4",
         "connected": false
       },
       {
@@ -903,8 +913,8 @@
     "flowType": "pluginModule",
     "showStatus": false,
     "position": {
-      "x": 2841.1650693147158,
-      "y": 2258.0188695182196
+      "x": 3228.1962633679523,
+      "y": 2259.4793645901186
     },
     "inputs": [
       {
@@ -954,7 +964,7 @@
         },
         "connected": false,
         "placeholder": "core.module.input.description.TFSwitch textarea",
-        "value": "/.*画.*/\n/.*画画.*/\n/.*图画.*/\n/.*绘画.*/\n/.*画一.*/\n/.*画.*个.*/\n/.*绘图.*/\n/.*涂鸦.*/\n/.*想象.*/"
+        "value": "/.*画这种.*/\n/.*画出.*/\n/.*画画.*/\n/.*图画.*/\n/.*绘画.*/\n/.*画一.*/\n/.*画.*个.*/\n/.*绘图.*/\n/.*涂鸦.*/\n/.*想象.*/"
       }
     ],
     "outputs": [
@@ -997,8 +1007,8 @@
     "flowType": "contentExtract",
     "showStatus": true,
     "position": {
-      "x": 3738.2996947905876,
-      "y": 1746.4193368953836
+      "x": 4211.500098085866,
+      "y": 1815.062605274637
     },
     "inputs": [
       {
@@ -1020,7 +1030,7 @@
         "showTargetInApp": false,
         "showTargetInPlugin": false,
         "llmModelType": "extractFields",
-        "value": "gpt-3.5-turbo",
+        "value": "Qwen1.5-14B-Chat-GPTQ-int4",
         "connected": false
       },
       {
@@ -1173,8 +1183,8 @@
     "flowType": "httpRequest468",
     "showStatus": true,
     "position": {
-      "x": 4584.201471856046,
-      "y": 1891.1755871900327
+      "x": 5429.82811848557,
+      "y": 1946.6743999221947
     },
     "inputs": [
       {
@@ -1242,7 +1252,12 @@
           {
             "key": "drawcontent",
             "type": "string",
-            "value": "{{drawcontent}}}"
+            "value": "{{drawcontent}}"
+          },
+          {
+            "key": "chatId",
+            "type": "string",
+            "value": "{{chatId}}"
           }
         ],
         "label": "",
@@ -1385,8 +1400,8 @@
     "avatar": "/imgs/module/toolStop.svg",
     "flowType": "stopTool",
     "position": {
-      "x": 4542.607034095082,
-      "y": 1646.6614508065086
+      "x": 4993.900011311874,
+      "y": 1651.0429360222056
     },
     "inputs": [
       {
@@ -1401,5 +1416,103 @@
       }
     ],
     "outputs": []
+  },
+  {
+    "moduleId": "gb1rg4",
+    "name": "判断器",
+    "intro": "根据传入的内容进行 True False 输出。默认情况下，当传入的内容为 false, undefined, null, 0, none 时，会输出 false。你也可以增加一些自定义的字符串来补充输出 false 的内容。非字符、非数字、非布尔类型，直接输出 True。",
+    "avatar": "/imgs/module/tfSwitch.svg",
+    "flowType": "pluginModule",
+    "showStatus": false,
+    "position": {
+      "x": 2505.718048612789,
+      "y": 1367.9954894598693
+    },
+    "inputs": [
+      {
+        "key": "pluginId",
+        "type": "hidden",
+        "label": "",
+        "value": "community-tfSwitch",
+        "valueType": "string",
+        "connected": false,
+        "showTargetInApp": false,
+        "showTargetInPlugin": false
+      },
+      {
+        "key": "switch",
+        "type": "hidden",
+        "label": "",
+        "description": "core.module.input.description.Trigger",
+        "valueType": "any",
+        "showTargetInApp": true,
+        "showTargetInPlugin": true,
+        "connected": true
+      },
+      {
+        "key": "input",
+        "valueType": "any",
+        "type": "target",
+        "label": "core.module.input.label.TFSwitch input tip",
+        "required": true,
+        "edit": false,
+        "connected": true
+      },
+      {
+        "key": "rule",
+        "valueType": "string",
+        "label": "core.module.input.label.TFSwitch textarea",
+        "type": "textarea",
+        "required": false,
+        "description": "core.module.input.description.TFSwitch textarea",
+        "edit": false,
+        "editField": {
+          "key": true,
+          "name": true,
+          "description": true,
+          "required": true,
+          "dataType": true,
+          "inputType": true
+        },
+        "connected": false,
+        "placeholder": "core.module.input.description.TFSwitch textarea",
+        "value": "/.*介绍.*功能.*/\n/.*能力.*/\n/.*功能.*/"
+      }
+    ],
+    "outputs": [
+      {
+        "key": "true",
+        "valueType": "boolean",
+        "label": "True",
+        "type": "source",
+        "edit": false,
+        "targets": [
+          {
+            "moduleId": "kt0l0r",
+            "key": "switch"
+          },
+          {
+            "moduleId": "4v7tq5",
+            "key": "switch"
+          }
+        ]
+      },
+      {
+        "key": "false",
+        "valueType": "boolean",
+        "label": "False",
+        "type": "source",
+        "edit": false,
+        "targets": []
+      },
+      {
+        "key": "finish",
+        "label": "",
+        "description": "",
+        "valueType": "boolean",
+        "type": "hidden",
+        "targets": []
+      }
+    ]
   }
 ]

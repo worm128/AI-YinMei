@@ -43,6 +43,9 @@ def is_index_contain_string(string_array, target_string):
             return num + len(s)
     return 0
 
+def has_string_reg(regx,s):
+    return re.search(regx, s)
+
 # text = ["唱一下", "唱一首", "唱歌", "唱"]
 # num = is_index_contain_string(text, "又是这个高端歌，吟美唱死")
 # print(num)
@@ -70,10 +73,18 @@ def is_index_contain_string(string_array, target_string):
 # wenhou_num = random.randrange(0, len(wenhou))
 # print(wenhou[wenhou_num])
 
+# 正则判断[集合判断]
+def has_string_reg_list(regxlist,s):
+    regx = regxlist.replace("[","(").replace("]",")").replace(",","|").replace("'","").replace(" ","")
+    return re.search(regx, s)
 
+text = ["跳舞", "跳一下", "舞蹈"]
+print(text)
+ok = has_string_reg_list(f"^{text}","舞蹈ddfg 嘻嘻嘻")
+print(ok.regs[0](1))
 jsonstr=[]
-press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-userlist = str(press_arry).replace("['","").replace("']","")
-# press = random.randrange(0, len(press_arry))
-# jsonstr.append({"content":"happy","key":press_arry[press],"num":1})
-print(jsonstr)
+# press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+# userlist = str(press_arry).replace("['","").replace("']","")
+# # press = random.randrange(0, len(press_arry))
+# # jsonstr.append({"content":"happy","key":press_arry[press],"num":1})
+# print(jsonstr)

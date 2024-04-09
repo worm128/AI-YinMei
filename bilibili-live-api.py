@@ -249,7 +249,7 @@ async def on_gift(event):
 @app.route("/http_sing", methods=["GET"])
 def http_sing():
     songname = request.args["songname"]
-    username = request.args["username"]
+    username = "所有人"
     print(f"http唱歌接口处理：\"{username}\"点播歌曲《{songname}》")
     song_json = {"prompt": songname, "username": username}
     SongQueueList.put(song_json)
@@ -259,7 +259,7 @@ def http_sing():
 def http_draw():
     drawname = request.args["drawname"]
     drawcontent = request.args["drawcontent"]
-    username = request.args["username"]
+    username = "所有人"
     print(f"http绘画接口处理：\"{username}\"绘画《{drawname}》，{drawcontent}")
     draw_json = {"prompt": drawname, "drawcontent":drawcontent, "username": username, "isExtend": False}
     DrawQueueList.put(draw_json)
@@ -335,8 +335,9 @@ def msg_deal(query,uid,user_name):
     
     #跳舞表情
     text = ["#"]
-    num = is_index_contain_string(text, query)
-    if num > 0:
+    is_contain = has_string_reg_list(f"^{text}", query)
+    if is_contain is not None:
+        num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
         print("跳舞表情：" + queryExtract)
@@ -365,8 +366,9 @@ def msg_deal(query,uid,user_name):
 
     # 搜索引擎查询
     text = ["查询", "查一下", "搜索"]
-    num = is_index_contain_string(text, query)  # 判断是不是需要搜索
-    if num > 0:
+    is_contain = has_string_reg_list(f"^{text}", query)
+    if is_contain is not None:
+        num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
         print("搜索词：" + queryExtract)
@@ -378,8 +380,9 @@ def msg_deal(query,uid,user_name):
 
     # 搜索图片
     text = ["搜图", "搜个图", "搜图片", "搜一下图片"]
-    num = is_index_contain_string(text, query)  # 判断是不是需要搜索
-    if num > 0:
+    is_contain = has_string_reg_list(f"^{text}", query)
+    if is_contain is not None:
+        num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
         print("搜索图：" + queryExtract)
@@ -390,9 +393,10 @@ def msg_deal(query,uid,user_name):
         return
 
     # 绘画
-    text = ["画画"]
-    num = is_index_contain_string(text, query)
-    if num > 0:
+    text = ["画画", "画一个", "画一下", "画个"]
+    is_contain = has_string_reg_list(f"^{text}", query)
+    if is_contain is not None:
+        num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
         print("绘画提示：" + queryExtract)
@@ -404,9 +408,10 @@ def msg_deal(query,uid,user_name):
         return
 
     # 唱歌
-    text = ["唱歌"]
-    num = is_index_contain_string(text, query)
-    if num > 0:
+    text = ["唱一下", "唱一首", "唱歌", "点歌", "点播"]
+    is_contain = has_string_reg_list(f"^{text}", query)
+    if is_contain is not None:
+        num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
         print("唱歌提示：" + queryExtract)
@@ -418,8 +423,9 @@ def msg_deal(query,uid,user_name):
 
     # 跳舞
     text = ["跳舞", "跳一下", "舞蹈"]
-    num = is_index_contain_string(text, query)
-    if num > 0:
+    is_contain = has_string_reg_list(f"^{text}", query)
+    if is_contain is not None:
+       num = is_index_contain_string(text, query)
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
        print("跳舞提示：" + queryExtract)
@@ -1306,6 +1312,27 @@ def emote_ws(num, interval, key):
                 run_forever_thread = Thread(target=run_forever)
                 run_forever_thread.start()
 
+# 判断字符是否存在此队列
+def exist_song_queues(queues,name):
+    # 当前歌曲
+    if "songname" in SongNowName and SongNowName["songname"] == name:
+        return True
+    # 歌单里歌曲
+    for i in range(queues.qsize()):
+        data = queues.queue[i]
+        if data["songname"]==name:
+            return True
+    return False
+
+# 正则判断
+def has_string_reg(regx,s):
+    return re.search(regx, s)
+
+# 正则判断[集合判断]
+def has_string_reg_list(regxlist,s):
+    regx = regxlist.replace("[","(").replace("]",")").replace(",","|").replace("'","").replace(" ","")
+    return re.search(regx, s)
+
 # 判断字符位置（不含搜索字符）- 如，搜索“画画女孩”，则输出“女孩”位置
 def is_index_contain_string(string_array, target_string):
     i = 0
@@ -1315,7 +1342,6 @@ def is_index_contain_string(string_array, target_string):
             num = target_string.find(s)
             return num + len(s)
     return 0
-
 
 # 判断字符位置（含搜索字符）- 如，搜索“画画女孩”，则输出“画画女孩”位置
 def is_array_contain_string(string_array, target_string):
@@ -1384,6 +1410,12 @@ def sing(songname, username):
         return 
     song_path = f"./output/{songname}.wav"
     # =============== 结束-获取真实歌曲名称 =================
+    
+    # =============== 开始-重复点播判断 =================
+    if exist_song_queues(SongMenuList,songname)==True:
+       outputTxt=f"回复{username}：{font_text}歌单里已经有歌曲《{songname}》，请勿重新点播"
+       tts_say(outputTxt)
+    # =============== 结束-重复点播判断 =================
 
     # =============== 开始-判断本地是否有歌 =================
     if os.path.exists(song_path):
@@ -1422,7 +1454,9 @@ def sing(songname, username):
     #等待播放
     print(f"等待播放{username}点播的歌曲《{songname}》：{is_singing}")
     #加入播放歌单
+
     SongMenuList.put({"username": username, "songname": songname,"is_created":is_created,"song_path":song_path,"query":query})
+  
 
 # 播放歌曲清单
 def check_playSongMenuList():
