@@ -11,6 +11,7 @@
   现在发现有道云笔记网页版本不能查看笔记图片，需要完整教案请进入 Q 群 27831318 获取 pdf 文档<br>
   https://note.youdao.com/s/1k0x7BLt<br>
 - 吟美 pdf 完整说明文档：
+  百度网盘：https://pan.baidu.com/s/1wB1aNTpN5X2WSPCq3GADJw?pwd=1kz2<br>
   在百度网盘->人工智能->吟美说明文档->AI 虚拟主播 Vtuber 研发(N 卡版本)-v1.7.pdf<br>
 - 旧版吟美项目【因集成过多内置第三方项目，已废弃】：https://github.com/worm128/AI-YinMei-backup
 
