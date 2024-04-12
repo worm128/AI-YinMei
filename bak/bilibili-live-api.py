@@ -7,7 +7,10 @@ import threading
 import os
 import time
 import requests
+import pyvirtualcam
+import cv2
 import base64
+import numpy as np
 import io
 import random
 import re
@@ -30,9 +33,8 @@ from flask import Flask, jsonify, request, render_template
 from flask_apscheduler import APScheduler
 from urllib import parse
 
-Ai_Name="吟美"  #Ai名称
 print("=====================================================================")
-print(f"开始启动人工智能{Ai_Name}！")
+print("开始启动人工智能吟美！")
 print(
     "组成功能：LLM大语言模型+bilibili直播对接+TTS微软语音合成+MPV语音播放+VTube Studio人物模型+pynput表情控制+stable-diffusion-webui绘画"
 )
@@ -97,6 +99,7 @@ drawUrl = "192.168.2.58:7860"
 is_drawing = 3  # 1.绘画中 2.绘画完成 3.绘画任务结束
 width = 980  # 图片宽度
 height = 500  # 图片高度
+CameraOutList = queue.Queue()  # 输出图片队列
 DrawQueueList = queue.Queue()  # 画画队列
 physical_save_folder="J:\\ai\\ai-yinmei\\porn\\"  #绘画保存图片物理路径
 # ============================================
@@ -124,10 +127,10 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="",
-    buvid3="",
-    bili_jct="",
-    dedeuserid="",
+    sessdata="8d848094%2C1728299438%2Cf312f%2A42CjADHVh4rIPyKjo3z2oZx0V3aiu7T91qTjH7SCFZVK5lgmZ_Qu01iS_VxA2WuYi4ggcSVkxMbzZpek9JNm5FWjJ5Y2RCcXhEcjk3dGN4WXFEdnB1aFdkQXJ0c0F2SnJvWmZ1Mm5HNDNpVzA2bEtNNHBaOXFVUENKOEFxblZmOElpT1RaWV9mMXJ3IIEC",
+    buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
+    bili_jct="1784a9cc2e51435cf6bd162519c870b9",
+    dedeuserid="333472479",
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
@@ -220,7 +223,7 @@ async def in_liveroom(event):
     time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
     print(f"{time1}:粉丝[{user_name}]进入了直播间")
     # 46130941：老爸  333472479：吟美
-    if user_id!=46130941 and user_id!=333472479:
+    if user_id!="46130941" and user_id!="333472479":
         # 加入欢迎列表
         WelcomeList.append(user_name)
 
@@ -502,7 +505,7 @@ def changeScene(sceneName):
                 obs.play_video("背景音乐",song)
             return True
         else:
-            AnswerList.put(f"晚上{Ai_Name}不敢过去{sceneName}哦")
+            AnswerList.put(f"晚上吟美不敢过去{sceneName}哦")
     return False
 
 # 判断每一种时间段允许移动的场景
@@ -695,11 +698,11 @@ def ai_response():
     if "query" in llm_json:
        #搜索任务的查询字符，在query字段
        title = llm_json["query"]
-       obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}搜索问题\"{title}\"")
+       obs.show_text("吟美状态提示",f"吟美搜索问题\"{title}\"")
     else:
-       obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}思考问题\"{title}\"")
+       obs.show_text("吟美状态提示",f"吟美思考问题\"{title}\"")
 
-    # 身份判定
+    # fastgpt
     shenfen=""
     if username=="程序猿的退休生活":
        shenfen="老爸说:"
@@ -707,8 +710,7 @@ def ai_response():
        shenfen=""
     else:
        shenfen=f"\"{username}\"说:"
-    
-    # fastgpt
+
     if local_llm_type == 1:
         username_prompt = f"{shenfen}{prompt}"
         #username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。"
@@ -720,16 +722,16 @@ def ai_response():
         response = response.replace("You", username)
     # 过滤表情<>或者()标签
     response = filter_html_tags(response)
-    obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}思考问题\"{title}\"完成")
+    obs.show_text("吟美状态提示",f"吟美思考问题\"{title}\"完成")
     
     # 切换场景
-    if "粉色" in response or "睡觉" in response or "粉红" in response:
+    if "粉" in response or "睡觉" in response or "房间" in response:
        changeScene("粉色房间")
     elif "清晨" in response or "早" in response or "睡醒" in response:
        changeScene("清晨房间")
     elif "祭拜" in response or "神社" in response or "寺庙" in response:
        changeScene("神社")
-    elif "花房" in response or "花香" in response:
+    elif "花" in response or "香" in response:
        changeScene("花房")
     elif "岸" in response or "海" in response:
        changeScene("海岸花坊")
@@ -906,7 +908,7 @@ def check_img_search():
         is_SearchImg = 2  # 搜图完成
 
 # 输出图片到虚拟摄像头
-def searchimg_output(img_search_json):
+def searchimg_output_camera(img_search_json):
     try:
         prompt = img_search_json["prompt"]
         username = img_search_json["username"]
@@ -925,10 +927,11 @@ def searchimg_output(img_search_json):
                 image_rgb = image.convert('RGB')
                 image_rgb.save(path, 'JPEG')
                 obs.show_image("绘画图片",path)
+                # CameraOutList.put(image)
                 return 1
         return 0
     except Exception as e:
-        print(f"【searchimg_output】发生了异常：{e}")
+        print(f"【searchimg_output_camera】发生了异常：{e}")
         logging.error(traceback.format_exc())
         return 0
 
@@ -939,10 +942,10 @@ def output_img_thead(img_search_json):
     username = img_search_json["username"]
     try:
         img_search_json = {"prompt": prompt, "username": username}
-        obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}在搜图《{prompt}》")
+        obs.show_text("吟美状态提示",f"吟美在搜图《{prompt}》")
         # 搜索并且输出图片到虚拟摄像头
-        status = searchimg_output(img_search_json)
-        obs.show_text(f"{Ai_Name}状态提示","")
+        status = searchimg_output_camera(img_search_json)
+        obs.show_text("吟美状态提示",f"")
         if status==1:
             # 加入回复列表，并且后续合成语音
             tts_say(f"回复{username}：我给你搜了一张图《{prompt}》")
@@ -1511,7 +1514,7 @@ def sing(songname, username):
     # =============== 开始-判断本地是否有歌 =================
     if os.path.exists(song_path):
         print(f"找到存在本地歌曲:{song_path}")
-        outputTxt=f"回复{username}：{font_text}{Ai_Name}会唱《{songname}》这首歌曲哦"
+        outputTxt=f"回复{username}：{font_text}吟美会唱《{songname}》这首歌曲哦"
         tts_say(outputTxt)
         is_created = 1
     # =============== 结束-判断本地是否有歌 =================
@@ -1529,7 +1532,7 @@ def sing(songname, username):
     if is_created == 0:
         # 播报学习歌曲
         print(f"歌曲不存在，需要生成歌曲《{songname}》")
-        outputTxt=f"回复{username}：{font_text}{Ai_Name}需要学唱歌曲《{songname}》，请耐心等待"
+        outputTxt=f"回复{username}：{font_text}吟美需要学唱歌曲《{songname}》，请耐心等待"
         tts_say(outputTxt)
         # 其他歌曲在生成的时候等待
         while is_creating_song == 1:
@@ -1539,7 +1542,7 @@ def sing(songname, username):
     if is_created==2:
         print(f"生成歌曲失败《{songname}》")
         return
-    obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}已经学会歌曲《{songname}》")
+    obs.show_text("吟美状态提示",f"吟美已经学会歌曲《{songname}》")
     # =============== 结束：如果不存在歌曲，生成歌曲 =================
 
     #等待播放
@@ -1614,7 +1617,7 @@ def create_song(songname,song_path,is_created,downfile):
                 i = i + 1
                 if i >= timout:
                     break
-                obs.show_text(f"{Ai_Name}状态提示",f"当前{Ai_Name}学唱歌曲《{songname}》第{i}秒")
+                obs.show_text("吟美状态提示",f"当前吟美学唱歌曲《{songname}》第{i}秒")
                 print(f"生成《{songname}》歌曲第[{i}]秒,生成状态:{is_created}")
                 time.sleep(1)
         # =============== 结束生成歌曲 =================
@@ -1634,8 +1637,8 @@ def play_song(is_created,songname,song_path,username,query):
             print(f"准备唱歌《{songname}》,播放路径:{song_path}")
             # =============== 开始-触发搜图 =================
             img_search_json = {"prompt": query, "username": username}
-            searchimg_output_thread = Thread(target=searchimg_output,args=(img_search_json,))
-            searchimg_output_thread.start()
+            searchimg_output_camera_thread = Thread(target=searchimg_output_camera,args=(img_search_json,))
+            searchimg_output_camera_thread.start()
             # =============== 结束-触发搜图 =================
             # 开始唱歌服装穿戴
             emote_ws(1, 0.2, "唱歌")
@@ -1718,8 +1721,9 @@ def translate(text,from_lanuage,to_lanuage):
     with DDGS(proxies=duckduckgo_proxies, timeout=20) as ddgs:
         try:
             r = ddgs.translate(text,from_=from_lanuage, to=to_lanuage)
-            print(f"翻译：{r}")
-            return r
+            rs = r[0]
+            print(f"翻译：{rs}")
+            return rs
         except Exception as e: 
             print(f"translate信息回复异常{e}")
             logging.error(traceback.format_exc())
@@ -1855,6 +1859,8 @@ def check_draw():
 # 绘画
 def draw(prompt, drawcontent, username, isExtend):
     global is_drawing
+    global CameraOutList
+    
     is_drawing = 1
 
     drawName=prompt
@@ -1974,6 +1980,15 @@ def draw(prompt, drawcontent, username, isExtend):
         img.save(path)
         # ================= end =================
 
+        # ============== cv2图片对象 ==============
+        # 字节流转换为cv2图片对象
+        # image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        # 转换为RGB：由于 cv2 读出来的图片默认是 BGR，因此需要转换成 RGB
+        # image = image[:, :, [2, 1, 0]]
+        # ================= end =================
+
+        # 虚拟摄像头输出
+        # CameraOutList.put(image)
         obs.show_image("绘画图片",path)
         # 播报绘画
         outputTxt=f"回复{username}：我给你画了一张画《{drawName}》"
@@ -2011,7 +2026,7 @@ def progress(prompt, username):
                             print(f"《{prompt}》进度{p}%发现黄图-nsfw:{nsfw},进度跳过")
                             continue
                         print(f"《{prompt}》进度{p}%绿色图片-nsfw:{nsfw},输出进度图")
-                        obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}正在绘图《{prompt}》,进度{p}%")
+                        obs.show_text("吟美状态提示",f"吟美正在绘图《{prompt}》,进度{p}%")
                     else:
                         print(f"《{prompt}》输出进度：{p}%")
                 except Exception as e:
@@ -2023,6 +2038,12 @@ def progress(prompt, username):
                 img = Image.open(io.BytesIO(base64.b64decode(imgb64)))
                 # 拉伸图片
                 img = img.resize((width, height), Image.LANCZOS)
+                # 字节流转换为cv2图片对象
+                # image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+                # 转换为RGB：由于 cv2 读出来的图片默认是 BGR，因此需要转换成 RGB
+                # image = image[:, :, [2, 1, 0]]
+                # 虚拟摄像头输出
+                # CameraOutList.put(image)
                 # 保存图片
                 timestamp = time.time()
                 path = f"{physical_save_folder}{prompt}_{username}_{nsfw}_{timestamp}.jpg"
@@ -2031,9 +2052,22 @@ def progress(prompt, username):
             time.sleep(1)
         elif is_drawing >= 2:
             print(f"《{prompt}》输出进度：100%")
-            obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}绘图《{prompt}》完成")
+            obs.show_text("吟美状态提示",f"吟美绘图《{prompt}》完成")
             break    
 
+# 鉴黄提示图片输出
+def nsfw_stop_image():
+    # 读取二进制字节流
+    img = Image.open("./images/黄图.jpg")
+    # 拉伸图片
+    img = img.resize((width, height), Image.LANCZOS)
+    # 字节流转换为cv2图片对象
+    image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+    # 转换为RGB：由于 cv2 读出来的图片默认是 BGR，因此需要转换成 RGB
+    image = image[:, :, [2, 1, 0]]
+    # 虚拟摄像头输出
+    CameraOutList.put(image)
+ 
 # 鉴黄
 def nsfw_deal(imgb64):
     headers = {"Content-Type": "application/json"}
@@ -2041,6 +2075,18 @@ def nsfw_deal(imgb64):
     nsfw = requests.post(url=f"http://192.168.2.198:1801/input", headers=headers, json=data, verify=False, timeout=(3, 5))
     nsfwJson = nsfw.json()
     return nsfwJson
+
+# 输出图片流到虚拟摄像头
+def outCamera():
+    global CameraOutList
+    with pyvirtualcam.Camera(width, height, device="OBS Virtual Camera", fps=20) as cam:
+        print(f"输出虚拟摄像头: {cam.device}")
+        while True:
+            if not CameraOutList.empty():
+                image = CameraOutList.get()
+                cam.send(image)
+                cam.sleep_until_next_frame()
+                time.sleep(1)
 
 # 进入直播间欢迎语
 def check_welcome_room():
@@ -2053,7 +2099,7 @@ def check_welcome_room():
         text = f"欢迎一下\"{userlist}\"{numstr}同学来到直播间,跪求关注一下我的直播间"
         WelcomeList.clear()
         #询问LLM
-        llm_json = {"prompt": text, "uid": 0, "username": Ai_Name}
+        llm_json = {"prompt": text, "uid": 0, "username": "吟美"}
         QuestionList.put(llm_json)  # 将弹幕消息放入队列
 
 # 时间判断场景
@@ -2087,6 +2133,10 @@ def main():
     run_forever_thread = Thread(target=run_forever)
     run_forever_thread.start()
 
+    # 唤起虚拟摄像头
+    # outCamera_thread = Thread(target=outCamera)
+    # outCamera_thread.start()
+    
     # 连接obs
     obs.connect()
 
@@ -2121,7 +2171,7 @@ def main():
     check_scene_time()
 
     # 吟美状态提示:初始化清空
-    obs.show_text(f"{Ai_Name}状态提示","")
+    obs.show_text("吟美状态提示","")
 
     if mode==1 or mode==2:
         # LLM回复
