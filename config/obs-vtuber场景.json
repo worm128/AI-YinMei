@@ -32,8 +32,8 @@
             "volume_locked": false
         }
     },
-    "current_scene": "粉色房间",
-    "current_program_scene": "粉色房间",
+    "current_scene": "海岸花坊",
+    "current_program_scene": "海岸花坊",
     "scene_order": [
         {
             "name": "神社"
@@ -416,8 +416,8 @@
             "settings": {
                 "id_counter": 0,
                 "custom_size": true,
-                "cx": 3840,
-                "cy": 3023,
+                "cx": 2876,
+                "cy": 1337,
                 "items": [
                     {
                         "name": "虚拟人物",
@@ -1510,7 +1510,7 @@
             "settings": {
                 "id_counter": 0,
                 "custom_size": true,
-                "cx": 2315,
+                "cx": 1951,
                 "cy": 2160,
                 "items": [
                     {
@@ -3544,7 +3544,7 @@
                 "id_counter": 0,
                 "custom_size": true,
                 "cx": 3791,
-                "cy": 2148,
+                "cy": 2111,
                 "items": [
                     {
                         "name": "弹幕",
@@ -3554,7 +3554,7 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 2592.833251953125,
-                            "y": 0.0
+                            "y": 17.212158203125
                         },
                         "scale": {
                             "x": 1.7116667032241821,
@@ -3593,7 +3593,7 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 0.0,
-                            "y": 1445.333251953125
+                            "y": 1407.54541015625
                         },
                         "scale": {
                             "x": 1.7566666603088379,
@@ -3632,7 +3632,7 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 4.0,
-                            "y": 37.787841796875
+                            "y": 0.0
                         },
                         "scale": {
                             "x": 0.95416665077209473,
@@ -3698,8 +3698,8 @@
             "settings": {
                 "id_counter": 0,
                 "custom_size": true,
-                "cx": 2537,
-                "cy": 2137,
+                "cx": 2528,
+                "cy": 2110,
                 "items": [
                     {
                         "name": "吟美状态提示",
@@ -3709,7 +3709,7 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 0.0,
-                            "y": 1331.0
+                            "y": 1304.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -3748,7 +3748,7 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 6.0,
-                            "y": 1185.0
+                            "y": 1158.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -3787,7 +3787,7 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 1775.0,
-                            "y": 2031.0
+                            "y": 2004.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -3825,7 +3825,7 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 1125.0,
+                            "x": 1116.0,
                             "y": 0.0
                         },
                         "scale": {
@@ -3926,10 +3926,6 @@
             "provider": "mssapi"
         }
     },
-    "resolution": {
-        "x": 3840,
-        "y": 2160
-    },
     "sources": [
         {
             "prev_ver": 503382016,
@@ -4002,6 +3998,7 @@
             "versioned_id": "text_gdiplus_v2",
             "settings": {
                 "outline": true,
+                "text": "吟美思考问题\"你哈啊，日语回复\"",
                 "font": {
                     "face": "微软雅黑",
                     "style": "Bold",
@@ -4009,8 +4006,7 @@
                     "flags": 1
                 },
                 "outline_size": 10,
-                "outline_color": 4278190080,
-                "text": "吟美已经学会歌曲《月の明り（最终幻想4主题曲）》"
+                "outline_color": 4278190080
             },
             "mixers": 0,
             "sync": 0,
@@ -4036,8 +4032,8 @@
             "id": "ffmpeg_source",
             "versioned_id": "ffmpeg_source",
             "settings": {
-                "restart_on_activate": false,
-                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\youtube\\社会摇\\“世界大战”爆发了？以前学社会摇好丢脸， 现在不会摇真TM丢脸 ！.mp4"
+                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\真人\\【ヲタ芸】猫ミームのあの曲【ゼロ打ち】.mp4",
+                "restart_on_activate": false
             },
             "mixers": 255,
             "sync": 0,
@@ -4488,7 +4484,7 @@
             "id": "image_source",
             "versioned_id": "image_source",
             "settings": {
-                "file": "J:\\ai\\vup背景\\海岸花坊\\夜晚.jpg"
+                "file": "J:\\ai\\vup背景\\海岸花坊\\白昼.jpg"
             },
             "mixers": 0,
             "sync": 0,
@@ -4750,7 +4746,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     },
                     {
@@ -4947,7 +4943,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     },
                     {
@@ -5105,7 +5101,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     },
                     {
@@ -5460,7 +5456,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     }
                 ]
@@ -6703,7 +6699,7 @@
             "id": "ffmpeg_source",
             "versioned_id": "ffmpeg_source",
             "settings": {
-                "local_file": "J:\\ai\\vup背景\\神社夜晚\\夜动态.mp4",
+                "local_file": "J:\\ai\\vup背景\\神社白天\\日动态.mp4",
                 "close_when_inactive": false,
                 "undo_uuid": "aab158ab-7d69-49b3-9053-3c07b7895127",
                 "looping": true,
@@ -7057,7 +7053,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     },
                     {
@@ -7412,7 +7408,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     },
                     {
@@ -7767,7 +7763,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     }
                 ]
@@ -7852,7 +7848,7 @@
             "id": "image_source",
             "versioned_id": "image_source",
             "settings": {
-                "file": "J:\\ai\\vup背景\\粉色房间\\晚上开灯桌子.png"
+                "file": "J:\\ai\\vup背景\\粉色房间\\白天桌子.png"
             },
             "mixers": 0,
             "sync": 0,
@@ -7878,7 +7874,7 @@
             "id": "image_source",
             "versioned_id": "image_source",
             "settings": {
-                "file": "J:\\ai\\vup背景\\粉色房间\\晚上开灯.jpg"
+                "file": "J:\\ai\\vup背景\\粉色房间\\白天.jpg"
             },
             "mixers": 0,
             "sync": 0,
@@ -8387,7 +8383,7 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 2641.833251953125,
-                            "y": -4.0
+                            "y": 51.0
                         },
                         "scale": {
                             "x": 1.7116667032241821,
@@ -8504,7 +8500,7 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 49.0,
-                            "y": -4.0
+                            "y": 33.787841796875
                         },
                         "scale": {
                             "x": 1.0,
@@ -8534,7 +8530,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     },
                     {
@@ -8661,8 +8657,8 @@
                         "locked": false,
                         "rot": 0.0,
                         "pos": {
-                            "x": 1171.0,
-                            "y": 0.0
+                            "x": 1162.0,
+                            "y": 27.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -8701,7 +8697,7 @@
                         "rot": 0.0,
                         "pos": {
                             "x": 46.0,
-                            "y": 0.0
+                            "y": 27.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -8934,7 +8930,7 @@
             "id": "image_source",
             "versioned_id": "image_source",
             "settings": {
-                "file": "J:\\ai\\ai-yinmei\\porn\\最终幻想4主题曲_苏子蛋_1712488121.5510836.jpg"
+                "file": "J:\\ai\\ai-yinmei\\porn\\天天向上_苏子蛋_1712883093.0771232.jpg"
             },
             "mixers": 0,
             "sync": 0,
@@ -8960,8 +8956,8 @@
             "id": "ffmpeg_source",
             "versioned_id": "ffmpeg_source",
             "settings": {
-                "looping": true,
-                "local_file": "J:\\ai\\背景音乐\\粉色房间.rm"
+                "local_file": "J:\\ai\\背景音乐\\海岸花坊.rm",
+                "looping": true
             },
             "mixers": 255,
             "sync": 0,
@@ -8986,7 +8982,7 @@
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
-            "monitoring_type": 2,
+            "monitoring_type": 0,
             "private_settings": {}
         },
         {
@@ -10205,7 +10201,7 @@
             "id": "ffmpeg_source",
             "versioned_id": "ffmpeg_source",
             "settings": {
-                "local_file": "H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号\\_8跳舞尬舞\\Russian Kid Dancing In The Club Goin Up On A Tuesday Night.mp4",
+                "local_file": "H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号\\_8跳舞尬舞\\奥特曼跳舞.mp4",
                 "restart_on_activate": false
             },
             "mixers": 255,
@@ -10364,7 +10360,7 @@
             "id": "ffmpeg_source",
             "versioned_id": "ffmpeg_source",
             "settings": {
-                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\吟美\\开心摇.mp4",
+                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\youtube\\chipi\\Chipi猫 但是翻唱.mp4",
                 "looping": false,
                 "restart_on_activate": false
             },

@@ -21,7 +21,7 @@ import logging
 from func.obs.obs_websocket import ObsWebSocket,VideoStatus,VideoControl
 from func.tools.file_util import FileUtil
 from func.tools.string_util import StringUtil
-from search import crawler,baidusearch
+from func.search import crawler,baidusearch
 from io import BytesIO
 from PIL import Image
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -127,9 +127,9 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="e7297ffd%2C1728021262%2C9d352%2A42CjByluo8_3cAYLGSzYP-jg-_Hb4Fo1vWVW1mnDRXqV4IVt6oNaiDhT356_eyAshEbCkSVkU1M2JscVhZdE9LWlBfZDR5VHVXRHFvX2lld1ozdDdvcTBVWnozTXdyMGVGWV9BdVJMbkk2WGxIeUdqNGdNeHY4MjNsVzQ5UnAwZG5oNGZUZWQtZk1RIIEC",
+    sessdata="8d848094%2C1728299438%2Cf312f%2A42CjADHVh4rIPyKjo3z2oZx0V3aiu7T91qTjH7SCFZVK5lgmZ_Qu01iS_VxA2WuYi4ggcSVkxMbzZpek9JNm5FWjJ5Y2RCcXhEcjk3dGN4WXFEdnB1aFdkQXJ0c0F2SnJvWmZ1Mm5HNDNpVzA2bEtNNHBaOXFVUENKOEFxblZmOElpT1RaWV9mMXJ3IIEC",
     buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
-    bili_jct="1a9126ed6a0e1548905aa3710e254f75",
+    bili_jct="1784a9cc2e51435cf6bd162519c870b9",
     dedeuserid="333472479",
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
@@ -167,12 +167,16 @@ nsfw_lock = threading.Lock()
 # ============================================
 
 # ============= 语音合成 =====================
+#bert-vists
 bert_vists_url="192.168.2.58:5000"
 speaker_name="珊瑚宫心海[中]"
 sdp_ratio=0.2  #SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
 noise=0.2 #控制感情变化程度，默认0.2
 noisew=0.9 #控制音节发音变化程度，默认0.9
 speed=1  #语速
+#gpt-SoVITS
+gtp_vists_url="192.168.2.58:9880"
+
 # ============================================
 
 # ============= OBS直播软件控制 =====================
@@ -215,10 +219,13 @@ print("--------------------")
 @room.on("INTERACT_WORD")
 async def in_liveroom(event):
     user_name = event["data"]["data"]["uname"]  # 获取用户昵称
+    user_id = event["data"]["data"]["uid"]  # 获取用户uid
     time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
     print(f"{time1}:粉丝[{user_name}]进入了直播间")
-    # 加入欢迎列表
-    WelcomeList.append(user_name)
+    # 46130941：老爸  333472479：吟美
+    if user_id!="46130941" and user_id!="333472479":
+        # 加入欢迎列表
+        WelcomeList.append(user_name)
 
 # B站弹幕处理
 @room.on("DANMU_MSG")  # 弹幕消息事件回调函数
@@ -263,6 +270,12 @@ def http_draw():
     print(f"http绘画接口处理：\"{username}\"绘画《{drawname}》，{drawcontent}")
     draw_json = {"prompt": drawname, "drawcontent":drawcontent, "username": username, "isExtend": False}
     DrawQueueList.put(draw_json)
+
+# http绘画接口处理
+@app.route("/http_scene", methods=["GET"])
+def http_scene():
+    scenename = request.args["scenename"]
+    changeScene(scenename)
 
 # http接口处理
 @app.route("/msg", methods=["POST"])
@@ -469,25 +482,31 @@ def msg_deal(query,uid,user_name):
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
        print("切换场景：" + queryExtract)
-       if allow_scene(queryExtract)==True:
-          # 切换场景
-          obs.change_scene(queryExtract)
-          # 背景乐切换
-          if queryExtract in song_background:
-             song = song_background[queryExtract]
-             if obs.get_video_status("背景音乐")==VideoStatus.PAUSE.value:
-                obs.play_video("背景音乐",song)
-                time.sleep(1)
-                obs.control_video("背景音乐",VideoControl.PAUSE.value)
-             else:
-                obs.play_video("背景音乐",song)
-       else:
-          AnswerList.put(f"晚上吟美不敢过去{queryExtract}")
+       changeScene(queryExtract)
        return
     
     #询问LLM
     llm_json = {"prompt": query, "uid": uid, "username": user_name}
     QuestionList.put(llm_json)  # 将弹幕消息放入队列
+
+# 场景切换
+def changeScene(sceneName):
+    if allow_scene(sceneName)==True:
+        # 切换场景
+        obs.change_scene(sceneName)
+        # 背景乐切换
+        if sceneName in song_background:
+            song = song_background[sceneName]
+            if obs.get_video_status("背景音乐")==VideoStatus.PAUSE.value:
+                obs.play_video("背景音乐",song)
+                time.sleep(1)
+                obs.control_video("背景音乐",VideoControl.PAUSE.value)
+            else:
+                obs.play_video("背景音乐",song)
+            return True
+        else:
+            AnswerList.put(f"晚上吟美不敢过去{sceneName}哦")
+    return False
 
 # 判断每一种时间段允许移动的场景
 def allow_scene(queryExtract):
@@ -606,7 +625,7 @@ def chat_fastgpt(content, uid, username):
     }
     try:
         response = requests.post(
-            url, headers=headers, json=data, verify=False, timeout=60
+            url, headers=headers, json=data, verify=False, timeout=(3, 60)
         )
     except Exception as e:
         print(f"【{content}】信息回复异常")
@@ -637,7 +656,7 @@ def chat_tgw(content, character, mode, preset,username):
     }
     try:
         response = requests.post(
-            url, headers=headers, json=data, verify=False, timeout=60
+            url, headers=headers, json=data, verify=False, timeout=(3, 60)
         )
     except Exception as e:
         print(f"【{content}】信息回复异常")
@@ -675,8 +694,9 @@ def ai_response():
 
     # 用户查询标题
     title = prompt
+    # query有值是搜索任务，没有值是聊天任务
     if "query" in llm_json:
-       #搜索语音
+       #搜索任务的查询字符，在query字段
        title = llm_json["query"]
        obs.show_text("吟美状态提示",f"吟美搜索问题\"{title}\"")
     else:
@@ -700,11 +720,23 @@ def ai_response():
         username_prompt = f"{shenfen}{prompt}"
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
+    # 过滤表情<>或者()标签
     response = filter_html_tags(response)
     obs.show_text("吟美状态提示",f"吟美思考问题\"{title}\"完成")
+    
+    # 切换场景
+    if "粉" in response or "睡觉" in response or "房间" in response:
+       changeScene("粉色房间")
+    elif "清晨" in response or "早" in response or "睡醒" in response:
+       changeScene("清晨房间")
+    elif "祭拜" in response or "神社" in response or "寺庙" in response:
+       changeScene("神社")
+    elif "花" in response or "香" in response:
+       changeScene("花房")
+    elif "岸" in response or "海" in response:
+       changeScene("海岸花坊")
 
     # 回复文本
-    # query有值是搜索任务，没有值是聊天任务
     answer = f"{response}"
 
     # 日志输出
@@ -714,11 +746,12 @@ def ai_response():
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
     # 加入回复列表，并且后续合成语音
-    AnswerList.put(answer)
+    json = {"question":title,"text":response,"lanuage":"AutoChange"}
+    AnswerList.put(json)
 
 # 过滤html标签
 def filter_html_tags(text):
-    pattern = r'<.*?>'  # 匹配尖括号内的所有内容
+    pattern = r'<.*?>|\(.*?\)'  # 匹配尖括号内的所有内容
     return re.sub(pattern, '', text)
 
 # duckduckgo搜索引擎搜索
@@ -890,7 +923,9 @@ def searchimg_output_camera(img_search_json):
                 # 保存图片
                 timestamp = time.time()
                 path = f"{physical_save_folder}{prompt}_{username}_{timestamp}.jpg"
-                image.save(path)
+                # 转换图像模式为RGB
+                image_rgb = image.convert('RGB')
+                image_rgb.save(path, 'JPEG')
                 obs.show_image("绘画图片",path)
                 # CameraOutList.put(image)
                 return 1
@@ -925,7 +960,7 @@ def output_img_thead(img_search_json):
 
 # 图片转换字节流
 def output_search_img(imgUrl,prompt,username):
-    response = requests.get(imgUrl)
+    response = requests.get(imgUrl,timeout=(5, 60))
     img_data = response.content
 
     imgb64 = base64.b64encode(img_data)
@@ -1031,7 +1066,19 @@ emotion：情感描述
 def bert_vits2(filename,text,emotion):
     save_path=f".\output\{filename}.mp3"
     text=parse.quote(text)
-    response = requests.get(url=f"http://{bert_vists_url}/voice?text={text}&model_id=0&speaker_name={speaker_name}&sdp_ratio={sdp_ratio}&noise={noise}&noisew={noisew}&length={speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}")
+    response = requests.get(url=f"http://{bert_vists_url}/voice?text={text}&model_id=0&speaker_name={speaker_name}&sdp_ratio={sdp_ratio}&noise={noise}&noisew={noisew}&length={speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}",timeout=(3, 60))
+    if response.status_code == 200:
+       audio_data = response.content # 获取音频数据
+       with open(save_path, 'wb') as file:
+            filenum=file.write(audio_data)
+            if filenum>0:
+                return 1
+    return 0
+
+def gtp_vists(filename,text,emotion):
+    save_path=f".\output\{filename}.mp3"
+    text=parse.quote(text)
+    response = requests.get(url=f"http://{gtp_vists_url}/?text={text}&text_language=auto",timeout=(3, 60))
     if response.status_code == 200:
        audio_data = response.content # 获取音频数据
        with open(save_path, 'wb') as file:
@@ -1044,18 +1091,35 @@ def bert_vits2(filename,text,emotion):
 def tts_say(text):
     try:
         say_lock.acquire()
-        tts_say_do(text)
+        json =  {"question":"","text":text,"lanuage":""}
+        tts_say_do(json)
     except Exception as e:
         print(f"【tts_say】发生了异常：{e}")
         logging.error(traceback.format_exc())
     finally:
         say_lock.release()
 
-# 直接合成语音播放
-def tts_say_do(text):
+# 直接合成语音播放-聊天用      
+def tts_chat_say(json):
+    try:
+        say_lock.acquire()
+        tts_say_do(json)
+    except Exception as e:
+        print(f"【tts_chat_say】发生了异常：{e}")
+        logging.error(traceback.format_exc())
+    finally:
+        say_lock.release()
+
+# 直接合成语音播放 {"question":question,"text":text,"lanuage":"ja"}
+def tts_say_do(json):
     global SayCount
     filename=f"say{SayCount}"
     
+    question = json["question"]
+    text = json["text"]
+    replyText = text
+    lanuage = json["lanuage"]
+
     # 识别表情
     jsonstr = emote_content(text)
     print(f"输出表情{jsonstr}")
@@ -1071,9 +1135,23 @@ def tts_say_do(text):
     #     f"edge-tts --voice zh-CN-XiaoxiaoNeural --rate=+20% --f .\output\{filename}.txt --write-media .\output\{filename}.mp3 2>nul",
     #     shell=True,
     # )
+
+    # bert-vits2合成语音
+    # status = bert_vits2(filename,text,emotion)
     
-    # bert_vits2合成语音
-    status = bert_vits2(filename,text,emotion)
+    # 感情值增加
+    moodNum = mood(emotion)
+
+    # 触发翻译日语
+    if lanuage=="AutoChange":
+        print(f"当前感情值:{moodNum}")
+        if moodNum>90 or "日语" in question or emotion=="angry":
+           trans_json = translate(text,"zh-Hans","ja")
+           if has_field(trans_json,"translated"):
+                text = trans_json["translated"]
+
+    # gtp-vists合成语音
+    status = gtp_vists(filename,text,emotion)
     if status == 0:
        return
     
@@ -1082,46 +1160,62 @@ def tts_say_do(text):
     emote_thread.start()
     
     # 输出回复字幕
-    ReplyTextList.put(text)
-
+    ReplyTextList.put(replyText)
+    
+    # 循环摇摆动作
+    yaotou_thread = Thread(target=auto_swing)
+    yaotou_thread.start()
+    
     # 播放声音
     mpv_play("mpv.exe", f".\output\{filename}.mp3", 100)
 
     # 执行命令行指令
     subprocess.run(f"del /f .\output\say{SayCount}.mp3 1>nul", shell=True)
     SayCount += 1
-    
+
+mood_num=0
+# 感情值判断
+def mood(emotion):
+    global mood_num
+    if emotion=="sad":
+        mood_num=mood_num+1
+    if emotion=="happy":
+        mood_num=mood_num+2
+    if emotion=="angry":
+        mood_num=mood_num+3
+    if mood_num>100:
+        mood_num=0
+    return mood_num
+
 
 # 从回复队列中提取一条，通过edge-tts生成语音对应AudioCount编号语音
 def tts_generate():
     global AnswerList
     response = AnswerList.get()
-    # 循环摇摆动作
-    yaotou_thread = Thread(target=auto_yaobai)
-    yaotou_thread.start()
+    
     # 合成语音
-    tts_say(response)
+    tts_chat_say(response)
 
 # 摇摆
-yaobai_motion = 2  #1.摇摆中 2.停止摇摆
-auto_yaobai_lock = threading.Lock()
-def auto_yaobai():
-    auto_yaobai_lock.acquire()
-    global yaobai_motion
+swing_motion = 2  #1.摇摆中 2.停止摇摆
+auto_swing_lock = threading.Lock()
+def auto_swing():
+    auto_swing_lock.acquire()
+    global swing_motion
     # 触发器-设置开始摇摆: 停止摇摆+（唱歌中 或者 聊天中）= 可以设置摇摆动作
-    if yaobai_motion == 2 and (is_singing==1 or is_tts_ready==False):
-       print(f"进入摇摆状态:{yaobai_motion},{is_singing},{is_tts_ready}")
-       yaobai_motion = 1
+    if swing_motion == 2 and (is_singing==1 or is_tts_ready==False):
+       print(f"进入摇摆状态:{swing_motion},{is_singing},{is_tts_ready}")
+       swing_motion = 1
     else:
-       auto_yaobai_lock.release()
+       auto_swing_lock.release()
        return
     # 监听停止摇摆线程
     stop_emote_thread = Thread(target=stop_motion)
     stop_emote_thread.start()
-    auto_yaobai_lock.release()
+    auto_swing_lock.release()
 
     # 执行器-循环摇摆：
-    while yaobai_motion == 1 and (is_singing==1 or is_tts_ready==False):
+    while swing_motion == 1 and (is_singing==1 or is_tts_ready==False):
         jsonstr = []
         jsonstr.append({"content":"happy","key":"摇摆1","num":1,"timesleep":0,"donum":0,"endwait":24})
         jsonstr.append({"content":"happy","key":"摇摆2","num":1,"timesleep":0,"donum":0,"endwait":21})
@@ -1140,19 +1234,19 @@ def auto_yaobai():
            endwait=endwait-1
            # 唱歌完毕并且聊天完毕：停止摇摆动作
            if is_singing==2 and is_tts_ready==True:
-              yaobai_motion=2
-              print(f"强制停止摇摆：{yaobai_motion}")
+              swing_motion=2
+              print(f"强制停止摇摆：{swing_motion}")
               break
-    yaobai_motion = 2
+    swing_motion = 2
     print(f"结束摇摆：{emote_show_json}")    
     
 
 
 # 停止动作
 def stop_motion():
-    while yaobai_motion==1:
+    while swing_motion==1:
         time.sleep(1)
-    print(f"静止：{yaobai_motion}")
+    print(f"静止：{swing_motion}")
     emote_ws(1, 0, "静止")
 
 # 文本识别表情内容
@@ -1394,7 +1488,7 @@ def sing(songname, username):
     query = songname # 查询内容
     
     # =============== 开始-获取真实歌曲名称 =================
-    musicJson = requests.get(url=f"http://{singUrl}/musicInfo/{songname}")
+    musicJson = requests.get(url=f"http://{singUrl}/musicInfo/{songname}",timeout=(3, 5))
     music_json = json.loads(musicJson.text)
     id = music_json["id"]
     songname = music_json["songName"]
@@ -1492,7 +1586,7 @@ def create_song(songname,song_path,is_created,downfile):
             match = re.match(song_regx, songname)
             if match:
                print(f"当前歌曲只下载不转换《{songname}》")
-               jsonStr = requests.get(url=f"http://{singUrl}/download_song/{songname}")
+               jsonStr = requests.get(url=f"http://{singUrl}/download_song/{songname}",timeout=(3, 120))
                status_json = json.loads(jsonStr.text)
                is_download=True
                break
@@ -1501,7 +1595,7 @@ def create_song(songname,song_path,is_created,downfile):
         # =============== 开始-学习唱歌任务 =================
         if is_download==False:
             # 生成歌曲接口
-            jsonStr = requests.get(url=f"http://{singUrl}/append_song/{songname}")
+            jsonStr = requests.get(url=f"http://{singUrl}/append_song/{songname}",timeout=(3, 5))
             status_json = json.loads(jsonStr.text)
         # =============== 结束-学习唱歌任务 =================
 
@@ -1551,8 +1645,8 @@ def play_song(is_created,songname,song_path,username,query):
             # 播报唱歌文字
             tts_say(f"回复{username}：我准备唱一首歌《{songname}》")
             # 循环摇摆动作
-            auto_yaobai_thread = Thread(target=auto_yaobai)
-            auto_yaobai_thread.start()
+            auto_swing_thread = Thread(target=auto_swing)
+            auto_swing_thread.start()
             # 唱歌视频播放
             sing_dance_thread = Thread(target=sing_dance, args=(query,))
             sing_dance_thread.start()
@@ -1603,7 +1697,7 @@ def sing_dance(songname):
 # 匹配已生成的歌曲，并返回字节流
 def check_down_song(songname):
     # 查看歌曲是否曾经生成
-    status = requests.get(url=f"http://{singUrl}/status")
+    status = requests.get(url=f"http://{singUrl}/status",timeout=(3, 5))
     converted_json = json.loads(status.text)
     converted_file = converted_json["converted_file"]  # 生成歌曲硬盘文件
     convertfail = converted_json["convertfail"]  # 生成歌曲硬盘文件
@@ -1617,18 +1711,19 @@ def check_down_song(songname):
     for filename in converted_file:
         if songname == filename:
             is_created = 1
-            downfile = requests.get(url=f"http://{singUrl}/get_audio/{songname}")
+            downfile = requests.get(url=f"http://{singUrl}/get_audio/{songname}",timeout=(3, 120))
             return downfile, is_created
     
     return None, is_created
 
 #翻译
-def translate(text):
+def translate(text,from_lanuage,to_lanuage):
     with DDGS(proxies=duckduckgo_proxies, timeout=20) as ddgs:
         try:
-            r = ddgs.translate(text,from_="zh-Hans", to="en")
-            print(f"翻译：{r}")
-            return r
+            r = ddgs.translate(text,from_=from_lanuage, to=to_lanuage)
+            rs = r[0]
+            print(f"翻译：{rs}")
+            return rs
         except Exception as e: 
             print(f"translate信息回复异常{e}")
             logging.error(traceback.format_exc())
@@ -1667,9 +1762,12 @@ def draw_prompt(query,offset,limit):
                     "tags.name",
                     "user.username"
                 ],
+                "filter": [
+				    "nsfwLevel=1"
+			    ],
                 "highlightPostTag": "__/ais-highlight__",
                 "highlightPreTag": "__ais-highlight__",
-                "indexUid": "images_v3",
+                "indexUid": "images_v4",
                 "limit": limit,
                 "offset": offset,
                 "q": query
@@ -1687,7 +1785,7 @@ def draw_prompt(query,offset,limit):
         # ========== 过滤18禁提示词: ==========
         # 参数"txt2imgHiRes"是18禁图片，"txt2img"是绿色图片；nsfw为禁黄标识：None是安全
         for json in hits_temp:
-            if json["generationProcess"]=="txt2img" and json["nsfw"]=="None":
+            if json["generationProcess"]=="txt2img":
                hits.append(json)
         if len(hits)<=0:
            return ""
@@ -1776,12 +1874,12 @@ def draw(prompt, drawcontent, username, isExtend):
     try:
         # 绘画标题
         if prompt!="":
-            trans_json = translate(prompt)  #翻译
+            trans_json = translate(prompt,"zh-Hans","en")  #翻译
             if has_field(trans_json,"translated"):
                 prompt = trans_json["translated"]
         # 绘画详细描述
         if drawcontent!="":
-            trans_json2 = translate(drawcontent)  #翻译
+            trans_json2 = translate(drawcontent,"zh-Hans","en")  #翻译
             if has_field(trans_json2,"translated"):
                 drawcontent = trans_json2["translated"]
 
@@ -1848,7 +1946,7 @@ def draw(prompt, drawcontent, username, isExtend):
         progress_thread = Thread(target=progress,args=(drawName, username))
         progress_thread.start()
         # 生成绘画
-        response = requests.post(url=f"http://{drawUrl}/sdapi/v1/txt2img", json=payload)
+        response = requests.post(url=f"http://{drawUrl}/sdapi/v1/txt2img", json=payload,timeout=(3, 30))
         is_drawing = 2
         r = response.json()
         #错误码跳出
@@ -1910,7 +2008,7 @@ def progress(prompt, username):
         # 绘画中：输出进度图
         if is_drawing == 1:
             # stable-diffusion绘图进度
-            response = requests.get(url=f"http://{drawUrl}/sdapi/v1/progress")
+            response = requests.get(url=f"http://{drawUrl}/sdapi/v1/progress",timeout=(3, 30))
             r = response.json()
             imgb64 = r["current_image"]
             if imgb64 != "" and imgb64 is not None:
@@ -1974,7 +2072,7 @@ def nsfw_stop_image():
 def nsfw_deal(imgb64):
     headers = {"Content-Type": "application/json"}
     data={"image_loader":"yahoo","model_weights":"data/open_nsfw-weights.npy","input_type":"BASE64_JPEG","input_image":imgb64}
-    nsfw = requests.post(url=f"http://192.168.2.198:1801/input", headers=headers, json=data, verify=False, timeout=60)
+    nsfw = requests.post(url=f"http://192.168.2.198:1801/input", headers=headers, json=data, verify=False, timeout=(3, 5))
     nsfwJson = nsfw.json()
     return nsfwJson
 
@@ -2055,6 +2153,11 @@ def main():
     # if content!="":
     #     obs.show_text("表情列表",content)
     
+    # 停止所有视频播放
+    obs.control_video("唱歌视频",VideoControl.STOP.value)
+    obs.control_video("video",VideoControl.STOP.value)
+    obs.control_video("表情",VideoControl.STOP.value)
+
     # 切换场景:初始化
     scene_name = "海岸花坊"
     obs.change_scene(scene_name)

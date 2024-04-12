@@ -73,16 +73,24 @@ def has_string_reg(regx,s):
 # wenhou_num = random.randrange(0, len(wenhou))
 # print(wenhou[wenhou_num])
 
+# 过滤html标签
+def filter_html_tags(text):
+    pattern = r'<.*?>|\(.*?\)'  # 匹配尖括号内的所有内容(.*?)
+    return re.sub(pattern, '', text)
+
+str="你啊哈大啊(搞笑)，你丫的兔崽子<死人呢>搞大幅度"
+end=filter_html_tags(str)
+print(end)
 # 正则判断[集合判断]
 def has_string_reg_list(regxlist,s):
     regx = regxlist.replace("[","(").replace("]",")").replace(",","|").replace("'","").replace(" ","")
     return re.search(regx, s)
 
-text = ["跳舞", "跳一下", "舞蹈"]
-print(text)
-ok = has_string_reg_list(f"^{text}","舞蹈ddfg 嘻嘻嘻")
-print(ok.regs[0](1))
-jsonstr=[]
+# text = ["跳舞", "跳一下", "舞蹈"]
+# print(text)
+# ok = has_string_reg_list(f"^{text}","舞蹈ddfg 嘻嘻嘻")
+# print(ok.regs[0](1))
+# jsonstr=[]
 # press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
 # userlist = str(press_arry).replace("['","").replace("']","")
 # # press = random.randrange(0, len(press_arry))
