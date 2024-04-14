@@ -125,9 +125,7 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 #实例化 Credential 类
 cred = Credential(
     sessdata="",
-    buvid3="",
-    bili_jct="",
-    dedeuserid="",
+    buvid3=""
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
@@ -1940,7 +1938,7 @@ def draw(prompt, drawcontent, username, isExtend):
         progress_thread = Thread(target=progress,args=(drawName, username))
         progress_thread.start()
         # 生成绘画
-        response = requests.post(url=f"http://{drawUrl}/sdapi/v1/txt2img", json=payload,timeout=(3, 30))
+        response = requests.post(url=f"http://{drawUrl}/sdapi/v1/txt2img", json=payload,timeout=(5, 60))
         is_drawing = 2
         r = response.json()
         #错误码跳出
@@ -1993,7 +1991,7 @@ def progress(prompt, username):
         # 绘画中：输出进度图
         if is_drawing == 1:
             # stable-diffusion绘图进度
-            response = requests.get(url=f"http://{drawUrl}/sdapi/v1/progress",timeout=(3, 30))
+            response = requests.get(url=f"http://{drawUrl}/sdapi/v1/progress",timeout=(5, 60))
             r = response.json()
             imgb64 = r["current_image"]
             if imgb64 != "" and imgb64 is not None:
