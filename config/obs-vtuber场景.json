@@ -224,7 +224,7 @@
                 "cy": 2115,
                 "items": [
                     {
-                        "name": "吟美状态提示",
+                        "name": "状态提示",
                         "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
                         "visible": true,
                         "locked": false,
@@ -416,8 +416,8 @@
             "settings": {
                 "id_counter": 0,
                 "custom_size": true,
-                "cx": 2876,
-                "cy": 1337,
+                "cx": 3840,
+                "cy": 3023,
                 "items": [
                     {
                         "name": "虚拟人物",
@@ -1510,11 +1510,11 @@
             "settings": {
                 "id_counter": 0,
                 "custom_size": true,
-                "cx": 1951,
+                "cx": 2133,
                 "cy": 2160,
                 "items": [
                     {
-                        "name": "吟美状态提示",
+                        "name": "状态提示",
                         "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
                         "visible": true,
                         "locked": false,
@@ -2216,7 +2216,7 @@
                 "cy": 2142,
                 "items": [
                     {
-                        "name": "吟美状态提示",
+                        "name": "状态提示",
                         "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
                         "visible": true,
                         "locked": false,
@@ -2333,6 +2333,45 @@
                         "private_settings": {}
                     },
                     {
+                        "name": "整合包",
+                        "source_uuid": "7da9f6b3-c515-4419-a4f5-364b1f3f4ad6",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1180.0,
+                            "y": 102.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 24,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
                         "name": "神社底部信息",
                         "source_uuid": "9dbef46d-97ba-482f-84c5-98c891e7ad80",
                         "visible": true,
@@ -2391,6 +2430,8 @@
                 "libobs.hide_scene_item.19": [],
                 "libobs.show_scene_item.20": [],
                 "libobs.hide_scene_item.20": [],
+                "libobs.show_scene_item.24": [],
+                "libobs.hide_scene_item.24": [],
                 "libobs.show_scene_item.21": [],
                 "libobs.hide_scene_item.21": []
             },
@@ -2959,7 +3000,7 @@
                 "cy": 2160,
                 "items": [
                     {
-                        "name": "吟美状态提示",
+                        "name": "状态提示",
                         "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
                         "visible": true,
                         "locked": false,
@@ -3702,7 +3743,7 @@
                 "cy": 2110,
                 "items": [
                     {
-                        "name": "吟美状态提示",
+                        "name": "状态提示",
                         "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
                         "visible": true,
                         "locked": false,
@@ -3926,6 +3967,10 @@
             "provider": "mssapi"
         }
     },
+    "resolution": {
+        "x": 3840,
+        "y": 2160
+    },
     "sources": [
         {
             "prev_ver": 503382016,
@@ -3992,48 +4037,13 @@
         },
         {
             "prev_ver": 503382016,
-            "name": "吟美状态提示",
-            "uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
-            "id": "text_gdiplus",
-            "versioned_id": "text_gdiplus_v2",
-            "settings": {
-                "outline": true,
-                "text": "吟美思考问题\"你哈啊，日语回复\"",
-                "font": {
-                    "face": "微软雅黑",
-                    "style": "Bold",
-                    "size": 80,
-                    "flags": 1
-                },
-                "outline_size": 10,
-                "outline_color": 4278190080
-            },
-            "mixers": 0,
-            "sync": 0,
-            "flags": 0,
-            "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {},
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 503382016,
             "name": "唱歌视频",
             "uuid": "22d07de0-79f2-4348-8660-ff9a3992d485",
             "id": "ffmpeg_source",
             "versioned_id": "ffmpeg_source",
             "settings": {
-                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\真人\\【ヲタ芸】猫ミームのあの曲【ゼロ打ち】.mp4",
-                "restart_on_activate": false
+                "restart_on_activate": false,
+                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\youtube\\社会摇\\【另类抖音】东北最强社会摇团队，社会摇中万人迷，唯有男神.mp4"
             },
             "mixers": 255,
             "sync": 0,
@@ -4156,6 +4166,41 @@
                 "libobs.push-to-talk": [],
                 "ObsBrowser.Refresh": []
             },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 503382016,
+            "name": "整合包",
+            "uuid": "7da9f6b3-c515-4419-a4f5-364b1f3f4ad6",
+            "id": "text_gdiplus",
+            "versioned_id": "text_gdiplus_v2",
+            "settings": {
+                "outline": true,
+                "text": "最近会公布吟美Ai整合包，\n                       请留意频道“程序猿的退休生活”",
+                "font": {
+                    "face": "微软雅黑",
+                    "style": "Bold",
+                    "size": 80,
+                    "flags": 1
+                },
+                "outline_size": 5,
+                "outline_color": 4278190080
+            },
+            "mixers": 0,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {},
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
             "monitoring_type": 0,
@@ -4510,7 +4555,7 @@
             "id": "scene",
             "versioned_id": "scene",
             "settings": {
-                "id_counter": 23,
+                "id_counter": 24,
                 "custom_size": false,
                 "items": [
                     {
@@ -4746,7 +4791,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": false
+                            "collapsed": true
                         }
                     },
                     {
@@ -4943,7 +4988,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": false
+                            "collapsed": true
                         }
                     },
                     {
@@ -5101,11 +5146,11 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": false
+                            "collapsed": true
                         }
                     },
                     {
-                        "name": "吟美状态提示",
+                        "name": "状态提示",
                         "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
                         "visible": true,
                         "locked": false,
@@ -5209,6 +5254,45 @@
                         "crop_right": 0,
                         "crop_bottom": 0,
                         "id": 20,
+                        "group_item_backup": true,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "整合包",
+                        "source_uuid": "7da9f6b3-c515-4419-a4f5-364b1f3f4ad6",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 1260.0,
+                            "y": 102.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 24,
                         "group_item_backup": true,
                         "scale_filter": "disable",
                         "blend_method": "default",
@@ -5456,7 +5540,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": false
+                            "collapsed": true
                         }
                     }
                 ]
@@ -6174,7 +6258,7 @@
                         }
                     },
                     {
-                        "name": "吟美状态提示",
+                        "name": "状态提示",
                         "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
                         "visible": true,
                         "locked": false,
@@ -6558,6 +6642,41 @@
                 "libobs.show_scene_item.22": [],
                 "libobs.hide_scene_item.22": []
             },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 503382016,
+            "name": "状态提示",
+            "uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
+            "id": "text_gdiplus",
+            "versioned_id": "text_gdiplus_v2",
+            "settings": {
+                "outline": true,
+                "font": {
+                    "face": "微软雅黑",
+                    "style": "Bold",
+                    "size": 80,
+                    "flags": 1
+                },
+                "outline_size": 10,
+                "outline_color": 4278190080,
+                "text": "吟美思考问题\"吟美学狗叫\"完成"
+            },
+            "mixers": 0,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {},
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
             "monitoring_type": 0,
@@ -7412,7 +7531,7 @@
                         }
                     },
                     {
-                        "name": "吟美状态提示",
+                        "name": "状态提示",
                         "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
                         "visible": true,
                         "locked": false,
@@ -8534,7 +8653,7 @@
                         }
                     },
                     {
-                        "name": "吟美状态提示",
+                        "name": "状态提示",
                         "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
                         "visible": true,
                         "locked": false,
@@ -8930,7 +9049,7 @@
             "id": "image_source",
             "versioned_id": "image_source",
             "settings": {
-                "file": "J:\\ai\\ai-yinmei\\porn\\天天向上_苏子蛋_1712883093.0771232.jpg"
+                "file": "J:\\ai\\ai-yinmei\\porn\\风之车_所有人_1713075538.1705067.jpg"
             },
             "mixers": 0,
             "sync": 0,
@@ -8956,8 +9075,8 @@
             "id": "ffmpeg_source",
             "versioned_id": "ffmpeg_source",
             "settings": {
-                "local_file": "J:\\ai\\背景音乐\\海岸花坊.rm",
-                "looping": true
+                "looping": true,
+                "local_file": "J:\\ai\\背景音乐\\海岸花坊.rm"
             },
             "mixers": 255,
             "sync": 0,
@@ -9358,7 +9477,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     },
                     {
@@ -9717,7 +9836,7 @@
                         }
                     },
                     {
-                        "name": "吟美状态提示",
+                        "name": "状态提示",
                         "source_uuid": "10122d17-60f9-4292-869e-1257bc1a14d2",
                         "visible": true,
                         "locked": false,
@@ -9910,7 +10029,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     },
                     {
@@ -10068,7 +10187,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": false
+                            "collapsed": true
                         }
                     }
                 ]
@@ -10191,7 +10310,7 @@
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
-            "monitoring_type": 2,
+            "monitoring_type": 0,
             "private_settings": {}
         },
         {
@@ -10360,7 +10479,7 @@
             "id": "ffmpeg_source",
             "versioned_id": "ffmpeg_source",
             "settings": {
-                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\youtube\\chipi\\Chipi猫 但是翻唱.mp4",
+                "local_file": "H:\\人工智能\\ai\\跳舞视频\\横屏\\吟美\\小熊舞.mp4",
                 "looping": false,
                 "restart_on_activate": false
             },

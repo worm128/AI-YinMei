@@ -124,8 +124,8 @@ is_creating_song = 2  # 1.生成中 2.生成完毕
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="",
-    buvid3=""
+    sessdata="f1e5bc7a%2C1728621982%2Ceea71%2A42CjBll5YCbc6qdfIDhUAiWftNX4EW36tuxARKyAmQ1za01VqxK_WIZPL79SJ9az0-gyASVnJ2NWJzRHo4Uk5la28tWlVrOFowZk5uNEpmd09VQTEzMkp0eUFJWFl3ZVpHM3VHaFpsZk5tN3RMSmNMdHc5V2tJQWZiSExNZnhLUEh3dk5NemE0d1hnIIEC",
+    buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc"
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
@@ -693,9 +693,9 @@ def ai_response():
     if "query" in llm_json:
        #搜索任务的查询字符，在query字段
        title = llm_json["query"]
-       obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}搜索问题\"{title}\"")
+       obs.show_text("状态提示",f"{Ai_Name}搜索问题\"{title}\"")
     else:
-       obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}思考问题\"{title}\"")
+       obs.show_text("状态提示",f"{Ai_Name}思考问题\"{title}\"")
 
     # 身份判定
     shenfen=""
@@ -718,7 +718,7 @@ def ai_response():
         response = response.replace("You", username)
     # 过滤表情<>或者()标签
     response = filter_html_tags(response)
-    obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}思考问题\"{title}\"完成")
+    obs.show_text("状态提示",f"{Ai_Name}思考问题\"{title}\"完成")
     
     # 切换场景
     if "粉色" in response or "睡觉" in response or "粉红" in response:
@@ -937,10 +937,10 @@ def output_img_thead(img_search_json):
     username = img_search_json["username"]
     try:
         img_search_json = {"prompt": prompt, "username": username}
-        obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}在搜图《{prompt}》")
+        obs.show_text("状态提示",f"{Ai_Name}在搜图《{prompt}》")
         # 搜索并且输出图片到虚拟摄像头
         status = searchimg_output(img_search_json)
-        obs.show_text(f"{Ai_Name}状态提示","")
+        obs.show_text("状态提示","")
         if status==1:
             # 加入回复列表，并且后续合成语音
             tts_say(f"回复{username}：我给你搜了一张图《{prompt}》")
@@ -1537,7 +1537,7 @@ def sing(songname, username):
     if is_created==2:
         print(f"生成歌曲失败《{songname}》")
         return
-    obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}已经学会歌曲《{songname}》")
+    obs.show_text("状态提示",f"{Ai_Name}已经学会歌曲《{songname}》")
     # =============== 结束：如果不存在歌曲，生成歌曲 =================
 
     #等待播放
@@ -1612,7 +1612,7 @@ def create_song(songname,song_path,is_created,downfile):
                 i = i + 1
                 if i >= timout:
                     break
-                obs.show_text(f"{Ai_Name}状态提示",f"当前{Ai_Name}学唱歌曲《{songname}》第{i}秒")
+                obs.show_text("状态提示",f"当前{Ai_Name}学唱歌曲《{songname}》第{i}秒")
                 print(f"生成《{songname}》歌曲第[{i}]秒,生成状态:{is_created}")
                 time.sleep(1)
         # =============== 结束生成歌曲 =================
@@ -2009,7 +2009,7 @@ def progress(prompt, username):
                             print(f"《{prompt}》进度{p}%发现黄图-nsfw:{nsfw},进度跳过")
                             continue
                         print(f"《{prompt}》进度{p}%绿色图片-nsfw:{nsfw},输出进度图")
-                        obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}正在绘图《{prompt}》,进度{p}%")
+                        obs.show_text("状态提示",f"{Ai_Name}正在绘图《{prompt}》,进度{p}%")
                     else:
                         print(f"《{prompt}》输出进度：{p}%")
                 except Exception as e:
@@ -2029,7 +2029,7 @@ def progress(prompt, username):
             time.sleep(1)
         elif is_drawing >= 2:
             print(f"《{prompt}》输出进度：100%")
-            obs.show_text(f"{Ai_Name}状态提示",f"{Ai_Name}绘图《{prompt}》完成")
+            obs.show_text("状态提示",f"{Ai_Name}绘图《{prompt}》完成")
             break    
 
 # 鉴黄
@@ -2119,7 +2119,7 @@ def main():
     check_scene_time()
 
     # 吟美状态提示:初始化清空
-    obs.show_text(f"{Ai_Name}状态提示","")
+    obs.show_text("状态提示","")
 
     if mode==1 or mode==2:
         # LLM回复
