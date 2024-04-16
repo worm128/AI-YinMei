@@ -57,7 +57,7 @@ def print(*args, **kwargs):
     logging.info(*args, **kwargs)
 
 #1.b站直播间 2.api web 3.双开
-mode=int(input("1.b站直播间 2.api web：") or "1")
+mode=int(input("接口对接(1.b站直播间 2.api web：)") or "1")
 
 #代理
 proxies = {"http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806"}
@@ -118,6 +118,7 @@ SongMenuList = queue.Queue()  # 唱歌显示
 SongNowName={} # 当前歌曲
 is_singing = 2  # 1.唱歌中 2.唱歌完成
 is_creating_song = 2  # 1.生成中 2.生成完毕
+song_not_convert=["三国演义\d+","粤剧","京剧","易经"]  #不需要学习的歌曲【支持正则】
 # ============================================
 
 # ============= B站直播间 =====================
@@ -146,18 +147,20 @@ def run_forever():
     ws.run_forever(ping_timeout=1)
 def on_open(ws):
     auth()
-ws = websocket.WebSocketApp("ws://127.0.0.1:8001",on_open = on_open)
+vst_websocket="127.0.0.1:8001"
+ws = websocket.WebSocketApp(f"ws://{vst_websocket}",on_open = on_open)
 vtuber_pluginName="winlonebot"
 vtuber_pluginDeveloper="winlone"
 vtuber_authenticationToken="4ae2f64ec9d1fe7bddc1b2edfb96292b28ab8b83554b50270a7fe83b3b3b8d05"
 # ============================================
 
 # ============= 鉴黄 =====================
+nsfw_server="192.168.2.198:1801"
 filterEn="huge breasts,open clothes,topless,voluptuous,breast,prostitution,erotic,armpit,milk,leaking,spraying,woman,cupless latex,latex,tits,boobs,lingerie,chest,seductive,poses,pose,leg,posture,alluring,milf,on bed,mature,slime,open leg,full body,bra,lace,bikini,full nude,nude,bare,one-piece,navel,cleavage,swimsuit,naked,adult,nudity,beautiful breasts,nipples,sex,Sexual,vaginal,penis,large penis,pantie,leotards,anal"
 filterCh="奶子,乳房"
-progress_limit=1   #绘图大于多少百分比进行鉴黄
-nsfw_limit=0.2  #nsfw黄图值大于多少进行绘画屏蔽，值越大越是黄图
-nsfw_progress_limit=0.2 #nsfw黄图-绘画进度鉴黄
+progress_limit=1   #绘图大于多少百分比进行鉴黄，这里设置了1%
+nsfw_limit=0.2  #nsfw黄图值大于多少进行绘画屏蔽【值越大越是黄图，值范围0~1】
+nsfw_progress_limit=0.2 #nsfw黄图-绘画进度鉴黄【值越大越是黄图，值范围0~1】
 nsfw_lock = threading.Lock()
 # ============================================
 
@@ -1396,7 +1399,7 @@ def emote_ws(num, interval, key):
             error = f"【表情发送】发生了异常：{e}"
             print(error)
             if error in "Connection is already closed":
-                ws = websocket.WebSocketApp("ws://127.0.0.1:8001",on_open = on_open)
+                ws = websocket.WebSocketApp(f"ws://{vst_websocket}",on_open = on_open)
                 # ws服务心跳包
                 run_forever_thread = Thread(target=run_forever)
                 run_forever_thread.start()
@@ -1566,7 +1569,6 @@ def check_playSongMenuList():
         SongNowName = {} #当前播放歌单清空
         play_song_lock.release()
 
-song_not_convert=["三国演义\d+","粤剧","京剧","易经"]  #不需要学习的歌曲【支持正则】
 #开始生成歌曲
 def create_song(songname,song_path,is_created,downfile):
     global is_creating_song
@@ -2036,7 +2038,7 @@ def progress(prompt, username):
 def nsfw_deal(imgb64):
     headers = {"Content-Type": "application/json"}
     data={"image_loader":"yahoo","model_weights":"data/open_nsfw-weights.npy","input_type":"BASE64_JPEG","input_image":imgb64}
-    nsfw = requests.post(url=f"http://192.168.2.198:1801/input", headers=headers, json=data, verify=False, timeout=(3, 5))
+    nsfw = requests.post(url=f"http://{nsfw_server}/input", headers=headers, json=data, verify=False, timeout=(3, 5))
     nsfwJson = nsfw.json()
     return nsfwJson
 

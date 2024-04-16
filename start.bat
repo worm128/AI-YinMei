@@ -1,3 +1,2 @@
-call ./runtime/Scripts/activate.bat
-py bilibili-live-api.py
+.\runtime\python.exe bilibili-live-api.py
 pause
