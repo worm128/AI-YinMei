@@ -18,6 +18,7 @@ output/*.mp3
 *.wav
 porn/*.png
 porn/*.jpg
+porn/
 aivenv/
 *.exe
 吟美配置/
