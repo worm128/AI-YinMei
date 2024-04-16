@@ -4140,7 +4140,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "https://chat.bilisc.com/room/DD1M35C6L4HS9?roomKeyType=2&showGiftName=true&blockGiftDanmaku=false&lang=zh",
+                "url": "https://chat.bilisc.com/room/xxxxx?roomKeyType=2&showGiftName=true&blockGiftDanmaku=false&lang=zh",
                 "width": 700,
                 "height": 680,
                 "shutdown": true,
