@@ -250,6 +250,14 @@ async def on_gift(event):
     tts_say_thread = Thread(target=tts_say,args=(text,))
     tts_say_thread.start()
 
+# http说话复读
+@app.route("/say", methods=["POST"])
+def http_say():
+    text = request.data.decode("utf-8")
+    tts_say_thread = Thread(target=tts_say,args=(text,))
+    tts_say_thread.start()
+    return jsonify({"status": "成功"})
+
 # http唱歌接口处理
 @app.route("/http_sing", methods=["GET"])
 def http_sing():
@@ -258,6 +266,7 @@ def http_sing():
     print(f"http唱歌接口处理：\"{username}\"点播歌曲《{songname}》")
     song_json = {"prompt": songname, "username": username}
     SongQueueList.put(song_json)
+    return jsonify({"status": "成功"})
 
 # http绘画接口处理
 @app.route("/http_draw", methods=["GET"])
@@ -268,12 +277,14 @@ def http_draw():
     print(f"http绘画接口处理：\"{username}\"绘画《{drawname}》，{drawcontent}")
     draw_json = {"prompt": drawname, "drawcontent":drawcontent, "username": username, "isExtend": False}
     DrawQueueList.put(draw_json)
+    return jsonify({"status": "成功"})
 
 # http绘画接口处理
 @app.route("/http_scene", methods=["GET"])
 def http_scene():
     scenename = request.args["scenename"]
     changeScene(scenename)
+    return jsonify({"status": "成功"})
 
 # http接口处理
 @app.route("/msg", methods=["POST"])
@@ -1168,7 +1179,7 @@ def tts_say_do(json):
     mpv_play("mpv.exe", f".\output\{filename}.mp3", 100)
 
     # 执行命令行指令
-    subprocess.run(f"del /f .\output\say{SayCount}.mp3 1>nul", shell=True)
+    subprocess.run(f"del /f .\output\{filename}.mp3 1>nul", shell=True)
     SayCount += 1
 
 mood_num=0
@@ -1645,8 +1656,8 @@ def play_song(is_created,songname,song_path,username,query):
             auto_swing_thread = Thread(target=auto_swing)
             auto_swing_thread.start()
             # 唱歌视频播放
-            sing_dance_thread = Thread(target=sing_dance, args=(query,))
-            sing_dance_thread.start()
+            # sing_dance_thread = Thread(target=sing_dance, args=(query,))
+            # sing_dance_thread.start()
             # 调用音乐播放器
             mpv_play("song.exe", song_path, 80)
             # 停止唱歌视频播放

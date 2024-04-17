@@ -22,6 +22,7 @@
 - 支持对接 bilibili 直播间弹幕回复和进入直播间欢迎语
 - 支持微软 edge-tts 语音合成
 - 支持 Bert-VITS2 语音合成
+- 支持 GPT-SoVITS 语音合成
 - 支持表情控制 Vtuber Studio
 - 支持绘画 stable-diffusion-webui 输出 OBS 直播间
 - 支持绘画图片鉴黄 public-NSFW-y-distinguish
@@ -79,10 +80,15 @@
   在百度网盘->人工智能->软件->虚拟声卡 Virtual Audio Cable v4.10 破解版<br>
 - ffmpeg：音频解码器，用于语音合成<br>
   在百度网盘->人工智能->软件->ffmpeg<br>
-- mongodb 连接工具-NoSQLBooster for MongoDB
-  人工智能>软件>nosqlbooster4mongo-8.1.7.exe
-- fastgpt 的 docker-compose 配置
-  人工智能>软件>docker 知识库
+- mongodb 连接工具-NoSQLBooster for MongoDB<br>
+  人工智能->软件->nosqlbooster4mongo-8.1.7.exe<br>
+- fastgpt 的 docker-compose 配置<br>
+  人工智能->软件->docker 知识库<br>
+- 整合包路径<br>
+  百度网盘：https://pan.baidu.com/s/1wB1aNTpN5X2WSPCq3GADJw?pwd=1kz2<br>
+  提取码：1kz2<br>
+  夸克：https://pan.quark.cn/s/ade5c2d30ae7<br>
+  提取码：ci9B<br>
 
 ### 运行环境
 
@@ -279,8 +285,12 @@ py nsfw_web.py
 
 ### 特别鸣谢
 
-- 语音合成：Auto-Convert-Music 开发者：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃<br>
+- 唱歌变声：Auto-Convert-Music 开发者：木白 Mu_Bai、宫园薰ヾ(≧∪≦\*)ノ〃<br>
   项目地址：https://github.com/MuBai-He/Auto-Convert-Music<br>
+- GPT-SoVITS：花儿不哭大佬开发的 TTS 语音合成<br>
+  https://github.com/RVC-Boss/GPT-SoVITS<br>
+- Bert-VITS2：TTS 语音合成，合成速度超快<br>
+  https://github.com/fishaudio/Bert-VITS2<br>
 - 知识库：fastgpt<br>
   项目地址：https://github.com/labring/FastGPT<br>
 - 大语言模型框架：one-api + Xinference<br>
