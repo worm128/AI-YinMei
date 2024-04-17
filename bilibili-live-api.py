@@ -151,7 +151,7 @@ vst_websocket="127.0.0.1:8001"
 ws = websocket.WebSocketApp(f"ws://{vst_websocket}",on_open = on_open)
 vtuber_pluginName="winlonebot"
 vtuber_pluginDeveloper="winlone"
-vtuber_authenticationToken="4ae2f64ec9d1fe7bddc1b2edfb96292b28ab8b83554b50270a7fe83b3b3b8d05"
+vtuber_authenticationToken="6f80e2aa087daa949cada5f4adb6c15d67f109aa3cbc3076e6de5eda79ed145d"
 # ============================================
 
 # ============= 鉴黄 =====================
@@ -1766,7 +1766,7 @@ def draw_prompt(query,offset,limit):
                     "baseModel",
                     "createdAtUnix",
                     "generationTool",
-                    "tags.name",
+                    "tagNames",
                     "user.username"
                 ],
                 "filter": [
@@ -1774,7 +1774,7 @@ def draw_prompt(query,offset,limit):
 			    ],
                 "highlightPostTag": "__/ais-highlight__",
                 "highlightPreTag": "__ais-highlight__",
-                "indexUid": "images_v4",
+                "indexUid": "images_v5",
                 "limit": limit,
                 "offset": offset,
                 "q": query
