@@ -126,7 +126,8 @@ song_not_convert=["三国演义\d+","粤剧","京剧","易经"]  #不需要学�
 #实例化 Credential 类
 cred = Credential(
     sessdata="",
-    buvid3=""
+    buvid3="",
+    dedeuserid=""
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
@@ -257,6 +258,15 @@ def http_say():
     tts_say_thread = Thread(target=tts_say,args=(text,))
     tts_say_thread.start()
     return jsonify({"status": "成功"})
+
+# http人物表情输出
+@app.route("/emote", methods=["POST"])
+def http_emote():
+    data = request.json
+    text=data["text"]
+    emote_thread1 = Thread(target=emote_ws,args=(1, 0.2, text))
+    emote_thread1.start()
+    return "ok"
 
 # http唱歌接口处理
 @app.route("/http_sing", methods=["GET"])
@@ -761,7 +771,7 @@ def ai_response():
 
 # 过滤html标签
 def filter_html_tags(text):
-    pattern = r'<.*?>|\(.*?\)'  # 匹配尖括号内的所有内容
+    pattern = r'\[.*?\]|<.*?>|\(.*?\)'  # 匹配尖括号内的所有内容
     return re.sub(pattern, '', text)
 
 # duckduckgo搜索引擎搜索
@@ -1060,10 +1070,11 @@ def check_answer():
 # 如果语音已经放完且队列中还有回复 则创建一个生成并播放TTS的线程
 def check_tts():
     global is_tts_ready
-    if not AnswerList.empty() and is_tts_ready:
-        is_tts_ready = False
-        tts_generate()
-        is_tts_ready = True  # 指示TTS已经准备好回复下一个问题
+    global AnswerList
+    if not AnswerList.empty():
+        response = AnswerList.get()
+        # 合成语音
+        tts_chat_say(response)
 
 
 '''
@@ -1099,29 +1110,25 @@ def gtp_vists(filename,text,emotion):
 # 直接合成语音播放       
 def tts_say(text):
     try:
-        say_lock.acquire()
         json =  {"question":"","text":text,"lanuage":""}
         tts_say_do(json)
     except Exception as e:
         print(f"【tts_say】发生了异常：{e}")
         logging.error(traceback.format_exc())
-    finally:
-        say_lock.release()
 
-# 直接合成语音播放-聊天用      
+# 直接合成语音播放-聊天用
 def tts_chat_say(json):
     try:
-        say_lock.acquire()
         tts_say_do(json)
     except Exception as e:
         print(f"【tts_chat_say】发生了异常：{e}")
         logging.error(traceback.format_exc())
-    finally:
-        say_lock.release()
 
 # 直接合成语音播放 {"question":question,"text":text,"lanuage":"ja"}
 def tts_say_do(json):
     global SayCount
+    global is_tts_ready
+    SayCount += 1
     filename=f"say{SayCount}"
     
     question = json["question"]
@@ -1163,7 +1170,12 @@ def tts_say_do(json):
     status = gtp_vists(filename,text,emotion)
     if status == 0:
        return
-    
+    if question!="":
+       obs.show_text("状态提示",f"{Ai_Name}语音合成\"{question}\"完成")
+
+    # ============ 【线程锁】播放语音【时间会很长】 ==================
+    say_lock.acquire()
+    is_tts_ready = False
     # 输出表情
     emote_thread = Thread(target=emote_show,args=(jsonstr,))
     emote_thread.start()
@@ -1177,10 +1189,13 @@ def tts_say_do(json):
     
     # 播放声音
     mpv_play("mpv.exe", f".\output\{filename}.mp3", 100)
+    is_tts_ready = True
+    say_lock.release()
+    # ========================= end =============================
 
     # 执行命令行指令
     subprocess.run(f"del /f .\output\{filename}.mp3 1>nul", shell=True)
-    SayCount += 1
+    
 
 mood_num=0
 # 感情值判断
@@ -1195,15 +1210,6 @@ def mood(emotion):
     if mood_num>100:
         mood_num=0
     return mood_num
-
-
-# 从回复队列中提取一条，通过edge-tts生成语音对应AudioCount编号语音
-def tts_generate():
-    global AnswerList
-    response = AnswerList.get()
-    
-    # 合成语音
-    tts_chat_say(response)
 
 # 摇摆
 swing_motion = 2  #1.摇摆中 2.停止摇摆
@@ -1518,6 +1524,7 @@ def sing(songname, username):
     if exist_song_queues(SongMenuList,songname)==True:
        outputTxt=f"回复{username}：{font_text}歌单里已经有歌曲《{songname}》，请勿重新点播"
        tts_say(outputTxt)
+       return
     # =============== 结束-重复点播判断 =================
 
     # =============== 开始-判断本地是否有歌 =================
@@ -2061,7 +2068,7 @@ def check_welcome_room():
         numstr = f"{count}位"
     userlist = str(WelcomeList).replace("['","").replace("']","")
     if len(WelcomeList) > 0:
-        text = f"欢迎一下\"{userlist}\"{numstr}同学来到直播间,跪求关注一下我的直播间"
+        text = f"欢迎\"{userlist}\"{numstr}同学来到{Ai_Name}的直播间,跪求关注一下{Ai_Name}的直播间"
         WelcomeList.clear()
         #询问LLM
         llm_json = {"prompt": text, "uid": 0, "username": Ai_Name}

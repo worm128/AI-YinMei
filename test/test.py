@@ -1,9 +1,9 @@
 import glob
 import os
 import re
-import chardet
-import random
-import queue
+# import chardet
+# import random
+# import queue
 from urllib import parse
 
 # song_name="Kiss Me Goodbye [Originally Performed by Angela Aki]"
@@ -75,10 +75,10 @@ def has_string_reg(regx,s):
 
 # 过滤html标签
 def filter_html_tags(text):
-    pattern = r'<.*?>|\(.*?\)'  # 匹配尖括号内的所有内容(.*?)
+    pattern = r'\[.*?\]|<.*?>|\(.*?\)'  # 匹配尖括号内的所有内容(.*?)
     return re.sub(pattern, '', text)
 
-str="你啊哈大啊(搞笑)，你丫的兔崽子<死人呢>搞大幅度"
+str="你[啊哈大]啊(搞笑)，你丫的兔崽子<死人呢>搞大幅度"
 end=filter_html_tags(str)
 print(end)
 # 正则判断[集合判断]

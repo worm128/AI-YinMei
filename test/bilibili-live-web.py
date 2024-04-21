@@ -574,7 +574,7 @@ def emote_do(text, response, keyboard, startTime, key):
         print(f"{response}:输出表情({start}){key}")
 
 @app.route("/emote", methods=["POST"])
-def emotehttp():
+def emote_http():
     data = request.json
     text=data["text"]
     emote_thread1 = Thread(target=emote_ws,args=(text, "开心",  0.2, "开心"))
