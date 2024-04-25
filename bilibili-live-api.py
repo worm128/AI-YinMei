@@ -112,7 +112,7 @@ is_SearchText = 2  # 1.搜文中 2.搜文完成
 # ============================================
 
 # ============= 唱歌参数 =====================
-singUrl = "192.168.2.58:1717"
+singUrl = "192.168.2.198:1717"
 SongQueueList = queue.Queue()  # 唱歌队列
 SongMenuList = queue.Queue()  # 唱歌显示
 SongNowName={} # 当前歌曲
@@ -614,6 +614,7 @@ def cmd(query):
     #下一首歌
     if query=="\\next":
         os.system('taskkill /T /F /IM song.exe')
+        obs.control_video("伴奏",VideoControl.STOP.value)
         is_singing = 2  # 1.唱歌中 2.唱歌完成
         return 1
     #停止跳舞
@@ -1188,7 +1189,7 @@ def tts_say_do(json):
     yaotou_thread.start()
     
     # 播放声音
-    mpv_play("mpv.exe", f".\output\{filename}.mp3", 100)
+    mpv_play("mpv.exe", f".\output\{filename}.mp3", 100 , "0")
     is_tts_ready = True
     say_lock.release()
     # ========================= end =============================
@@ -1462,10 +1463,10 @@ def is_array_contain_string(string_array, target_string):
     return 0
 
 # 播放器播放
-def mpv_play(mpv_name, song_path, volume):
+def mpv_play(mpv_name, song_path, volume, start):
     # end：播放多少秒结束  volume：音量，最大100，最小0
     subprocess.run(
-        f'{mpv_name} -vo null --volume={volume} "{song_path}" 1>nul',
+        f'{mpv_name} -vo null --volume={volume} --start={start} "{song_path}" 1>nul',
         shell=True,
     )
 
@@ -1517,7 +1518,7 @@ def sing(songname, username):
         print(outputTxt)
         tts_say(outputTxt)
         return 
-    song_path = f"./output/{songname}.wav"
+    song_path = f"./output/{songname}/"
     # =============== 结束-获取真实歌曲名称 =================
     
     # =============== 开始-重复点播判断 =================
@@ -1528,7 +1529,7 @@ def sing(songname, username):
     # =============== 结束-重复点播判断 =================
 
     # =============== 开始-判断本地是否有歌 =================
-    if os.path.exists(song_path):
+    if os.path.exists(f"{song_path}/accompany.wav") or os.path.exists(f"{song_path}/vocal.wav"):
         print(f"找到存在本地歌曲:{song_path}")
         outputTxt=f"回复{username}：{font_text}{Ai_Name}会唱《{songname}》这首歌曲哦"
         tts_say(outputTxt)
@@ -1537,11 +1538,13 @@ def sing(songname, username):
     else:       
     # =============== 开始-调用已经转换的歌曲 =================
     # 下载歌曲：这里网易歌库返回songname和用户的模糊搜索可能歌名不同
-        downfile, is_created = check_down_song(songname)
-        if downfile is not None and is_created == 1:
-            with open(song_path, "wb") as f:
-                f.write(downfile.content)
-                print(f"找到服务已经转换的歌曲《{songname}》")
+        is_created = check_down_song(songname)
+        if is_created == 1:
+            # 下载伴奏
+            down_song_file(songname,"get_accompany","accompany",song_path)
+            # 下载人声
+            down_song_file(songname,"get_vocal","vocal",song_path)
+            print(f"找到服务已经转换的歌曲《{songname}》")
     # =============== 结束-调用已经转换的歌曲 =================
 
     # =============== 开始：如果不存在歌曲，生成歌曲 =================
@@ -1554,7 +1557,7 @@ def sing(songname, username):
         while is_creating_song == 1:
             time.sleep(1)
         # 调用Ai学唱歌服务：生成歌曲
-        is_created=create_song(songname,song_path,is_created,downfile)
+        is_created=create_song(songname,song_path,is_created)
     if is_created==2:
         print(f"生成歌曲失败《{songname}》")
         return
@@ -1564,7 +1567,6 @@ def sing(songname, username):
     #等待播放
     print(f"等待播放{username}点播的歌曲《{songname}》：{is_singing}")
     #加入播放歌单
-
     SongMenuList.put({"username": username, "songname": songname,"is_created":is_created,"song_path":song_path,"query":query})
   
 
@@ -1588,7 +1590,7 @@ def check_playSongMenuList():
         play_song_lock.release()
 
 #开始生成歌曲
-def create_song(songname,song_path,is_created,downfile):
+def create_song(songname,song_path,is_created):
     global is_creating_song
     try:
         # =============== 开始生成歌曲 =================
@@ -1596,18 +1598,21 @@ def create_song(songname,song_path,is_created,downfile):
         is_creating_song = 1
         status_json={}
         is_download=False
-        # =============== 开始-当前歌曲只下载不转换 =================
+        # =============== 开始-选择一、当前歌曲只下载不转换 =================
         for song_regx in song_not_convert:
             match = re.match(song_regx, songname)
             if match:
                print(f"当前歌曲只下载不转换《{songname}》")
-               jsonStr = requests.get(url=f"http://{singUrl}/download_song/{songname}",timeout=(3, 120))
+               # 直接生成原始音乐
+               jsonStr = requests.get(url=f"http://{singUrl}/download_origin_song/{songname}",timeout=(3, 120))
                status_json = json.loads(jsonStr.text)
+               # 下载原始音乐
+               down_song_file(songname,"get_audio","vocal",song_path)
                is_download=True
-               break
+               return 1
         # =============== 结束-当前歌曲只下载不转换 =================
         
-        # =============== 开始-学习唱歌任务 =================
+        # =============== 开始-选择二、学习唱歌任务 =================
         if is_download==False:
             # 生成歌曲接口
             jsonStr = requests.get(url=f"http://{singUrl}/append_song/{songname}",timeout=(3, 5))
@@ -1620,15 +1625,20 @@ def create_song(songname,song_path,is_created,downfile):
         if status=="processing" or status=="processed" or status=="waiting":
             timout = 2400  # 生成歌曲等待时间
             i = 0
-            while downfile is None and is_creating_song==1:
+            vocal_downfile=None
+            accompany_downfile=None
+            song_path = f"./output/{songname}/"
+            while (vocal_downfile is None or accompany_downfile is None) and is_creating_song==1:
                 # 检查歌曲是否生成成功：这里网易歌库返回songname和用户的模糊搜索可能歌名不同
-                downfile, is_created = check_down_song(songname)
+                is_created = check_down_song(songname)
                 if is_created == 2:
                     break
-                # 本地保存歌曲
-                if downfile is not None and is_created == 1:
-                    with open(song_path, "wb") as f:
-                        f.write(downfile.content)
+                # 检测文件生成后，进行下载
+                if is_created == 1:
+                    # 下载伴奏
+                    accompany_downfile = down_song_file(songname,"get_accompany","accompany",song_path)
+                    # 下载人声
+                    vocal_downfile = down_song_file(songname,"get_vocal","vocal",song_path)
                 i = i + 1
                 if i >= timout:
                     break
@@ -1643,6 +1653,19 @@ def create_song(songname,song_path,is_created,downfile):
         is_creating_song = 2
         create_song_lock.release()
     return is_created
+
+# 下载伴奏accompany/人声vocal
+def down_song_file(songname,interface_name,file_name,save_folder):
+    # 下载
+    downfile = requests.get(url=f"http://{singUrl}/{interface_name}/{songname}",timeout=(3, 120))
+    if not os.path.exists(save_folder):
+       os.mkdir(save_folder)
+    save_path = save_folder+f"/{file_name}.wav"
+    # 本地保存
+    if downfile is not None:
+       with open(save_path, "wb") as f:
+            f.write(downfile.content)
+    return downfile
 
 # 播放歌曲 1.成功 2.没有歌曲播放 3.异常 
 def play_song(is_created,songname,song_path,username,query):
@@ -1665,10 +1688,15 @@ def play_song(is_created,songname,song_path,username,query):
             # 唱歌视频播放
             # sing_dance_thread = Thread(target=sing_dance, args=(query,))
             # sing_dance_thread.start()
-            # 调用音乐播放器
-            mpv_play("song.exe", song_path, 80)
+            # 伴奏播放
+            abspath = os.path.abspath(song_path+"accompany.wav")
+            obs.play_video("伴奏",abspath)
+            # 调用音乐播放器[人声播放]
+            mpv_play("song.exe", song_path+"vocal.wav", 100, "+0.5")
+            # 伴奏停止
+            obs.control_video("伴奏",VideoControl.STOP.value)
             # 停止唱歌视频播放
-            obs.control_video("唱歌视频",VideoControl.STOP.value)
+            # obs.control_video("唱歌视频",VideoControl.STOP.value)
             # 结束唱歌穿戴
             emote_ws(1, 0.2, "唱歌")
             return 1
@@ -1712,7 +1740,7 @@ def sing_dance(songname):
 # 匹配已生成的歌曲，并返回字节流
 def check_down_song(songname):
     # 查看歌曲是否曾经生成
-    status = requests.get(url=f"http://{singUrl}/status",timeout=(3, 5))
+    status = requests.get(url=f"http://{singUrl}/accompany_vocal_status",timeout=(3, 5))
     converted_json = json.loads(status.text)
     converted_file = converted_json["converted_file"]  # 生成歌曲硬盘文件
     convertfail = converted_json["convertfail"]  # 生成歌曲硬盘文件
@@ -1720,16 +1748,15 @@ def check_down_song(songname):
     for filename in convertfail:
         if songname == filename:
             is_created = 2
-            return None, is_created
+            return is_created
 
     # 优先：精确匹配文件名
     for filename in converted_file:
         if songname == filename:
             is_created = 1
-            downfile = requests.get(url=f"http://{singUrl}/get_audio/{songname}",timeout=(3, 120))
-            return downfile, is_created
+            return is_created
     
-    return None, is_created
+    return is_created
 
 #翻译
 def translate(text,from_lanuage,to_lanuage):
@@ -2125,6 +2152,8 @@ def main():
     obs.control_video("唱歌视频",VideoControl.STOP.value)
     obs.control_video("video",VideoControl.STOP.value)
     obs.control_video("表情",VideoControl.STOP.value)
+    obs.play_video("伴奏","")
+    obs.control_video("伴奏",VideoControl.STOP.value)
 
     # 切换场景:初始化
     scene_name = "海岸花坊"
