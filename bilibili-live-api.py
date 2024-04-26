@@ -112,22 +112,23 @@ is_SearchText = 2  # 1.搜文中 2.搜文完成
 # ============================================
 
 # ============= 唱歌参数 =====================
-singUrl = "192.168.2.198:1717"
+singUrl = "192.168.2.58:1717"
 SongQueueList = queue.Queue()  # 唱歌队列
 SongMenuList = queue.Queue()  # 唱歌显示
 SongNowName={} # 当前歌曲
 is_singing = 2  # 1.唱歌中 2.唱歌完成
 is_creating_song = 2  # 1.生成中 2.生成完毕
 song_not_convert=["三国演义\d+","粤剧","京剧","易经"]  #不需要学习的歌曲【支持正则】
+sing_play_flag=0  # 1.正在播放唱歌 0.未播放唱歌 【用于监听歌曲播放器是否停止】
 # ============================================
 
 # ============= B站直播间 =====================
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="",
-    buvid3="",
-    dedeuserid=""
+    sessdata="0a8e91ed%2C1729603867%2C90505%2A42CjDcfr3Xjw8tyVAwPYwOS1Riw31ZAoFntGiryKtkLyGv92E6LXlIKDYGuDhI5vx0VyUSVnJab1JGVjFGZjRNa3FPRC0xelpLSFpyNHVDaW8teDZJNll0X2tVaHUyWWFjMnRmLW1WNlNtWk9kNnRCbElxamxpQWFlYW5OYTF2bzRscVkzc2dqdGN3IIEC",
+    buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
+    dedeuserid="333472479"
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
@@ -645,7 +646,7 @@ def chat_fastgpt(content, uid, username):
     }
     try:
         response = requests.post(
-            url, headers=headers, json=data, verify=False, timeout=(3, 60)
+            url, headers=headers, json=data, verify=False, timeout=(5, 60)
         )
     except Exception as e:
         print(f"【{content}】信息回复异常")
@@ -676,7 +677,7 @@ def chat_tgw(content, character, mode, preset,username):
     }
     try:
         response = requests.post(
-            url, headers=headers, json=data, verify=False, timeout=(3, 60)
+            url, headers=headers, json=data, verify=False, timeout=(5, 60)
         )
     except Exception as e:
         print(f"【{content}】信息回复异常")
@@ -1087,7 +1088,7 @@ emotion：情感描述
 def bert_vits2(filename,text,emotion):
     save_path=f".\output\{filename}.mp3"
     text=parse.quote(text)
-    response = requests.get(url=f"http://{bert_vists_url}/voice?text={text}&model_id=0&speaker_name={speaker_name}&sdp_ratio={sdp_ratio}&noise={noise}&noisew={noisew}&length={speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}",timeout=(3, 60))
+    response = requests.get(url=f"http://{bert_vists_url}/voice?text={text}&model_id=0&speaker_name={speaker_name}&sdp_ratio={sdp_ratio}&noise={noise}&noisew={noisew}&length={speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}",timeout=(5, 60))
     if response.status_code == 200:
        audio_data = response.content # 获取音频数据
        with open(save_path, 'wb') as file:
@@ -1099,7 +1100,7 @@ def bert_vits2(filename,text,emotion):
 def gtp_vists(filename,text,emotion):
     save_path=f".\output\{filename}.mp3"
     text=parse.quote(text)
-    response = requests.get(url=f"http://{gtp_vists_url}/?text={text}&text_language=auto",timeout=(3, 60))
+    response = requests.get(url=f"http://{gtp_vists_url}/?text={text}&text_language=auto",timeout=(5, 60))
     if response.status_code == 200:
        audio_data = response.content # 获取音频数据
        with open(save_path, 'wb') as file:
@@ -1462,6 +1463,13 @@ def is_array_contain_string(string_array, target_string):
             return i
     return 0
 
+# 播放唱歌
+def sing_play(mpv_name, song_path, volume, start):
+    global sing_play_flag
+    sing_play_flag=1
+    mpv_play(mpv_name, song_path, volume, start)
+    sing_play_flag=0
+
 # 播放器播放
 def mpv_play(mpv_name, song_path, volume, start):
     # end：播放多少秒结束  volume：音量，最大100，最小0
@@ -1504,7 +1512,7 @@ def sing(songname, username):
     query = songname # 查询内容
     
     # =============== 开始-获取真实歌曲名称 =================
-    musicJson = requests.get(url=f"http://{singUrl}/musicInfo/{songname}",timeout=(3, 5))
+    musicJson = requests.get(url=f"http://{singUrl}/musicInfo/{songname}",timeout=(5, 10))
     music_json = json.loads(musicJson.text)
     id = music_json["id"]
     songname = music_json["songName"]
@@ -1604,7 +1612,7 @@ def create_song(songname,song_path,is_created):
             if match:
                print(f"当前歌曲只下载不转换《{songname}》")
                # 直接生成原始音乐
-               jsonStr = requests.get(url=f"http://{singUrl}/download_origin_song/{songname}",timeout=(3, 120))
+               jsonStr = requests.get(url=f"http://{singUrl}/download_origin_song/{songname}",timeout=(5, 120))
                status_json = json.loads(jsonStr.text)
                # 下载原始音乐
                down_song_file(songname,"get_audio","vocal",song_path)
@@ -1615,7 +1623,7 @@ def create_song(songname,song_path,is_created):
         # =============== 开始-选择二、学习唱歌任务 =================
         if is_download==False:
             # 生成歌曲接口
-            jsonStr = requests.get(url=f"http://{singUrl}/append_song/{songname}",timeout=(3, 5))
+            jsonStr = requests.get(url=f"http://{singUrl}/append_song/{songname}",timeout=(5, 10))
             status_json = json.loads(jsonStr.text)
         # =============== 结束-学习唱歌任务 =================
 
@@ -1657,7 +1665,7 @@ def create_song(songname,song_path,is_created):
 # 下载伴奏accompany/人声vocal
 def down_song_file(songname,interface_name,file_name,save_folder):
     # 下载
-    downfile = requests.get(url=f"http://{singUrl}/{interface_name}/{songname}",timeout=(3, 120))
+    downfile = requests.get(url=f"http://{singUrl}/{interface_name}/{songname}",timeout=(5, 120))
     if not os.path.exists(save_folder):
        os.mkdir(save_folder)
     save_path = save_folder+f"/{file_name}.wav"
@@ -1688,11 +1696,19 @@ def play_song(is_created,songname,song_path,username,query):
             # 唱歌视频播放
             # sing_dance_thread = Thread(target=sing_dance, args=(query,))
             # sing_dance_thread.start()
+            # ============== 播放音乐 ================
             # 伴奏播放
             abspath = os.path.abspath(song_path+"accompany.wav")
-            obs.play_video("伴奏",abspath)
+            accompany_thread = Thread(target=obs.play_video, args=("伴奏",abspath))
             # 调用音乐播放器[人声播放]
-            mpv_play("song.exe", song_path+"vocal.wav", 100, "+0.5")
+            mpv_play_thread = Thread(target=sing_play, args=("song.exe", song_path+"vocal.wav", 100, "+0.5"))
+            accompany_thread.start()
+            mpv_play_thread.start()
+            # ================ end ==================
+            # 循环等待唱歌结束标志
+            time.sleep(3)
+            while sing_play_flag==1:
+                time.sleep(1)
             # 伴奏停止
             obs.control_video("伴奏",VideoControl.STOP.value)
             # 停止唱歌视频播放
@@ -1740,7 +1756,7 @@ def sing_dance(songname):
 # 匹配已生成的歌曲，并返回字节流
 def check_down_song(songname):
     # 查看歌曲是否曾经生成
-    status = requests.get(url=f"http://{singUrl}/accompany_vocal_status",timeout=(3, 5))
+    status = requests.get(url=f"http://{singUrl}/accompany_vocal_status",timeout=(5, 10))
     converted_json = json.loads(status.text)
     converted_file = converted_json["converted_file"]  # 生成歌曲硬盘文件
     convertfail = converted_json["convertfail"]  # 生成歌曲硬盘文件
@@ -2083,7 +2099,7 @@ def progress(prompt, username):
 def nsfw_deal(imgb64):
     headers = {"Content-Type": "application/json"}
     data={"image_loader":"yahoo","model_weights":"data/open_nsfw-weights.npy","input_type":"BASE64_JPEG","input_image":imgb64}
-    nsfw = requests.post(url=f"http://{nsfw_server}/input", headers=headers, json=data, verify=False, timeout=(3, 5))
+    nsfw = requests.post(url=f"http://{nsfw_server}/input", headers=headers, json=data, verify=False, timeout=(5, 10))
     nsfwJson = nsfw.json()
     return nsfwJson
 
