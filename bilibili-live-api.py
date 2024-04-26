@@ -126,9 +126,9 @@ sing_play_flag=0  # 1.正在播放唱歌 0.未播放唱歌 【用于监听歌曲
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="0a8e91ed%2C1729603867%2C90505%2A42CjDcfr3Xjw8tyVAwPYwOS1Riw31ZAoFntGiryKtkLyGv92E6LXlIKDYGuDhI5vx0VyUSVnJab1JGVjFGZjRNa3FPRC0xelpLSFpyNHVDaW8teDZJNll0X2tVaHUyWWFjMnRmLW1WNlNtWk9kNnRCbElxamxpQWFlYW5OYTF2bzRscVkzc2dqdGN3IIEC",
-    buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
-    dedeuserid="333472479"
+    sessdata="",
+    buvid3="",
+    dedeuserid=""
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
