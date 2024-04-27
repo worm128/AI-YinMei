@@ -615,7 +615,6 @@ def cmd(query):
     #下一首歌
     if query=="\\next":
         os.system('taskkill /T /F /IM song.exe')
-        obs.control_video("伴奏",VideoControl.STOP.value)
         is_singing = 2  # 1.唱歌中 2.唱歌完成
         return 1
     #停止跳舞
@@ -1361,7 +1360,7 @@ def emote_content(response):
     if num > 0:
         jsonstr.append({"content":"love","key":"可爱","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 摸摸头 ==============
-    text = ["摸摸头", "乖", "做得好"]
+    text = ["摸摸头", "摸摸脑袋", "乖", "做得好"]
     num = is_array_contain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"happy","key":"摸摸头","num":num,"timesleep":5,"donum":1,"endwait":0})
@@ -1512,13 +1511,13 @@ def sing(songname, username):
     query = songname # 查询内容
     
     # =============== 开始-获取真实歌曲名称 =================
-    musicJson = requests.get(url=f"http://{singUrl}/musicInfo/{songname}",timeout=(5, 10))
+    musicJson = requests.get(url=f"http://{singUrl}/musicInfo/{query}",timeout=(5, 10))
     music_json = json.loads(musicJson.text)
     id = music_json["id"]
     songname = music_json["songName"]
     # 前置信息说明
     font_text=""
-    if query!=songname:
+    if query.lower().replace(" ","")!=songname.lower().replace(" ",""):
        font_text = f"根据\"{query}\"的信息，"
 
     if id==0:
@@ -1565,7 +1564,7 @@ def sing(songname, username):
         while is_creating_song == 1:
             time.sleep(1)
         # 调用Ai学唱歌服务：生成歌曲
-        is_created=create_song(songname,song_path,is_created)
+        is_created=create_song(songname,query,song_path,is_created)
     if is_created==2:
         print(f"生成歌曲失败《{songname}》")
         return
@@ -1591,14 +1590,15 @@ def check_playSongMenuList():
         # =============== 开始：播放歌曲 =================
         obs.control_video("背景音乐",VideoControl.PAUSE.value)
         play_song(mlist["is_created"],mlist["songname"],mlist["song_path"],mlist["username"],mlist["query"])
-        obs.control_video("背景音乐",VideoControl.PLAY.value)
+        if SongMenuList.qsize()==0:
+           obs.control_video("背景音乐",VideoControl.PLAY.value)
         # =============== 结束：播放歌曲 =================
         is_singing = 2  # 完成唱歌
         SongNowName = {} #当前播放歌单清空
         play_song_lock.release()
 
 #开始生成歌曲
-def create_song(songname,song_path,is_created):
+def create_song(songname,query,song_path,is_created):
     global is_creating_song
     try:
         # =============== 开始生成歌曲 =================
@@ -1623,7 +1623,7 @@ def create_song(songname,song_path,is_created):
         # =============== 开始-选择二、学习唱歌任务 =================
         if is_download==False:
             # 生成歌曲接口
-            jsonStr = requests.get(url=f"http://{singUrl}/append_song/{songname}",timeout=(5, 10))
+            jsonStr = requests.get(url=f"http://{singUrl}/append_song/{query}",timeout=(5, 10))
             status_json = json.loads(jsonStr.text)
         # =============== 结束-学习唱歌任务 =================
 
@@ -1701,7 +1701,7 @@ def play_song(is_created,songname,song_path,username,query):
             abspath = os.path.abspath(song_path+"accompany.wav")
             accompany_thread = Thread(target=obs.play_video, args=("伴奏",abspath))
             # 调用音乐播放器[人声播放]
-            mpv_play_thread = Thread(target=sing_play, args=("song.exe", song_path+"vocal.wav", 100, "+0.5"))
+            mpv_play_thread = Thread(target=sing_play, args=("song.exe", song_path+"vocal.wav", 100, "+0.08"))
             accompany_thread.start()
             mpv_play_thread.start()
             # ================ end ==================
@@ -2165,12 +2165,13 @@ def main():
     #     obs.show_text("表情列表",content)
     
     # 停止所有视频播放
+    obs.play_video("唱歌视频","")
     obs.control_video("唱歌视频",VideoControl.STOP.value)
     obs.control_video("video",VideoControl.STOP.value)
     obs.control_video("表情",VideoControl.STOP.value)
     obs.play_video("伴奏","")
     obs.control_video("伴奏",VideoControl.STOP.value)
-
+    
     # 切换场景:初始化
     scene_name = "海岸花坊"
     obs.change_scene(scene_name)
