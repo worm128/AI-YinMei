@@ -73,10 +73,14 @@ def has_string_reg(regx,s):
 # wenhou_num = random.randrange(0, len(wenhou))
 # print(wenhou[wenhou_num])
 
+if re.search("[,|，|。|!|！|。|?|？]", "\""):
+   print("match")
+
 # 过滤html标签
 def filter_html_tags(text):
     pattern = r'\[.*?\]|<.*?>|\(.*?\)'  # 匹配尖括号内的所有内容(.*?)
     return re.sub(pattern, '', text)
+
 
 str="你[啊哈大]啊(搞笑)，你丫的兔崽子<死人呢>搞大幅度"
 end=filter_html_tags(str)

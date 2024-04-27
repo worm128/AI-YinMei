@@ -126,9 +126,9 @@ sing_play_flag=0  # 1.正在播放唱歌 0.未播放唱歌 【用于监听歌曲
 # b站直播身份验证：
 #实例化 Credential 类
 cred = Credential(
-    sessdata="",
-    buvid3="",
-    dedeuserid=""
+    sessdata="0a8e91ed%2C1729603867%2C90505%2A42CjDcfr3Xjw8tyVAwPYwOS1Riw31ZAoFntGiryKtkLyGv92E6LXlIKDYGuDhI5vx0VyUSVnJab1JGVjFGZjRNa3FPRC0xelpLSFpyNHVDaW8teDZJNll0X2tVaHUyWWFjMnRmLW1WNlNtWk9kNnRCbElxamxpQWFlYW5OYTF2bzRscVkzc2dqdGN3IIEC",
+    buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
+    dedeuserid="333472479"
 )
 room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
 room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
@@ -630,7 +630,7 @@ def chat_fastgpt(content, uid, username):
     timestamp = time.time()
     data={
             "chatId": timestamp,
-            "stream": False,
+            "stream": True,
             "detail": False,
             "variables": {
                 "uid": uid,
@@ -643,15 +643,16 @@ def chat_fastgpt(content, uid, username):
                 }
             ]
     }
+    response = None
     try:
         response = requests.post(
-            url, headers=headers, json=data, verify=False, timeout=(5, 60)
+            url, headers=headers, json=data, verify=False, timeout=(5, 60), stream=True
         )
     except Exception as e:
         print(f"【{content}】信息回复异常")
         return "我听不懂你说什么"
-    assistant_message = response.json()["choices"][0]["message"]["content"]
-    return assistant_message
+    
+    return response
 
 
 # text-generation-webui接口调用-LLM回复
@@ -695,6 +696,7 @@ def aiResponseTry():
         logging.error(traceback.format_exc())
         is_ai_ready=True
 
+is_stream_out = False #标识语音流式处理时候，其他音频合成不能干扰
 # LLM回复
 def ai_response():
     """
@@ -704,6 +706,7 @@ def ai_response():
     global is_ai_ready
     global QuestionList
     global history
+    global is_stream_out
 
     is_ai_ready = False
     llm_json = QuestionList.get()
@@ -742,37 +745,80 @@ def ai_response():
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     # 过滤表情<>或者()标签
-    response = filter_html_tags(response)
+    # response = filter_html_tags(response)
     obs.show_text("状态提示",f"{Ai_Name}思考问题\"{title}\"完成")
     
-    # 切换场景
-    if "粉色" in response or "睡觉" in response or "粉红" in response:
-       changeScene("粉色房间")
-    elif "清晨" in response or "早" in response or "睡醒" in response:
-       changeScene("清晨房间")
-    elif "祭拜" in response or "神社" in response or "寺庙" in response:
-       changeScene("神社")
-    elif "花房" in response or "花香" in response:
-       changeScene("花房")
-    elif "岸" in response or "海" in response:
-       changeScene("海岸花坊")
+    # 处理流式回复
+    all_content=""
+    temp=""
+    timestamp = time.time()
+    is_stream_out = True
+    split_flag=",|，|。|!|！|?|？|\n"  #文本分隔符
+    for line in response.iter_lines():
+        if line:
+            # 处理收到的JSON响应
+            # response_json = json.loads(line)
+            str_data = line.decode('utf-8')
+            str_data = str_data.replace("data: ","")
+            print(str_data)
+            if str_data!="[DONE]":
+                response_json = json.loads(str_data)
+                if response_json["choices"][0]["finish_reason"]!="stop":
+                    # 回复内容
+                    stream_content = response_json["choices"][0]["delta"]["content"]
+                    if stream_content=="":
+                        continue
+                    # 过滤特殊符号
+                    stream_content = filter_html_tags(stream_content)
+                    content = temp + stream_content
+                    print(content)
+                    
+                    if re.search(f"[{split_flag}]", content):
+                        text = split_flag.split("|")
+                        num = is_index_contain_string(text, content)
+                        temp = content[num : len(content)]
+                        content = content.replace(temp,"")
 
-    # 回复文本
-    answer = f"{response}"
+                        # 加入语音列表，并且后续合成语音
+                        jsonStr = {"traceid":f"{timestamp}","question":title,"text":content,"lanuage":"AutoChange"}
+                        AnswerList.put(jsonStr)
+                    else:
+                        temp = content
 
-    # 日志输出
-    current_question_count = QuestionList.qsize()
-    print(f"[AI回复]{answer}")
-    print(f"System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
+                    all_content = all_content + response_json["choices"][0]["delta"]["content"]
+                else:
+                    # 结束把剩余文本输出语音
+                    if temp!="" and re.search(f"[{split_flag}]", temp) is None:
+                        jsonStr = {"traceid":f"{timestamp}","question":title,"text":temp,"lanuage":"AutoChange"}
+                        AnswerList.put(jsonStr)
+                    print("end:"+response_json["choices"][0]["finish_reason"])
+    is_stream_out = False
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
+    # 切换场景
+    if "粉色" in all_content or "睡觉" in all_content or "粉红" in all_content:
+       changeScene("粉色房间")
+    elif "清晨" in all_content or "早" in all_content or "睡醒" in all_content:
+       changeScene("清晨房间")
+    elif "祭拜" in all_content or "神社" in all_content or "寺庙" in all_content:
+       changeScene("神社")
+    elif "花房" in all_content or "花香" in all_content:
+       changeScene("花房")
+    elif "岸" in all_content or "海" in all_content:
+       changeScene("海岸花坊")
+       
+    # 日志输出
+    current_question_count = QuestionList.qsize()
+    print(f"[AI回复]{all_content}")
+    print(f"System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
+
     # 加入回复列表，并且后续合成语音
-    json = {"question":title,"text":response,"lanuage":"AutoChange"}
-    AnswerList.put(json)
+    # json = {"question":title,"text":response,"lanuage":"AutoChange"}
+    # AnswerList.put(json)
 
 # 过滤html标签
 def filter_html_tags(text):
-    pattern = r'\[.*?\]|<.*?>|\(.*?\)'  # 匹配尖括号内的所有内容
+    pattern = r'\[.*?\]|<.*?>|\(.*?\)|\n'  # 匹配尖括号内的所有内容
     return re.sub(pattern, '', text)
 
 # duckduckgo搜索引擎搜索
@@ -1070,7 +1116,6 @@ def check_answer():
 
 # 如果语音已经放完且队列中还有回复 则创建一个生成并播放TTS的线程
 def check_tts():
-    global is_tts_ready
     global AnswerList
     if not AnswerList.empty():
         response = AnswerList.get()
@@ -1111,7 +1156,7 @@ def gtp_vists(filename,text,emotion):
 # 直接合成语音播放       
 def tts_say(text):
     try:
-        json =  {"question":"","text":text,"lanuage":""}
+        json =  {"traceid":"","question":"","text":text,"lanuage":""}
         tts_say_do(json)
     except Exception as e:
         print(f"【tts_say】发生了异常：{e}")
@@ -1162,7 +1207,7 @@ def tts_say_do(json):
     # 触发翻译日语
     if lanuage=="AutoChange":
         print(f"当前感情值:{moodNum}")
-        if moodNum>90 or "日语" in question or emotion=="angry":
+        if moodNum>200 or "日语" in question or emotion=="angry":
            trans_json = translate(text,"zh-Hans","ja")
            if has_field(trans_json,"translated"):
                 text = trans_json["translated"]
@@ -1173,6 +1218,12 @@ def tts_say_do(json):
        return
     if question!="":
        obs.show_text("状态提示",f"{Ai_Name}语音合成\"{question}\"完成")
+
+    # 判断同序列聊天语音合成时候，其他语音合成任务等待
+    traceid = json["traceid"]
+    if traceid=="":
+        while is_stream_out==True:
+            time.sleep(1)
 
     # ============ 【线程锁】播放语音【时间会很长】 ==================
     say_lock.acquire()
@@ -1194,7 +1245,7 @@ def tts_say_do(json):
     say_lock.release()
     # ========================= end =============================
 
-    # 执行命令行指令
+    # 删除语音文件
     subprocess.run(f"del /f .\output\{filename}.mp3 1>nul", shell=True)
     
 
@@ -1208,7 +1259,7 @@ def mood(emotion):
         mood_num=mood_num+2
     if emotion=="angry":
         mood_num=mood_num+3
-    if mood_num>100:
+    if mood_num>300:
         mood_num=0
     return mood_num
 
@@ -1230,20 +1281,22 @@ def auto_swing():
     stop_emote_thread.start()
     auto_swing_lock.release()
 
-    # 执行器-循环摇摆：
+    # 执行器-循环摇摆：唱歌中 或者 说话中 都会摇摆
     while swing_motion == 1 and (is_singing==1 or is_tts_ready==False):
         jsonstr = []
         jsonstr.append({"content":"happy","key":"摇摆1","num":1,"timesleep":0,"donum":0,"endwait":24})
         jsonstr.append({"content":"happy","key":"摇摆2","num":1,"timesleep":0,"donum":0,"endwait":21})
         jsonstr.append({"content":"happy","key":"摇摆3","num":1,"timesleep":0,"donum":0,"endwait":25})
         jsonstr.append({"content":"happy","key":"摇摆4","num":1,"timesleep":0,"donum":0,"endwait":19})
+        # 随机一个【摇摆动作】
         num = random.randrange(0, len(jsonstr))
         emote_show_json = []
         emote_show_json.append(jsonstr[num])
+        # 执行【摇摆动作】
         print(f"执行摇摆：{emote_show_json}")
         emote_show_thread = Thread(target=emote_show,args=(emote_show_json,))
         emote_show_thread.start()
-        # 当前表情等待结束时间
+        # 当前【摇摆动作】等待结束时间
         endwait = emote_show_json[0]["endwait"]
         while endwait>0:
            time.sleep(1)
@@ -1440,7 +1493,7 @@ def has_string_reg(regx,s):
 
 # 正则判断[集合判断]
 def has_string_reg_list(regxlist,s):
-    regx = regxlist.replace("[","(").replace("]",")").replace(",","|").replace("'","").replace(" ","")
+    regx = regxlist.replace(",","|").replace("'","").replace(" ","")
     return re.search(regx, s)
 
 # 判断字符位置（不含搜索字符）- 如，搜索“画画女孩”，则输出“女孩”位置
