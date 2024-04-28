@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="referrer" content="no-referrer">
+		<link rel="icon" href="/favicon.ico">
+		<title>chat</title>
+		<style>
+            /* Transparent background */
+            body {
+                background-color: transparent !important;
+            }
+			#chat {
+				width: 1200px; height:200px; overflow: hidden; 
+				background-color: rgba(0, 0, 0, 0.7);
+				padding: 10px; -webkit-border-radius: 15px; border: solid 1px #ffffff; 
+            }
+			#content {
+                width: auto; height:auto;
+            }
+			#content .area{
+			    color: white; line-height: 43px; 
+				font-size: 32px; font-weight: bold; word-wrap: break-word; overflow:hidden;
+				letter-spacing:5px; font-family:"微软雅黑";
+			}
+			#content .area .end{
+			    animation: blink 1s linear infinite;
+			}
+			@keyframes blink {
+				0% {
+					opacity: 0;
+				}
+				50% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+        </style>
+		<script type="text/javascript" src="jquery-3.7.1.min.js"></script>
+	</head>
+	<body>
+		<div id="chat">
+			  <div id="content">
+				<div class="area">
+					<span class="font"></span><span class="end"></span>
+				</div>
+			  </div>
+		</div>
+		<div id="tip"></div>
+		<script type="text/javascript">
+			function typewriter(data) {
+				traceid = data["traceid"]
+				text = data["content"]
+				text = text.replaceAll("<br/>","\r\n");
+				var i = 0; // 当前要显示的字符索引
+				attrname=$('#content div.area .font').attr("class");
+				//更改文字输出的class为traceid追踪
+				if(attrname!="font "+traceid){
+				   //不同traceid
+				   $("#content div.area .font").text("");
+				   $('#content div.area .font').attr('class',"font "+traceid);
+				}
+				new_attrname = "#content div.area .font."+traceid
+				$("#content div.area .end").text("_");
+				function showChar() {
+					if (i < text.length) {
+						fontnum=$(new_attrname).text().length
+						//超过字数清空
+						if(fontnum % 125==0)
+						   $(new_attrname).text("");
+						//尾部追加文字
+						$(new_attrname).append(text[i]);
+						i++; // 更新索引值
+						setTimeout(showChar, 80); // 每次间隔xx调用自身，模拟打字效果
+					} else {
+						console.log('完成'); // 所有字符都已经输出完毕时触发此行代码
+						$("#content div.area .end").text("");
+					}
+				}
+				
+				showChar(); // 开始输出第一个字符
+			}
+			
+			// JavaScript部分
+			function refreshPage(){
+				$.ajax({
+                    url: "http://127.0.0.1:1800/chatreply",
+                    type: "get",
+                    dataType: "jsonp",
+                    //需要和服务端回掉方法中的参数名相对应
+                    //注释掉这句话默认传的名称叫callback
+                    jsonp: "CallBack",
+                    cache: false,
+                    data: {},
+                    success: function (data) {
+						if(data["status"]=="成功")
+						{
+						    typewriter(data)
+						}
+                    }
+                });
+			}
+            
+			// 每隔1000毫秒（1秒）
+			setInterval(function(){
+				refreshPage();
+			}, 1000);
+		</script>
+	</body>
+</html>

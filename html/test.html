@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="referrer" content="no-referrer">
+		<link rel="icon" href="/favicon.ico">
+		<title>chat</title>
+		<style>
+            /* Transparent background */
+            body {
+                background-color: transparent !important;
+            }
+			#chat {
+				width: 1200px; height:200px; overflow: hidden; 
+				background-color: rgba(0, 0, 0, 0.7);
+				padding: 10px; -webkit-border-radius: 15px; border: solid 1px #ffffff; 
+            }
+			#content {
+                width: auto; height:auto;
+            }
+			#content .area{
+			    color: white; line-height: 43px; 
+				font-size: 32px; font-weight: bold; word-wrap: break-word; overflow:hidden;
+				letter-spacing:5px; font-family:"微软雅黑";
+			}
+			#content .area .end{
+			    animation: blink 1s linear infinite;
+			}
+			@keyframes blink {
+				0% {
+					opacity: 0;
+				}
+				50% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+        </style>
+		<script type="text/javascript" src="jquery-3.7.1.min.js"></script>
+	</head>
+	<body>
+		<div id="chat">
+			  <div id="content">
+				<div class="area">
+					<span class="font"></span><span class="end"></span>
+				</div>
+			  </div>
+		</div>
+		<div id="tip"></div>
+		<script type="text/javascript">
+            traceid="11111111"
+			$("#content div.area .font").text("");
+			$('#content div.area .font').attr('class',"font "+traceid);
+			$("#content div.area .end").text("_");
+			$("#content div.area .font."+traceid).append("ffffff");
+            attrname=$('#content div.area .font').attr("class");
+			alert(attrname)
+			
+		</script>
+	</body>
+</html>
