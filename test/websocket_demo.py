@@ -25,7 +25,7 @@ def auth():
         "data": {
             "pluginName": "winlonebot",
             "pluginDeveloper": "winlone",
-            "authenticationToken": "4ae2f64ec9d1fe7bddc1b2edfb96292b28ab8b83554b50270a7fe83b3b3b8d05"
+            "authenticationToken": "6f80e2aa087daa949cada5f4adb6c15d67f109aa3cbc3076e6de5eda79ed145d"
         }
     }
     data=json.dumps(auth)

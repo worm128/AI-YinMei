@@ -312,12 +312,13 @@ def input_msg():
 def chatreply():
     global ReplyTextList
     CallBackForTest=request.args.get('CallBack')
-    text=""
     status="失败"
     if not ReplyTextList.empty():
-        text = ReplyTextList.get();
+        json_str = ReplyTextList.get();
+        text = json_str["text"]
+        traceid = json_str["traceid"]
         status = "成功"
-    str = "({\"status\": \""+status+"\",\"content\": \""+text.replace("\"","'").replace("\r"," ").replace("\n","<br/>")+"\"})"
+    str = "({\"traceid\": \""+traceid+"\",\"status\": \""+status+"\",\"content\": \""+text.replace("\"","'").replace("\r"," ").replace("\n","<br/>")+"\"})"
     if CallBackForTest is not None:
         str=CallBackForTest+str
     return str
@@ -627,7 +628,7 @@ def cmd(query):
 def chat_fastgpt(content, uid, username):
     url = f"http://{fastgpt_url}/api/v1/chat/completions"
     headers = {"Content-Type": "application/json","Authorization":fastgpt_authorization}
-    timestamp = time.time()
+    timestamp = int(time.time())
     data={
             "chatId": timestamp,
             "stream": True,
@@ -745,13 +746,12 @@ def ai_response():
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     # 过滤表情<>或者()标签
-    # response = filter_html_tags(response)
     obs.show_text("状态提示",f"{Ai_Name}思考问题\"{title}\"完成")
     
     # 处理流式回复
     all_content=""
     temp=""
-    timestamp = time.time()
+    timestamp = int(time.time())
     is_stream_out = True
     split_flag=",|，|。|!|！|?|？|\n"  #文本分隔符
     for line in response.iter_lines():
@@ -771,16 +771,16 @@ def ai_response():
                     # 过滤特殊符号
                     stream_content = filter_html_tags(stream_content)
                     content = temp + stream_content
-                    print(content)
-                    
+
                     if re.search(f"[{split_flag}]", content):
                         text = split_flag.split("|")
                         num = is_index_contain_string(text, content)
                         temp = content[num : len(content)]
-                        content = content.replace(temp,"")
+                        content = content[0 : num]
+                        print("分割后文本:"+content)
 
                         # 加入语音列表，并且后续合成语音
-                        jsonStr = {"traceid":f"{timestamp}","question":title,"text":content,"lanuage":"AutoChange"}
+                        jsonStr = {"voiceType":"chat","traceid":f"{timestamp}","question":title,"text":content,"lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     else:
                         temp = content
@@ -789,7 +789,7 @@ def ai_response():
                 else:
                     # 结束把剩余文本输出语音
                     if temp!="" and re.search(f"[{split_flag}]", temp) is None:
-                        jsonStr = {"traceid":f"{timestamp}","question":title,"text":temp,"lanuage":"AutoChange"}
+                        jsonStr = {"voiceType":"chat","traceid":f"{timestamp}","question":title,"text":temp,"lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     print("end:"+response_json["choices"][0]["finish_reason"])
     is_stream_out = False
@@ -812,9 +812,6 @@ def ai_response():
     print(f"[AI回复]{all_content}")
     print(f"System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
 
-    # 加入回复列表，并且后续合成语音
-    # json = {"question":title,"text":response,"lanuage":"AutoChange"}
-    # AnswerList.put(json)
 
 # 过滤html标签
 def filter_html_tags(text):
@@ -988,7 +985,7 @@ def searchimg_output(img_search_json):
             # 虚拟摄像头输出
             if image is not None:
                 # 保存图片
-                timestamp = time.time()
+                timestamp = int(time.time())
                 path = f"{physical_save_folder}{prompt}_{username}_{timestamp}.jpg"
                 # 转换图像模式为RGB
                 image_rgb = image.convert('RGB')
@@ -1088,7 +1085,7 @@ def nsfw_fun(imgb64,prompt,username,retryCount,tip,nsfw_limit):
             obs.show_image("绘画图片","J:\\ai\\ai-yinmei\\images\\黄图950.jpg")
             # 保存用户的黄图，留底观察
             img = Image.open(io.BytesIO(base64.b64decode(imgb64)))
-            timestamp = time.time()
+            timestamp = int(time.time())
             img.save(f"./porn/{prompt}_{username}_porn_{nsfw}_{timestamp}.jpg")
             return 0,nsfw
         elif status=="成功":
@@ -1156,7 +1153,8 @@ def gtp_vists(filename,text,emotion):
 # 直接合成语音播放       
 def tts_say(text):
     try:
-        json =  {"traceid":"","question":"","text":text,"lanuage":""}
+        timestamp = int(time.time())
+        json =  {"voiceType":"other","traceid":f"{timestamp}","question":"","text":text,"lanuage":""}
         tts_say_do(json)
     except Exception as e:
         print(f"【tts_say】发生了异常：{e}")
@@ -1181,6 +1179,8 @@ def tts_say_do(json):
     text = json["text"]
     replyText = text
     lanuage = json["lanuage"]
+    voiceType = json["voiceType"]
+    traceid = json["traceid"]
 
     # 识别表情
     jsonstr = emote_content(text)
@@ -1189,18 +1189,6 @@ def tts_say_do(json):
     if len(jsonstr)>0:
         emotion = jsonstr[0]["content"]
 
-    # 微软合成语音
-    # with open(f"./output/{filename}.txt", "w", encoding="utf-8") as f:
-    #     f.write(f"{text}")  # 将要读的回复写入临时文件
-    # 合成声音
-    # subprocess.run(
-    #     f"edge-tts --voice zh-CN-XiaoxiaoNeural --rate=+20% --f .\output\{filename}.txt --write-media .\output\{filename}.mp3 2>nul",
-    #     shell=True,
-    # )
-
-    # bert-vits2合成语音
-    # status = bert_vits2(filename,text,emotion)
-    
     # 感情值增加
     moodNum = mood(emotion)
 
@@ -1211,6 +1199,18 @@ def tts_say_do(json):
            trans_json = translate(text,"zh-Hans","ja")
            if has_field(trans_json,"translated"):
                 text = trans_json["translated"]
+    
+     # 微软合成语音
+    # with open(f"./output/{filename}.txt", "w", encoding="utf-8") as f:
+    #     f.write(f"{text}")  # 将要读的回复写入临时文件
+    # 合成声音
+    # subprocess.run(
+    #     f"edge-tts --voice zh-CN-XiaoxiaoNeural --rate=+20% --f .\output\{filename}.txt --write-media .\output\{filename}.mp3 2>nul",
+    #     shell=True,
+    # )
+
+    # bert-vits2合成语音
+    # status = bert_vits2(filename,text,emotion)
 
     # gtp-vists合成语音
     status = gtp_vists(filename,text,emotion)
@@ -1220,8 +1220,7 @@ def tts_say_do(json):
        obs.show_text("状态提示",f"{Ai_Name}语音合成\"{question}\"完成")
 
     # 判断同序列聊天语音合成时候，其他语音合成任务等待
-    traceid = json["traceid"]
-    if traceid=="":
+    if voiceType!="chat":
         while is_stream_out==True:
             time.sleep(1)
 
@@ -1233,7 +1232,8 @@ def tts_say_do(json):
     emote_thread.start()
     
     # 输出回复字幕
-    ReplyTextList.put(replyText)
+    replyText_json={"traceid":traceid,"text":replyText}
+    ReplyTextList.put(replyText_json)
     
     # 循环摇摆动作
     yaotou_thread = Thread(target=auto_swing)
@@ -1286,8 +1286,10 @@ def auto_swing():
         jsonstr = []
         jsonstr.append({"content":"happy","key":"摇摆1","num":1,"timesleep":0,"donum":0,"endwait":24})
         jsonstr.append({"content":"happy","key":"摇摆2","num":1,"timesleep":0,"donum":0,"endwait":21})
-        jsonstr.append({"content":"happy","key":"摇摆3","num":1,"timesleep":0,"donum":0,"endwait":25})
+        jsonstr.append({"content":"happy","key":"摇摆3","num":1,"timesleep":0,"donum":0,"endwait":30})
         jsonstr.append({"content":"happy","key":"摇摆4","num":1,"timesleep":0,"donum":0,"endwait":19})
+        jsonstr.append({"content":"happy","key":"摇摆5","num":1,"timesleep":0,"donum":0,"endwait":30})
+        jsonstr.append({"content":"happy","key":"摇摆6","num":1,"timesleep":0,"donum":0,"endwait":30})
         # 随机一个【摇摆动作】
         num = random.randrange(0, len(jsonstr))
         emote_show_json = []
@@ -2083,7 +2085,7 @@ def draw(prompt, drawcontent, username, isExtend):
         img = Image.open(io.BytesIO(base64.b64decode(imgb64)))
         img = img.resize((width, height), Image.LANCZOS)
         # 保存图片-留底观察
-        timestamp = time.time()
+        timestamp = int(time.time())
         path = f"{physical_save_folder}{drawName}_{username}_{nsfw}_{timestamp}.jpg"
         img.save(path)
         # ================= end =================
@@ -2138,7 +2140,7 @@ def progress(prompt, username):
                 # 拉伸图片
                 img = img.resize((width, height), Image.LANCZOS)
                 # 保存图片
-                timestamp = time.time()
+                timestamp = int(time.time())
                 path = f"{physical_save_folder}{prompt}_{username}_{nsfw}_{timestamp}.jpg"
                 img.save(path)
                 obs.show_image("绘画图片",path)
@@ -2242,15 +2244,15 @@ def main():
 
     if mode==1 or mode==2:
         # LLM回复
-        sched1.add_job(func=check_answer, trigger="interval", seconds=1, id=f"answer", max_instances=10)
+        sched1.add_job(func=check_answer, trigger="interval", seconds=1, id=f"answer", max_instances=100)
         # tts语音合成
-        sched1.add_job(func=check_tts, trigger="interval", seconds=1, id=f"tts", max_instances=10)
+        sched1.add_job(func=check_tts, trigger="interval", seconds=1, id=f"tts", max_instances=1000)
         # 绘画
-        sched1.add_job(func=check_draw, trigger="interval", seconds=1, id=f"draw", max_instances=10)
+        sched1.add_job(func=check_draw, trigger="interval", seconds=1, id=f"draw", max_instances=50)
         # 搜索资料
-        sched1.add_job(func=check_text_search, trigger="interval", seconds=1, id=f"text_search", max_instances=10)
+        sched1.add_job(func=check_text_search, trigger="interval", seconds=1, id=f"text_search", max_instances=50)
         # 搜图
-        sched1.add_job(func=check_img_search, trigger="interval", seconds=1, id=f"img_search", max_instances=10)
+        sched1.add_job(func=check_img_search, trigger="interval", seconds=1, id=f"img_search", max_instances=50)
         # 唱歌转换
         sched1.add_job(func=check_sing, trigger="interval", seconds=1, id=f"sing", max_instances=50)
         # 歌曲清单播放
@@ -2260,7 +2262,7 @@ def main():
         # 时间判断场景[白天黑夜切换]
         sched1.add_job(func=check_scene_time, trigger="cron", hour="6,17,18", id=f"scene_time")
         # 欢迎语
-        sched1.add_job(func=check_welcome_room, trigger="interval", seconds=8, id=f"welcome_room", max_instances=10)
+        sched1.add_job(func=check_welcome_room, trigger="interval", seconds=8, id=f"welcome_room", max_instances=50)
         sched1.start()
     
     if mode==1 or mode==2:
