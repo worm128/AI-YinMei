@@ -1195,7 +1195,7 @@ def tts_say_do(json):
     # 触发翻译日语
     if lanuage=="AutoChange":
         print(f"当前感情值:{moodNum}")
-        if moodNum>200 or "日语" in question or emotion=="angry":
+        if moodNum>270 or "日语" in question or emotion=="angry":
            trans_json = translate(text,"zh-Hans","ja")
            if has_field(trans_json,"translated"):
                 text = trans_json["translated"]
