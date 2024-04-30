@@ -18,11 +18,12 @@ import uuid
 import asyncio, aiohttp
 import http.cookies
 import yaml
-
-from typing import *
 import func.blivedm as blivedm
 import func.blivedm.models.open_live as open_models
 import func.blivedm.models.web as web_models
+
+from concurrent.futures import ThreadPoolExecutor
+from typing import *
 from func.obs.obs_websocket import ObsWebSocket,VideoStatus,VideoControl
 from func.tools.file_util import FileUtil
 from func.tools.string_util import StringUtil
@@ -1245,9 +1246,9 @@ def check_answer():
 def check_tts():
     global AnswerList
     if not AnswerList.empty():
-        response = AnswerList.get()
+        json = AnswerList.get()
         # 合成语音
-        tts_chat_say(response)
+        tts_chat_say(json)
 
 
 '''
@@ -1280,21 +1281,24 @@ def gtp_vists(filename,text,emotion):
                 return 1
     return 0
 
+# 语音合成线程池
+tts_say_pool = ThreadPoolExecutor(max_workers=5, thread_name_prefix='tts_say')
 # 直接合成语音播放       
 def tts_say(text):
     try:
-        #timestamp = int(time.time())
         uuid_value = uuid.uuid4()
         json =  {"voiceType":"other","traceid":f"{uuid_value}","chatStatus":"end","question":"","text":text,"lanuage":""}
-        tts_say_do(json)
+        tts_say_pool.submit(tts_say_do, json)
     except Exception as e:
         print(f"【tts_say】发生了异常：{e}")
         logging.error(traceback.format_exc())
 
+# 语音合成线程池
+tts_chat_say_pool = ThreadPoolExecutor(max_workers=5, thread_name_prefix='tts_chat_say')
 # 直接合成语音播放-聊天用
 def tts_chat_say(json):
     try:
-        tts_say_do(json)
+        tts_chat_say_pool.submit(tts_say_do, json)
     except Exception as e:
         print(f"【tts_chat_say】发生了异常：{e}")
         logging.error(traceback.format_exc())
