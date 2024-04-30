@@ -15,7 +15,14 @@ import traceback
 import websocket
 import logging
 import uuid
+import asyncio, aiohttp
+import http.cookies
+import yaml
 
+from typing import *
+import func.blivedm as blivedm
+import func.blivedm.models.open_live as open_models
+import func.blivedm.models.web as web_models
 from func.obs.obs_websocket import ObsWebSocket,VideoStatus,VideoControl
 from func.tools.file_util import FileUtil
 from func.tools.string_util import StringUtil
@@ -30,6 +37,11 @@ from urllib.parse import quote
 from flask import Flask, jsonify, request, render_template
 from flask_apscheduler import APScheduler
 from urllib import parse
+
+# 加载配置
+f = open('config.yml','r',encoding='utf-8')
+cont = f.read()
+config = yaml.load(cont,Loader=yaml.FullLoader)
 
 Ai_Name="吟美"  #Ai名称
 print("=====================================================================")
@@ -124,18 +136,19 @@ sing_play_flag=0  # 1.正在播放唱歌 0.未播放唱歌 【用于监听歌曲
 # ============================================
 
 # ============= B站直播间 =====================
+room_id = config["blivedm"]["room_id"]  # 输入直播间编号
+# ******** blivedm ********
 # b站直播身份验证：
-#实例化 Credential 类
-cred = Credential(
-    sessdata="0a8e91ed%2C1729603867%2C90505%2A42CjDcfr3Xjw8tyVAwPYwOS1Riw31ZAoFntGiryKtkLyGv92E6LXlIKDYGuDhI5vx0VyUSVnJab1JGVjFGZjRNa3FPRC0xelpLSFpyNHVDaW8teDZJNll0X2tVaHUyWWFjMnRmLW1WNlNtWk9kNnRCbElxamxpQWFlYW5OYTF2bzRscVkzc2dqdGN3IIEC",
-    buvid3="C08180D1-DDCD-1766-0162-FB77DF0BDAE597566infoc",
-    dedeuserid="333472479"
-)
-room_id = int(input("输入你的B站直播间编号: ") or "31814714")  # 输入直播间编号
-room = live.LiveDanmaku(room_id, credential=cred, debug=False)  # 连接弹幕服务器
-#sender = live.LiveRoom(room_id, credential=cred)  # 用来发送弹幕
-# 自己的UID 可以手动填写也可以根据直播间号获取
-#my_uid = sync(sender.get_room_info())["room_info"]["uid"]
+SESSDATA = config["blivedm"]["sessdata"]
+session: Optional[aiohttp.ClientSession] = None
+
+# 在开放平台申请的开发者密钥
+ACCESS_KEY_ID = config["blivedm"]["ACCESS_KEY_ID"]
+ACCESS_KEY_SECRET = config["blivedm"]["ACCESS_KEY_SECRET"]
+# 在开放平台创建的项目ID
+APP_ID = config["blivedm"]["APP_ID"]
+# 主播身份码
+ROOM_OWNER_AUTH_CODE = config["blivedm"]["ROOM_OWNER_AUTH_CODE"]
 # ============================================
 
 # ============= api web =====================
@@ -215,43 +228,6 @@ WelcomeList = []  # welcome欢迎列表
 print("--------------------")
 print("AI虚拟主播-启动成功！")
 print("--------------------")
-
-# 用户进入直播间
-@room.on("INTERACT_WORD")
-async def in_liveroom(event):
-    user_name = event["data"]["data"]["uname"]  # 获取用户昵称
-    user_id = event["data"]["data"]["uid"]  # 获取用户uid
-    time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
-    print(f"{time1}:粉丝[{user_name}]进入了直播间")
-    # 46130941：老爸  333472479：吟美
-    if user_id!=46130941 and user_id!=333472479:
-        # 加入欢迎列表
-        WelcomeList.append(user_name)
-
-# B站弹幕处理
-@room.on("DANMU_MSG")  # 弹幕消息事件回调函数
-async def input_msg(event):
-    # 发送者UID
-    uid = event["data"]["info"][2][0]
-    # 排除自己发送的弹幕
-    # if uid == my_uid:
-    #     return
-    
-    query = event["data"]["info"][1]  # 获取弹幕内容
-    user_name = event["data"]["info"][2][1]  # 获取用户昵称
-    #消息处理分发
-    msg_deal(query,uid,user_name)
-
-# 收到礼物
-@room.on('SEND_GIFT')
-async def on_gift(event):
-    username=event["data"]["data"]["uname"]
-    giftname=event["data"]["data"]["giftName"]
-    num=event["data"]["data"]["num"]
-    text = f"谢谢‘{username}’赠送的{num}个{giftname}"
-    print(text)
-    tts_say_thread = Thread(target=tts_say,args=(text,))
-    tts_say_thread.start()
 
 # http说话复读
 @app.route("/say", methods=["POST"])
@@ -349,6 +325,147 @@ def songlist():
     if CallBackForTest is not None:
        temp = CallBackForTest+str
     return temp
+
+
+# blivedm弹幕监听
+async def blivedm_start():
+    await run_single_client()
+
+# SessData会话监听
+async def blivedm_start2():
+    global session
+    init_session()
+    try:
+        await run_single_client2()
+    finally:
+        await session.close()
+
+def init_session():
+    cookies = http.cookies.SimpleCookie()
+    cookies['SESSDATA'] = SESSDATA
+    cookies['SESSDATA']['domain'] = 'bilibili.com'
+
+    global session
+    session = aiohttp.ClientSession()
+    session.cookie_jar.update_cookies(cookies)
+
+# sessData方式监听
+async def run_single_client2():
+      """
+      演示监听一个直播间
+      """
+      global session
+
+      client = blivedm.BLiveClient(room_id, session=session)
+      handler = MyHandler2()
+      client.set_handler(handler)
+
+      client.start()
+      try:
+          await client.join()
+      finally:
+          await client.stop_and_close()
+
+# 开放平台方式监听
+async def run_single_client():
+    """
+    演示监听一个直播间
+    """
+    client = blivedm.OpenLiveClient(
+        access_key_id=ACCESS_KEY_ID,
+        access_key_secret=ACCESS_KEY_SECRET,
+        app_id=APP_ID,
+        room_owner_auth_code=ROOM_OWNER_AUTH_CODE,
+    )
+    handler = MyHandler()
+    client.set_handler(handler)
+
+    client.start()
+    try:
+        await client.join()
+    finally:
+        await client.stop_and_close()
+
+class MyHandler2(blivedm.BaseHandler):
+    # 演示如何添加自定义回调
+    _CMD_CALLBACK_DICT = blivedm.BaseHandler._CMD_CALLBACK_DICT.copy()
+    
+    # 入场消息回调
+    def __interact_word_callback(self, client: blivedm.BLiveClient, command: dict):
+        print(f"[{client.room_id}] INTERACT_WORD: self_type={type(self).__name__}, room_id={client.room_id},"
+              f" uname={command['data']['uname']}")
+        user_name = command["data"]["uname"]  # 获取用户昵称
+        user_id = command["data"]["uid"]  # 获取用户uid
+        time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+        print(f"{time1}:粉丝[{user_name}]进入了直播间")
+        # 46130941：老爸  333472479：吟美
+        if user_id!=46130941 and user_id!=333472479:
+            # 加入欢迎列表
+            WelcomeList.append(user_name)
+            
+    _CMD_CALLBACK_DICT['INTERACT_WORD'] = __interact_word_callback  # noqa
+
+    def _on_heartbeat(self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage):
+        print(f'[{client.room_id}] 心跳2')
+    
+
+class MyHandler(blivedm.BaseHandler):
+    # 心跳
+    def _on_heartbeat(self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage):
+        print(f'[{client.room_id}] 心跳1')
+    
+    # 弹幕获取
+    def _on_open_live_danmaku(self, client: blivedm.OpenLiveClient, message: open_models.DanmakuMessage):
+        print(f'[{message.room_id}] {message.uname}：{message.msg}')
+        msg_deal(message.msg, message.room_id, message.uname)
+
+    # 赠送礼物
+    def _on_open_live_gift(self, client: blivedm.OpenLiveClient, message: open_models.GiftMessage):
+        coin_type = '金瓜子' if message.paid else '银瓜子'
+        total_coin = message.price * message.gift_num
+        print(f'[{message.room_id}] {message.uname} 赠送{message.gift_name}x{message.gift_num}'
+              f' （{coin_type}x{total_coin}）')
+        username = message.uname
+        giftname = message.gift_name
+        num = message.gift_num
+        text = f"谢谢‘{username}’赠送的{num}个{giftname}"
+        print(text)
+        tts_say_thread = Thread(target=tts_say,args=(text,))
+        tts_say_thread.start()
+
+    def _on_open_live_buy_guard(self, client: blivedm.OpenLiveClient, message: open_models.GuardBuyMessage):
+        print(f'[{message.room_id}] {message.user_info.uname} 购买 大航海等级={message.guard_level}')
+        username = message.user_info.uname
+        level = message.guard_level
+        text = f"非常谢谢‘{username}’购买 大航海等级{level},{Ai_Name}大小姐在这里给你跪下了"
+        print(text)
+        tts_say_thread = Thread(target=tts_say,args=(text,))
+        tts_say_thread.start()
+
+    def _on_open_live_super_chat(
+        self, client: blivedm.OpenLiveClient, message: open_models.SuperChatMessage
+    ):
+        print(f'[{message.room_id}] 醒目留言 ¥{message.rmb} {message.uname}：{message.message}')
+        username = message.uname
+        rmb = message.rmb
+        text = f"谢谢‘{username}’赠送的¥{rmb}元,她留言说\"{message.message}\""
+        print(text)
+        tts_say_thread = Thread(target=tts_say,args=(text,))
+        tts_say_thread.start()
+
+    def _on_open_live_super_chat_delete(
+        self, client: blivedm.OpenLiveClient, message: open_models.SuperChatDeleteMessage
+    ):
+        print(f'[{message.room_id}] 删除醒目留言 message_ids={message.message_ids}')
+
+    def _on_open_live_like(self, client: blivedm.OpenLiveClient, message: open_models.LikeMessage):
+        print(f'[{message.room_id}] {message.uname} 点赞')
+        username = message.uname
+        text = f"谢谢‘{username}’点赞,{Ai_Name}大小姐最爱你了"
+        print(text)
+        tts_say_thread = Thread(target=tts_say,args=(text,))
+        tts_say_thread.start()
+
 
 def msg_deal(query,uid,user_name):
     """
@@ -2302,15 +2419,21 @@ def main():
         app_thread.start()
         
     if mode==1:
-        # 开始监听弹幕流
-        sync(room.connect())
+        # bilibili-api弹幕监听
+        # sync(room.connect())
+        # blivedm弹幕监听
+        #asyncio.run(blivedm_start())
+        asyncio.run(listen_blivedm_task())
     else:
         while True:
            time.sleep(10)
+    print("结束")
 
-# b站直播间监听
-def brun():
-    sync(room.connect())
+# 监听B站直播间两个监听组合【开放平台+SessData会话】
+async def listen_blivedm_task():
+   task1 = asyncio.create_task(blivedm_start())
+   task2 = asyncio.create_task(blivedm_start2())
+   results = await asyncio.gather(task1,task2)
 
 # http服务  
 def apprun():
