@@ -857,11 +857,12 @@ def ai_response():
     # fastgpt
     if local_llm_type == 1:
         username_prompt = f"{shenfen}{prompt}"
-        #username_prompt = f"###{shenfen}对你说：###\n\"{prompt}\"。"
+        print(username_prompt)
         response = chat_fastgpt(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
         username_prompt = f"{shenfen}{prompt}"
+        print(username_prompt)
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     # 过滤表情<>或者()标签
