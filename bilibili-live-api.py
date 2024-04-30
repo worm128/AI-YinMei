@@ -39,7 +39,7 @@ from flask_apscheduler import APScheduler
 from urllib import parse
 
 # 加载配置
-f = open('config.yml','r',encoding='utf-8')
+f = open('config-prod.yml','r',encoding='utf-8')
 cont = f.read()
 config = yaml.load(cont,Loader=yaml.FullLoader)
 
@@ -1377,6 +1377,7 @@ def tts_say_do(json):
     
     # 输出回复字幕
     replyText_json={"traceid":traceid,"chatStatus":f"{chatStatus}","text":replyText}
+    print(replyText_json)
     ReplyTextList.put(replyText_json)
     
     # 循环摇摆动作
