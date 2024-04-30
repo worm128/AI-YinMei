@@ -14,6 +14,7 @@ import re
 import traceback
 import websocket
 import logging
+import uuid
 
 from func.obs.obs_websocket import ObsWebSocket,VideoStatus,VideoControl
 from func.tools.file_util import FileUtil
@@ -317,8 +318,9 @@ def chatreply():
         json_str = ReplyTextList.get();
         text = json_str["text"]
         traceid = json_str["traceid"]
+        chatStatus = json_str["chatStatus"]
         status = "成功"
-    str = "({\"traceid\": \""+traceid+"\",\"status\": \""+status+"\",\"content\": \""+text.replace("\"","'").replace("\r"," ").replace("\n","<br/>")+"\"})"
+    str = "({\"traceid\": \""+traceid+"\",\"chatStatus\": \""+chatStatus+"\",\"status\": \""+status+"\",\"content\": \""+text.replace("\"","'").replace("\r"," ").replace("\n","<br/>")+"\"})"
     if CallBackForTest is not None:
         str=CallBackForTest+str
     return str
@@ -751,9 +753,10 @@ def ai_response():
     # 处理流式回复
     all_content=""
     temp=""
-    timestamp = int(time.time())
-    is_stream_out = True
+    uuid_value = uuid.uuid4()
+    #is_stream_out = True
     split_flag=",|，|。|!|！|?|？|\n"  #文本分隔符
+    linenum = 1
     for line in response.iter_lines():
         if line:
             # 处理收到的JSON响应
@@ -778,9 +781,15 @@ def ai_response():
                         temp = content[num : len(content)]
                         content = content[0 : num]
                         print("分割后文本:"+content)
+                        
+                        # 判断是否起始数据
+                        chatStatus=""
+                        if linenum==1:
+                            chatStatus="start"
+                        linenum=linenum+1
 
                         # 加入语音列表，并且后续合成语音
-                        jsonStr = {"voiceType":"chat","traceid":f"{timestamp}","question":title,"text":content,"lanuage":"AutoChange"}
+                        jsonStr = {"voiceType":"chat","traceid":f"{uuid_value}","chatStatus":f"{chatStatus}","question":title,"text":content,"lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     else:
                         temp = content
@@ -788,11 +797,14 @@ def ai_response():
                     all_content = all_content + response_json["choices"][0]["delta"]["content"]
                 else:
                     # 结束把剩余文本输出语音
-                    if temp!="" and re.search(f"[{split_flag}]", temp) is None:
-                        jsonStr = {"voiceType":"chat","traceid":f"{timestamp}","question":title,"text":temp,"lanuage":"AutoChange"}
+                    if temp!="":
+                        jsonStr = {"voiceType":"chat","traceid":f"{uuid_value}","chatStatus":"end","question":title,"text":temp,"lanuage":"AutoChange"}
+                        AnswerList.put(jsonStr)
+                    else:
+                        jsonStr = {"voiceType":"chat","traceid":f"{uuid_value}","chatStatus":"end","question":title,"text":"","lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     print("end:"+response_json["choices"][0]["finish_reason"])
-    is_stream_out = False
+    #is_stream_out = False
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
     # 切换场景
@@ -1153,8 +1165,9 @@ def gtp_vists(filename,text,emotion):
 # 直接合成语音播放       
 def tts_say(text):
     try:
-        timestamp = int(time.time())
-        json =  {"voiceType":"other","traceid":f"{timestamp}","question":"","text":text,"lanuage":""}
+        #timestamp = int(time.time())
+        uuid_value = uuid.uuid4()
+        json =  {"voiceType":"other","traceid":f"{uuid_value}","chatStatus":"end","question":"","text":text,"lanuage":""}
         tts_say_do(json)
     except Exception as e:
         print(f"【tts_say】发生了异常：{e}")
@@ -1172,6 +1185,7 @@ def tts_chat_say(json):
 def tts_say_do(json):
     global SayCount
     global is_tts_ready
+    global is_stream_out
     SayCount += 1
     filename=f"say{SayCount}"
     
@@ -1181,6 +1195,16 @@ def tts_say_do(json):
     lanuage = json["lanuage"]
     voiceType = json["voiceType"]
     traceid = json["traceid"]
+    chatStatus = json["chatStatus"]
+    
+    # 退出标识
+    if text == "" and chatStatus=="end":
+        say_lock.acquire()
+        replyText_json={"traceid":traceid,"chatStatus":f"{chatStatus}","text":""}
+        ReplyTextList.put(replyText_json)
+        is_stream_out = False
+        say_lock.release()
+        return
 
     # 识别表情
     jsonstr = emote_content(text)
@@ -1226,13 +1250,16 @@ def tts_say_do(json):
 
     # ============ 【线程锁】播放语音【时间会很长】 ==================
     say_lock.acquire()
+    if chatStatus=="start":
+       is_stream_out = True
     is_tts_ready = False
+
     # 输出表情
     emote_thread = Thread(target=emote_show,args=(jsonstr,))
     emote_thread.start()
     
     # 输出回复字幕
-    replyText_json={"traceid":traceid,"text":replyText}
+    replyText_json={"traceid":traceid,"chatStatus":f"{chatStatus}","text":replyText}
     ReplyTextList.put(replyText_json)
     
     # 循环摇摆动作
@@ -1241,7 +1268,11 @@ def tts_say_do(json):
     
     # 播放声音
     mpv_play("mpv.exe", f".\output\{filename}.mp3", 100 , "0")
+
     is_tts_ready = True
+    if chatStatus=="end":
+       is_stream_out = False
+
     say_lock.release()
     # ========================= end =============================
 
@@ -1495,7 +1526,7 @@ def has_string_reg(regx,s):
 
 # 正则判断[集合判断]
 def has_string_reg_list(regxlist,s):
-    regx = regxlist.replace(",","|").replace("'","").replace(" ","")
+    regx = regxlist.replace("[","(").replace("]",")").replace(",","|").replace("'","").replace(" ","")
     return re.search(regx, s)
 
 # 判断字符位置（不含搜索字符）- 如，搜索“画画女孩”，则输出“女孩”位置

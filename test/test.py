@@ -73,15 +73,19 @@ def has_string_reg(regx,s):
 # wenhou=[f"{user_name}，恭喜发财，龙年大吉"]
 # wenhou_num = random.randrange(0, len(wenhou))
 # print(wenhou[wenhou_num])
-content= "有一只,超爱干净的猫咪"
-num = is_index_contain_string(",", content)
-temp = content[num : len(content)]
-content = content[0 : num]
-print(temp)
-print(content)
+# content= "有一只,超爱干净的猫咪"
+# num = is_index_contain_string(",", content)
+# temp = content[num : len(content)]
+# content = content[0 : num]
+# print(temp)
+# print(content)
 
-timestamp = int(time.time())
-print(timestamp)
+import uuid
+
+for i in range(100):
+    uuid_value = uuid.uuid4()
+    timestamp = time.time()
+    print(uuid_value)
 
 if re.search("[,|，|。|!|！|。|?|？]", "\""):
    print("match")
