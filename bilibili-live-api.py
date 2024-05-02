@@ -227,6 +227,14 @@ print("--------------------")
 print("AI虚拟主播-启动成功！")
 print("--------------------")
 
+# 执行指令
+@app.route("/cmd", methods=["GET"])
+def http_cmd():
+    cmdstr = request.args["cmd"]
+    print(f"执行指令：\"{cmd}\"")
+    cmd(cmdstr)
+    return jsonify({"status": "成功"})
+
 # http说话复读
 @app.route("/say", methods=["POST"])
 def http_say():
@@ -732,12 +740,16 @@ def cmd(query):
         os.system('taskkill /T /F /IM mpv.exe')
         return 1
     #下一首歌
-    if query=="\\next":
+    text = ["\\next", "下一首", "下首", "切歌", "next"]
+    is_contain = has_string_reg_list(f"^{text}", query)
+    if is_contain is not None:
         os.system('taskkill /T /F /IM song.exe')
         is_singing = 2  # 1.唱歌中 2.唱歌完成
         return 1
     #停止跳舞
-    if query=="\\停止跳舞":
+    text = ["\\停止跳舞", "停止跳舞", "不要跳舞", "stop dance"]
+    is_contain = has_string_reg_list(f"^{text}", query)
+    if is_contain is not None:
         is_dance = 2  #1.正在跳舞 2.跳舞完成
         return 1
     return 0
