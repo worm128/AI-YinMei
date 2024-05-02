@@ -1052,14 +1052,14 @@ def check_text_search():
         prompt = text_search_json["prompt"]
         uid = text_search_json["uid"]
         username = text_search_json["username"]
-
+        traceid = text_search_json["traceid"]
         #搜索引擎搜索
         searchStr = baidu_web_search(prompt)
         #llm模型处理
-        llm_prompt = f'帮我在答案"{searchStr}"中提取"{prompt}"的信息'
-        print(f"重置提问:{llm_prompt}")
+        llm_prompt = f'[{traceid}]帮我在答案"{searchStr}"中提取"{prompt}"的信息'
+        print(f"[{traceid}]重置提问:{llm_prompt}")
         #询问LLM
-        llm_json = {"query": prompt, "prompt": llm_prompt, "uid": uid, "username": username}
+        llm_json = {"traceid":traceid, "query": prompt, "prompt": llm_prompt, "uid": uid, "username": username}
         QuestionList.put(llm_json)
 
         is_SearchText = 2  # 搜文完成
@@ -2336,10 +2336,11 @@ def check_welcome_room():
         numstr = f"{count}位"
     userlist = str(WelcomeList).replace("['","").replace("']","")
     if len(WelcomeList) > 0:
-        text = f"欢迎\"{userlist}\"{numstr}同学来到{Ai_Name}的直播间,跪求关注一下{Ai_Name}的直播间"
+        traceid = str(uuid.uuid4())
+        text = f"[{traceid}]欢迎\"{userlist}\"{numstr}同学来到{Ai_Name}的直播间,跪求关注一下{Ai_Name}的直播间"
         WelcomeList.clear()
         #询问LLM
-        llm_json = {"prompt": text, "uid": 0, "username": Ai_Name}
+        llm_json = {"traceid":traceid, "prompt": text, "uid": 0, "username": Ai_Name}
         QuestionList.put(llm_json)  # 将弹幕消息放入队列
 
 # 时间判断场景
