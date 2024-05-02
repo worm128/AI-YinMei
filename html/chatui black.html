@@ -59,9 +59,8 @@
 				text = text.replaceAll("<br/>","\r\n");
 				var i = 0; // 当前要显示的字符索引
 				attrname=$('#content div.area .font').attr("class");
-				//更改文字输出的class为traceid追踪
+				//判断是新traceid：更改文字输出的class为traceid追踪
 				if(attrname!="font "+traceid){
-				   //不同traceid
 				   $("#content div.area .font").text("");
 				   $('#content div.area .font').attr('class',"font "+traceid);
 				}

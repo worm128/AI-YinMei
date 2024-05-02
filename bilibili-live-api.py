@@ -59,7 +59,7 @@ os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 sched1 = AsyncIOScheduler(timezone="Asia/Shanghai")
 #设置控制台日志
 today = datetime.date.today().strftime("%Y-%m-%d")
-logging.basicConfig(level=logging.INFO, encoding="utf-8", format='%(asctime)s %(levelname)s %(filename)s %(name)s %(message)s',handlers=[logging.StreamHandler(),logging.FileHandler(filename=f"./logs/log_{today}.txt", encoding="utf-8")])
+logging.basicConfig(level=logging.INFO, encoding="utf-8", format='%(asctime)s %(levelname)s %(filename)s [line:%(lineno)d] %(message)s',handlers=[logging.StreamHandler(),logging.FileHandler(filename=f"./logs/log_{today}.txt", encoding="utf-8")])
 # 定时器只输出error
 my_logging = logging.getLogger("apscheduler.executors.default")
 my_logging.setLevel('ERROR')
@@ -90,10 +90,7 @@ ReplyTextList = queue.Queue()   #Ai回复框文本队列
 history = []
 is_ai_ready = True  # 定义ai回复是否转换完成标志
 is_tts_ready = True  # 定义语音是否生成完成标志
-AudioCount = 0
 SayCount = 0
-history_count = 2  # 定义最大对话记忆轮数,请注意这个数值不包括扮演设置消耗的轮数，只有当enable_history为True时生效
-enable_role = False  # 是否启用扮演模式
 # ============================================
 
 # ============= 本地模型加载 =====================
@@ -417,7 +414,7 @@ class MyHandler(blivedm.BaseHandler):
     
     # 弹幕获取
     def _on_open_live_danmaku(self, client: blivedm.OpenLiveClient, message: open_models.DanmakuMessage):
-        print(f'[{message.room_id}] {message.uname}：{message.msg}')
+        print(f'{message.uname}：{message.msg}')
         msg_deal(message.msg, message.room_id, message.uname)
 
     # 赠送礼物
@@ -460,7 +457,7 @@ class MyHandler(blivedm.BaseHandler):
         print(f'[{message.room_id}] 删除醒目留言 message_ids={message.message_ids}')
 
     def _on_open_live_like(self, client: blivedm.OpenLiveClient, message: open_models.LikeMessage):
-        print(f'[{message.room_id}] {message.uname} 点赞')
+        print(f'{message.uname} 点赞')
         username = message.uname
         text = f"谢谢‘{username}’点赞,{Ai_Name}大小姐最爱你了"
         print(text)
@@ -472,13 +469,14 @@ def msg_deal(query,uid,user_name):
     """
     处理弹幕消息
     """
+    traceid = str(uuid.uuid4())
     query=filter(query,filterCh)
-    print(f"[{user_name}]:{query}")  # 打印弹幕信息
+    print(f"[{traceid}]弹幕捕获：[{user_name}]:{query}")  # 打印弹幕信息
 
     # 命令执行
     status = cmd(query)  
     if status==1:
-        print(f"执行命令：{query}")
+        print(f"[{traceid}]执行命令：{query}")
         return
 
     # 说话不执行任务
@@ -494,7 +492,7 @@ def msg_deal(query,uid,user_name):
         num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
-        print("跳舞表情：" + queryExtract)
+        print(f"[{traceid}]跳舞表情：" + queryExtract)
         video_path=""
         if queryExtract=="rnd":
             rnd_video = random.randrange(0, len(emote_video))
@@ -525,10 +523,10 @@ def msg_deal(query,uid,user_name):
         num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
-        print("搜索词：" + queryExtract)
+        print(f"[{traceid}]搜索词：" + queryExtract)
         if queryExtract=="":
            return
-        text_search_json = {"prompt": queryExtract, "uid": uid, "username": user_name}
+        text_search_json = {"traceid":traceid,"prompt": queryExtract, "uid": uid, "username": user_name}
         SearchTextList.put(text_search_json)
         return
 
@@ -539,10 +537,10 @@ def msg_deal(query,uid,user_name):
         num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
-        print("搜索图：" + queryExtract)
+        print(f"[{traceid}]搜索图：" + queryExtract)
         if queryExtract=="":
            return
-        img_search_json = {"prompt": queryExtract, "username": user_name}
+        img_search_json = {"traceid":traceid,"prompt": queryExtract, "username": user_name}
         SearchImgList.put(img_search_json)
         return
 
@@ -553,10 +551,10 @@ def msg_deal(query,uid,user_name):
         num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
-        print("绘画提示：" + queryExtract)
+        print(f"[{traceid}]绘画提示：" + queryExtract)
         if queryExtract=="":
            return
-        draw_json = {"prompt": queryExtract, "drawcontent":"", "username": user_name, "isExtend": True}
+        draw_json = {"traceid":traceid,"prompt": queryExtract, "drawcontent":"", "username": user_name, "isExtend": True}
         # 加入绘画队列
         DrawQueueList.put(draw_json)
         return
@@ -568,10 +566,10 @@ def msg_deal(query,uid,user_name):
         num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
-        print("唱歌提示：" + queryExtract)
+        print(f"[{traceid}]唱歌提示：" + queryExtract)
         if queryExtract=="":
            return
-        song_json = {"prompt": queryExtract, "username": user_name}
+        song_json = {"traceid":traceid,"prompt": queryExtract, "username": user_name}
         SongQueueList.put(song_json)
         return
 
@@ -582,7 +580,7 @@ def msg_deal(query,uid,user_name):
        num = is_index_contain_string(text, query)
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
-       print("跳舞提示：" + queryExtract)
+       print(f"[{traceid}]跳舞提示：" + queryExtract)
        video_path=""
        #提示语为空，随机视频
        if queryExtract=="":
@@ -595,7 +593,7 @@ def msg_deal(query,uid,user_name):
               video_path = matches_list[rnd_video]
        #加入跳舞队列
        if video_path!="":
-          dance_json = {"prompt": queryExtract, "username": user_name, "video_path": video_path}
+          dance_json = {"traceid":traceid,"prompt": queryExtract, "username": user_name, "video_path": video_path}
           DanceQueueList.put(dance_json)
           return
        else:
@@ -609,7 +607,7 @@ def msg_deal(query,uid,user_name):
     if num > 0:
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
-       print("换装提示：" + queryExtract)
+       print(f"[{traceid}]换装提示：" + queryExtract)
        # 开始唱歌服装穿戴
        emote_ws(1, 0, now_clothes)  #解除当前衣服
        emote_ws(1, 0, queryExtract)  #穿上新衣服
@@ -622,12 +620,12 @@ def msg_deal(query,uid,user_name):
     if num > 0:
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
-       print("切换场景：" + queryExtract)
+       print(f"[{traceid}]切换场景：" + queryExtract)
        changeScene(queryExtract)
        return
     
     #询问LLM
-    llm_json = {"prompt": query, "uid": uid, "username": user_name}
+    llm_json = {"traceid":traceid,"prompt": query, "uid": uid, "username": user_name}
     QuestionList.put(llm_json)  # 将弹幕消息放入队列
 
 # 场景切换
@@ -835,6 +833,7 @@ def ai_response():
     uid = llm_json["uid"]
     username = llm_json["username"]
     prompt = llm_json["prompt"]
+    traceid = llm_json["traceid"]
 
     # 用户查询标题
     title = prompt
@@ -858,11 +857,11 @@ def ai_response():
     # fastgpt
     if local_llm_type == 1:
         username_prompt = f"{shenfen}{prompt}"
-        print(username_prompt)
+        print(f"[{traceid}]{username_prompt}")
         response = chat_fastgpt(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
-        username_prompt = f"{shenfen}{prompt}"
+        username_prompt = f"[{traceid}]{shenfen}{prompt}"
         print(username_prompt)
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
@@ -872,7 +871,6 @@ def ai_response():
     # 处理流式回复
     all_content=""
     temp=""
-    uuid_value = uuid.uuid4()
     #is_stream_out = True
     split_flag=",|，|。|!|！|?|？|\n"  #文本分隔符
     linenum = 1
@@ -882,7 +880,7 @@ def ai_response():
             # response_json = json.loads(line)
             str_data = line.decode('utf-8')
             str_data = str_data.replace("data: ","")
-            print(str_data)
+            print(f"[{traceid}]{str_data}")
             if str_data!="[DONE]":
                 response_json = json.loads(str_data)
                 if response_json["choices"][0]["finish_reason"]!="stop":
@@ -899,7 +897,7 @@ def ai_response():
                         num = is_index_contain_string(text, content)
                         temp = content[num : len(content)]
                         content = content[0 : num]
-                        print("分割后文本:"+content)
+                        print(f"[{traceid}]分割后文本:"+content)
                         
                         # 判断是否起始数据
                         chatStatus=""
@@ -908,7 +906,7 @@ def ai_response():
                         linenum=linenum+1
 
                         # 加入语音列表，并且后续合成语音
-                        jsonStr = {"voiceType":"chat","traceid":f"{uuid_value}","chatStatus":f"{chatStatus}","question":title,"text":content,"lanuage":"AutoChange"}
+                        jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":chatStatus,"question":title,"text":content,"lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     else:
                         temp = content
@@ -917,12 +915,12 @@ def ai_response():
                 else:
                     # 结束把剩余文本输出语音
                     if temp!="":
-                        jsonStr = {"voiceType":"chat","traceid":f"{uuid_value}","chatStatus":"end","question":title,"text":temp,"lanuage":"AutoChange"}
+                        jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":"end","question":title,"text":temp,"lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     else:
-                        jsonStr = {"voiceType":"chat","traceid":f"{uuid_value}","chatStatus":"end","question":title,"text":"","lanuage":"AutoChange"}
+                        jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":"end","question":title,"text":"","lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
-                    print("end:"+response_json["choices"][0]["finish_reason"])
+                    print(f"[{traceid}]end:"+response_json["choices"][0]["finish_reason"])
     #is_stream_out = False
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
@@ -940,8 +938,8 @@ def ai_response():
        
     # 日志输出
     current_question_count = QuestionList.qsize()
-    print(f"[AI回复]{all_content}")
-    print(f"System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
+    print(f"[{traceid}][AI回复]{all_content}")
+    print(f"[{traceid}]System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
 
 
 # 过滤html标签
@@ -1065,7 +1063,7 @@ def check_dance():
         cmd("\\dance")
         tts_say("开始跳舞了，大家嗨起来")
         dance_json = DanceQueueList.get()
-        # 开始搜图任务
+        # 开始跳舞任务
         dance(dance_json)
         # 重启定时任务
         sched1.resume()
@@ -1241,14 +1239,18 @@ def check_answer():
         answers_thread = Thread(target=aiResponseTry)
         answers_thread.start()
 
-
+# 语音合成线程池
+tts_chat_say_pool = ThreadPoolExecutor(max_workers=5, thread_name_prefix='tts_chat_say')
 # 如果语音已经放完且队列中还有回复 则创建一个生成并播放TTS的线程
 def check_tts():
     global AnswerList
     if not AnswerList.empty():
         json = AnswerList.get()
+        traceid = json["traceid"]
+        text = json["text"]
+        print(f"[{traceid}]text:{text},is_tts_ready:{is_tts_ready},is_stream_out:{is_stream_out},SayCount:{SayCount},is_singing:{is_singing}")
         # 合成语音
-        tts_chat_say(json)
+        tts_chat_say_pool.submit(tts_chat_say, json)
 
 
 '''
@@ -1281,25 +1283,26 @@ def gtp_vists(filename,text,emotion):
                 return 1
     return 0
 
-# 语音合成线程池
-tts_say_pool = ThreadPoolExecutor(max_workers=5, thread_name_prefix='tts_say')
 # 直接合成语音播放       
 def tts_say(text):
     try:
-        uuid_value = uuid.uuid4()
-        json =  {"voiceType":"other","traceid":f"{uuid_value}","chatStatus":"end","question":"","text":text,"lanuage":""}
-        tts_say_pool.submit(tts_say_do, json)
+        traceid = str(uuid.uuid4())
+        json =  {"voiceType":"other","traceid":traceid,"chatStatus":"end","question":"","text":text,"lanuage":""}
+        tts_say_do(json)
     except Exception as e:
         print(f"【tts_say】发生了异常：{e}")
         logging.error(traceback.format_exc())
 
-# 语音合成线程池
-tts_chat_say_pool = ThreadPoolExecutor(max_workers=5, thread_name_prefix='tts_chat_say')
+
 # 直接合成语音播放-聊天用
 def tts_chat_say(json):
+    global is_tts_ready
+    global is_stream_out
     try:
-        tts_chat_say_pool.submit(tts_say_do, json)
+        tts_say_do(json)
     except Exception as e:
+        is_tts_ready = True
+        is_stream_out = False
         print(f"【tts_chat_say】发生了异常：{e}")
         logging.error(traceback.format_exc())
 
@@ -1322,7 +1325,8 @@ def tts_say_do(json):
     # 退出标识
     if text == "" and chatStatus=="end":
         say_lock.acquire()
-        replyText_json={"traceid":traceid,"chatStatus":f"{chatStatus}","text":""}
+        replyText_json={"traceid":traceid,"chatStatus":chatStatus,"text":""}
+        print(replyText_json)
         ReplyTextList.put(replyText_json)
         is_stream_out = False
         say_lock.release()
@@ -1330,7 +1334,7 @@ def tts_say_do(json):
 
     # 识别表情
     jsonstr = emote_content(text)
-    print(f"输出表情{jsonstr}")
+    print(f"[{traceid}]输出表情{jsonstr}")
     emotion = "happy"
     if len(jsonstr)>0:
         emotion = jsonstr[0]["content"]
@@ -1340,7 +1344,7 @@ def tts_say_do(json):
 
     # 触发翻译日语
     if lanuage=="AutoChange":
-        print(f"当前感情值:{moodNum}")
+        print(f"[{traceid}]当前感情值:{moodNum}")
         if moodNum>270 or "日语" in question or emotion=="angry":
            trans_json = translate(text,"zh-Hans","ja")
            if has_field(trans_json,"translated"):
@@ -1381,7 +1385,7 @@ def tts_say_do(json):
     emote_thread.start()
     
     # 输出回复字幕
-    replyText_json={"traceid":traceid,"chatStatus":f"{chatStatus}","text":replyText}
+    replyText_json={"traceid":traceid,"chatStatus":chatStatus,"text":replyText}
     print(replyText_json)
     ReplyTextList.put(replyText_json)
     
