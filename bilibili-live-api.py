@@ -2337,7 +2337,7 @@ def check_welcome_room():
     userlist = str(WelcomeList).replace("['","").replace("']","")
     if len(WelcomeList) > 0:
         traceid = str(uuid.uuid4())
-        text = f"[{traceid}]欢迎\"{userlist}\"{numstr}同学来到{Ai_Name}的直播间,跪求关注一下{Ai_Name}的直播间"
+        text = f"欢迎\"{userlist}\"{numstr}同学来到{Ai_Name}的直播间,跪求关注一下{Ai_Name}的直播间"
         WelcomeList.clear()
         #询问LLM
         llm_json = {"traceid":traceid, "prompt": text, "uid": 0, "username": Ai_Name}
