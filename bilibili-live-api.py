@@ -1,4 +1,4 @@
-# b站AI直播对接text-generation-webui聚合文本LLM模型
+# b站AI直播对接
 import json
 import datetime
 import queue
@@ -31,10 +31,8 @@ from func.search import crawler,baidusearch
 from io import BytesIO
 from PIL import Image
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from bilibili_api import live, sync, Credential
 from duckduckgo_search import DDGS
 from threading import Thread
-from urllib.parse import quote
 from flask import Flask, jsonify, request, render_template
 from flask_apscheduler import APScheduler
 from urllib import parse
@@ -1385,15 +1383,15 @@ def tts_say_do(json):
        obs.show_text("状态提示",f"{Ai_Name}语音合成\"{question}\"完成")
 
     # 判断同序列聊天语音合成时候，其他语音合成任务等待
-    if voiceType!="chat":
-        while is_stream_out==True:
-            time.sleep(1)
+    # if voiceType!="chat":
+    #     while is_stream_out==True:
+    #         time.sleep(1)
 
     # ============ 【线程锁】播放语音【时间会很长】 ==================
     say_lock.acquire()
+    is_tts_ready = False
     if chatStatus=="start":
        is_stream_out = True
-    is_tts_ready = False
 
     # 输出表情
     emote_thread = Thread(target=emote_show,args=(jsonstr,))
@@ -1411,10 +1409,9 @@ def tts_say_do(json):
     # 播放声音
     mpv_play("mpv.exe", f".\output\{filename}.mp3", 100 , "0")
 
-    is_tts_ready = True
     if chatStatus=="end":
        is_stream_out = False
-
+    is_tts_ready = True
     say_lock.release()
     # ========================= end =============================
 
