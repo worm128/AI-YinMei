@@ -938,7 +938,7 @@ def ai_response():
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
     # 切换场景
-    if "粉色" in all_content or "睡觉" in all_content or "粉红" in all_content:
+    if "粉色" in all_content or "睡觉" in all_content or "粉红" in all_content or "房间" in all_content or "晚上" in all_content:
        changeScene("粉色房间")
     elif "清晨" in all_content or "早" in all_content or "睡醒" in all_content:
        changeScene("清晨房间")
@@ -1358,10 +1358,14 @@ def tts_say_do(json):
     # 触发翻译日语
     if lanuage=="AutoChange":
         log.info(f"[{traceid}]当前感情值:{moodNum}")
-        if moodNum>270 or "日语" in question or emotion=="angry":
+        if moodNum>270 or "日语" in question or emotion=="angry" or re.search(".*日[文|语].*说.*", text):
            trans_json = translate(text,"zh-Hans","ja")
            if has_field(trans_json,"translated"):
                 text = trans_json["translated"]
+        if re.search(".*英[文|语].*", question) or re.search(".*英[文|语].*说.*", text):
+           trans_json = translate(text,"zh-Hans","en")
+           if has_field(trans_json,"translated"):
+                text = trans_json["translated"] 
     
      # 微软合成语音
     # with open(f"./output/{filename}.txt", "w", encoding="utf-8") as f:
