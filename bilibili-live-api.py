@@ -884,7 +884,6 @@ def ai_response():
     # 处理流式回复
     all_content=""
     temp=""
-    #is_stream_out = True
     split_flag=",|，|。|!|！|?|？|\n"  #文本分隔符
     linenum = 1
     for line in response.iter_lines():
@@ -918,7 +917,7 @@ def ai_response():
                             chatStatus="start"
                         linenum=linenum+1
 
-                        # 加入语音列表，并且后续合成语音
+                        # 合成语音：文本碎片化段落
                         jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":chatStatus,"question":title,"text":content,"lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     else:
@@ -928,13 +927,14 @@ def ai_response():
                 else:
                     # 结束把剩余文本输出语音
                     if temp!="":
+                        # 结尾：剩余文本
                         jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":"end","question":title,"text":temp,"lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     else:
+                        # 结尾：空值
                         jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":"end","question":title,"text":"","lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     log.info(f"[{traceid}]end:"+response_json["choices"][0]["finish_reason"])
-    #is_stream_out = False
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
     # 切换场景
