@@ -44,22 +44,10 @@ f = open('config-prod.yml','r',encoding='utf-8')
 cont = f.read()
 config = yaml.load(cont,Loader=yaml.FullLoader)
 
-Ai_Name="吟美"  #Ai名称
-print("=====================================================================")
-print(f"开始启动人工智能{Ai_Name}！")
-print(
-    "组成功能：LLM大语言模型+bilibili直播对接+TTS微软语音合成+MPV语音播放+VTube Studio人物模型+pynput表情控制+stable-diffusion-webui绘画"
-)
-print("源码地址：https://github.com/worm128/ai-yinmei")
-print("开发者：Winlone")
-print("QQ群：27831318")
-print("=====================================================================")
-
-os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
-sched1 = AsyncIOScheduler(timezone="Asia/Shanghai")
 #设置控制台日志
 today = datetime.date.today().strftime("%Y-%m-%d")
 logging.basicConfig(level=logging.INFO, encoding="utf-8", format='%(asctime)s %(levelname)s %(filename)s [line:%(lineno)d] %(message)s',handlers=[logging.StreamHandler(),logging.FileHandler(filename=f"./logs/log_{today}.txt", encoding="utf-8")])
+log=logging.getLogger("bilibili-live")
 # 定时器只输出error
 my_logging = logging.getLogger("apscheduler.executors.default")
 my_logging.setLevel('ERROR')
@@ -68,7 +56,22 @@ my_logging = logging.getLogger("werkzeug")
 my_logging.setLevel('ERROR')
 # 重定向print输出到日志文件
 def print(*args, **kwargs):
-    logging.info(*args, **kwargs)
+    log.info(*args, **kwargs)
+
+Ai_Name="吟美"  #Ai名称
+log.info("=====================================================================")
+log.info(f"开始启动人工智能{Ai_Name}！")
+log.info(
+    "组成功能：LLM大语言模型+bilibili直播对接+TTS微软语音合成+MPV语音播放+VTube Studio人物模型+pynput表情控制+stable-diffusion-webui绘画"
+)
+log.info("源码地址：https://github.com/worm128/ai-yinmei")
+log.info("开发者：Winlone")
+log.info("QQ群：27831318")
+log.info("=====================================================================")
+
+os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
+sched1 = AsyncIOScheduler(timezone="Asia/Shanghai")
+
 
 #1.b站直播间 2.api web 3.双开
 mode=int(input("接口对接(1.b站直播间 2.api web):") or "1")
@@ -223,15 +226,15 @@ song_background={"海岸花坊":"J:\\ai\\背景音乐\\海岸花坊.rm",
 WelcomeList = []  # welcome欢迎列表
 # ========================================
 
-print("--------------------")
-print("AI虚拟主播-启动成功！")
-print("--------------------")
+log.info("--------------------")
+log.info("AI虚拟主播-启动成功！")
+log.info("--------------------")
 
 # 执行指令
 @app.route("/cmd", methods=["GET"])
 def http_cmd():
     cmdstr = request.args["cmd"]
-    print(f"执行指令：\"{cmd}\"")
+    log.info(f"执行指令：\"{cmd}\"")
     cmd(cmdstr)
     return jsonify({"status": "成功"})
 
@@ -257,7 +260,7 @@ def http_emote():
 def http_sing():
     songname = request.args["songname"]
     username = "所有人"
-    print(f"http唱歌接口处理：\"{username}\"点播歌曲《{songname}》")
+    log.info(f"http唱歌接口处理：\"{username}\"点播歌曲《{songname}》")
     song_json = {"prompt": songname, "username": username}
     SongQueueList.put(song_json)
     return jsonify({"status": "成功"})
@@ -268,7 +271,7 @@ def http_draw():
     drawname = request.args["drawname"]
     drawcontent = request.args["drawcontent"]
     username = "所有人"
-    print(f"http绘画接口处理：\"{username}\"绘画《{drawname}》，{drawcontent}")
+    log.info(f"http绘画接口处理：\"{username}\"绘画《{drawname}》，{drawcontent}")
     draw_json = {"prompt": drawname, "drawcontent":drawcontent, "username": username, "isExtend": False}
     DrawQueueList.put(draw_json)
     return jsonify({"status": "成功"})
@@ -398,12 +401,12 @@ class MyHandler2(blivedm.BaseHandler):
     
     # 入场消息回调
     def __interact_word_callback(self, client: blivedm.BLiveClient, command: dict):
-        print(f"[{client.room_id}] INTERACT_WORD: self_type={type(self).__name__}, room_id={client.room_id},"
+        log.info(f"[{client.room_id}] INTERACT_WORD: self_type={type(self).__name__}, room_id={client.room_id},"
               f" uname={command['data']['uname']}")
         user_name = command["data"]["uname"]  # 获取用户昵称
         user_id = command["data"]["uid"]  # 获取用户uid
         time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
-        print(f"{time1}:粉丝[{user_name}]进入了直播间")
+        log.info(f"{time1}:粉丝[{user_name}]进入了直播间")
         # 46130941：老爸  333472479：吟美
         if user_id!=46130941 and user_id!=333472479:
             # 加入欢迎列表
@@ -412,63 +415,63 @@ class MyHandler2(blivedm.BaseHandler):
     _CMD_CALLBACK_DICT['INTERACT_WORD'] = __interact_word_callback  # noqa
 
     def _on_heartbeat(self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage):
-        print(f'[{client.room_id}] 心跳2')
+        log.info(f'[{client.room_id}] 心跳2')
     
 
 class MyHandler(blivedm.BaseHandler):
     # 心跳
     def _on_heartbeat(self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage):
-        print(f'[{client.room_id}] 心跳1')
+        log.info(f'[{client.room_id}] 心跳1')
     
     # 弹幕获取
     def _on_open_live_danmaku(self, client: blivedm.OpenLiveClient, message: open_models.DanmakuMessage):
-        print(f'{message.uname}：{message.msg}')
+        log.info(f'{message.uname}：{message.msg}')
         msg_deal(message.msg, message.room_id, message.uname)
 
     # 赠送礼物
     def _on_open_live_gift(self, client: blivedm.OpenLiveClient, message: open_models.GiftMessage):
         coin_type = '金瓜子' if message.paid else '银瓜子'
         total_coin = message.price * message.gift_num
-        print(f'[{message.room_id}] {message.uname} 赠送{message.gift_name}x{message.gift_num}'
+        log.info(f'[{message.room_id}] {message.uname} 赠送{message.gift_name}x{message.gift_num}'
               f' （{coin_type}x{total_coin}）')
         username = message.uname
         giftname = message.gift_name
         num = message.gift_num
         text = f"谢谢‘{username}’赠送的{num}个{giftname}"
-        print(text)
+        log.info(text)
         tts_say_thread = Thread(target=tts_say,args=(text,))
         tts_say_thread.start()
 
     def _on_open_live_buy_guard(self, client: blivedm.OpenLiveClient, message: open_models.GuardBuyMessage):
-        print(f'[{message.room_id}] {message.user_info.uname} 购买 大航海等级={message.guard_level}')
+        log.info(f'[{message.room_id}] {message.user_info.uname} 购买 大航海等级={message.guard_level}')
         username = message.user_info.uname
         level = message.guard_level
         text = f"非常谢谢‘{username}’购买 大航海等级{level},{Ai_Name}大小姐在这里给你跪下了"
-        print(text)
+        log.info(text)
         tts_say_thread = Thread(target=tts_say,args=(text,))
         tts_say_thread.start()
 
     def _on_open_live_super_chat(
         self, client: blivedm.OpenLiveClient, message: open_models.SuperChatMessage
     ):
-        print(f'[{message.room_id}] 醒目留言 ¥{message.rmb} {message.uname}：{message.message}')
+        log.info(f'[{message.room_id}] 醒目留言 ¥{message.rmb} {message.uname}：{message.message}')
         username = message.uname
         rmb = message.rmb
         text = f"谢谢‘{username}’赠送的¥{rmb}元,她留言说\"{message.message}\""
-        print(text)
+        log.info(text)
         tts_say_thread = Thread(target=tts_say,args=(text,))
         tts_say_thread.start()
 
     def _on_open_live_super_chat_delete(
         self, client: blivedm.OpenLiveClient, message: open_models.SuperChatDeleteMessage
     ):
-        print(f'[{message.room_id}] 删除醒目留言 message_ids={message.message_ids}')
+        log.info(f'[{message.room_id}] 删除醒目留言 message_ids={message.message_ids}')
 
     def _on_open_live_like(self, client: blivedm.OpenLiveClient, message: open_models.LikeMessage):
-        print(f'{message.uname} 点赞')
+        log.info(f'{message.uname} 点赞')
         username = message.uname
         text = f"谢谢‘{username}’点赞,{Ai_Name}大小姐最爱你了"
-        print(text)
+        log.info(text)
         tts_say_thread = Thread(target=tts_say,args=(text,))
         tts_say_thread.start()
 
@@ -479,12 +482,12 @@ def msg_deal(query,uid,user_name):
     """
     traceid = str(uuid.uuid4())
     query=filter(query,filterCh)
-    print(f"[{traceid}]弹幕捕获：[{user_name}]:{query}")  # 打印弹幕信息
+    log.info(f"[{traceid}]弹幕捕获：[{user_name}]:{query}")  # 打印弹幕信息
 
     # 命令执行
     status = cmd(query)  
     if status==1:
-        print(f"[{traceid}]执行命令：{query}")
+        log.info(f"[{traceid}]执行命令：{query}")
         return
 
     # 说话不执行任务
@@ -500,7 +503,7 @@ def msg_deal(query,uid,user_name):
         num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
-        print(f"[{traceid}]跳舞表情：" + queryExtract)
+        log.info(f"[{traceid}]跳舞表情：" + queryExtract)
         video_path=""
         if queryExtract=="rnd":
             rnd_video = random.randrange(0, len(emote_video))
@@ -531,7 +534,7 @@ def msg_deal(query,uid,user_name):
         num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
-        print(f"[{traceid}]搜索词：" + queryExtract)
+        log.info(f"[{traceid}]搜索词：" + queryExtract)
         if queryExtract=="":
            return
         text_search_json = {"traceid":traceid,"prompt": queryExtract, "uid": uid, "username": user_name}
@@ -545,7 +548,7 @@ def msg_deal(query,uid,user_name):
         num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
-        print(f"[{traceid}]搜索图：" + queryExtract)
+        log.info(f"[{traceid}]搜索图：" + queryExtract)
         if queryExtract=="":
            return
         img_search_json = {"traceid":traceid,"prompt": queryExtract, "username": user_name}
@@ -559,7 +562,7 @@ def msg_deal(query,uid,user_name):
         num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
-        print(f"[{traceid}]绘画提示：" + queryExtract)
+        log.info(f"[{traceid}]绘画提示：" + queryExtract)
         if queryExtract=="":
            return
         draw_json = {"traceid":traceid,"prompt": queryExtract, "drawcontent":"", "username": user_name, "isExtend": True}
@@ -574,7 +577,7 @@ def msg_deal(query,uid,user_name):
         num = is_index_contain_string(text, query)
         queryExtract = query[num : len(query)]  # 提取提问语句
         queryExtract = queryExtract.strip()
-        print(f"[{traceid}]唱歌提示：" + queryExtract)
+        log.info(f"[{traceid}]唱歌提示：" + queryExtract)
         if queryExtract=="":
            return
         song_json = {"traceid":traceid,"prompt": queryExtract, "username": user_name}
@@ -588,7 +591,7 @@ def msg_deal(query,uid,user_name):
        num = is_index_contain_string(text, query)
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
-       print(f"[{traceid}]跳舞提示：" + queryExtract)
+       log.info(f"[{traceid}]跳舞提示：" + queryExtract)
        video_path=""
        #提示语为空，随机视频
        if queryExtract=="":
@@ -605,7 +608,7 @@ def msg_deal(query,uid,user_name):
           DanceQueueList.put(dance_json)
           return
        else:
-          print("跳舞视频不存在：" + queryExtract)
+          log.info("跳舞视频不存在：" + queryExtract)
           return
 
     # 换装
@@ -615,7 +618,7 @@ def msg_deal(query,uid,user_name):
     if num > 0:
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
-       print(f"[{traceid}]换装提示：" + queryExtract)
+       log.info(f"[{traceid}]换装提示：" + queryExtract)
        # 开始唱歌服装穿戴
        emote_ws(1, 0, now_clothes)  #解除当前衣服
        emote_ws(1, 0, queryExtract)  #穿上新衣服
@@ -628,7 +631,7 @@ def msg_deal(query,uid,user_name):
     if num > 0:
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
-       print(f"[{traceid}]切换场景：" + queryExtract)
+       log.info(f"[{traceid}]切换场景：" + queryExtract)
        changeScene(queryExtract)
        return
     
@@ -670,7 +673,7 @@ def allow_scene(queryExtract):
 def emote_play_nodance(eomte_path):
     emote_video_lock.acquire()
     global emote_now_path
-    print(f"播放表情:{eomte_path}")
+    log.info(f"播放表情:{eomte_path}")
     # 第一次播放
     if eomte_path!=emote_now_path:
        obs.play_video("表情",eomte_path)
@@ -693,7 +696,7 @@ def emote_play(eomte_path):
     emote_video_lock.acquire()
     global emote_now_path
     obs.control_video("video",VideoControl.PAUSE.value)
-    print(f"播放表情:{eomte_path}")
+    log.info(f"播放表情:{eomte_path}")
     # 第一次播放
     if eomte_path!=emote_now_path:
        obs.play_video("表情",eomte_path)
@@ -780,7 +783,7 @@ def chat_fastgpt(content, uid, username):
             url, headers=headers, json=data, verify=False, timeout=(5, 60), stream=True
         )
     except Exception as e:
-        print(f"【{content}】信息回复异常")
+        log.info(f"【{content}】信息回复异常")
         return "我听不懂你说什么"
     
     return response
@@ -811,7 +814,7 @@ def chat_tgw(content, character, mode, preset,username):
             url, headers=headers, json=data, verify=False, timeout=(5, 60)
         )
     except Exception as e:
-        print(f"【{content}】信息回复异常")
+        log.info(f"【{content}】信息回复异常")
         return "我听不懂你说什么"
     assistant_message = response.json()["choices"][0]["message"]["content"]
     # history.append({"role": "assistant", "content": assistant_message})
@@ -823,7 +826,7 @@ def aiResponseTry():
     try:
         ai_response()
     except Exception as e:
-        print(f"【ai_response】发生了异常：{e}")
+        log.info(f"【ai_response】发生了异常：{e}")
         logging.error(traceback.format_exc())
         is_ai_ready=True
 
@@ -869,12 +872,12 @@ def ai_response():
     # fastgpt
     if local_llm_type == 1:
         username_prompt = f"{shenfen}{prompt}"
-        print(f"[{traceid}]{username_prompt}")
+        log.info(f"[{traceid}]{username_prompt}")
         response = chat_fastgpt(username_prompt, uid, username)
     # text-generation-webui
     elif local_llm_type == 2:
         username_prompt = f"[{traceid}]{shenfen}{prompt}"
-        print(username_prompt)
+        log.info(username_prompt)
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     # 过滤表情<>或者()标签
@@ -892,7 +895,7 @@ def ai_response():
             # response_json = json.loads(line)
             str_data = line.decode('utf-8')
             str_data = str_data.replace("data: ","")
-            print(f"[{traceid}]{str_data}")
+            log.info(f"[{traceid}]{str_data}")
             if str_data!="[DONE]":
                 response_json = json.loads(str_data)
                 if response_json["choices"][0]["finish_reason"]!="stop":
@@ -909,7 +912,7 @@ def ai_response():
                         num = is_index_contain_string(text, content)
                         temp = content[num : len(content)]
                         content = content[0 : num]
-                        print(f"[{traceid}]分割后文本:"+content)
+                        log.info(f"[{traceid}]分割后文本:"+content)
                         
                         # 判断是否起始数据
                         chatStatus=""
@@ -932,7 +935,7 @@ def ai_response():
                     else:
                         jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":"end","question":title,"text":"","lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
-                    print(f"[{traceid}]end:"+response_json["choices"][0]["finish_reason"])
+                    log.info(f"[{traceid}]end:"+response_json["choices"][0]["finish_reason"])
     #is_stream_out = False
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
@@ -950,8 +953,8 @@ def ai_response():
        
     # 日志输出
     current_question_count = QuestionList.qsize()
-    print(f"[{traceid}][AI回复]{all_content}")
-    print(f"[{traceid}]System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
+    log.info(f"[{traceid}][AI回复]{all_content}")
+    log.info(f"[{traceid}]System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
 
 
 # 过滤html标签
@@ -975,7 +978,7 @@ def duckduckgo_web_search(query):
             for r in ddgs_text_gen:
                 content = r["body"]+";"+content
         except Exception as e: 
-            print(f"web_search信息回复异常{e}")
+            log.info(f"web_search信息回复异常{e}")
             logging.error(traceback.format_exc())
     return content
 
@@ -984,7 +987,7 @@ def baidu_web_search(query):
     content = ""
     results = baidusearch.search(query, num_results=3, debug=0)
     if isinstance(results, list):
-        print("search results：(total[{}]items.)".format(len(results)))
+        log.info("search results：(total[{}]items.)".format(len(results)))
         for res in results:
             content = res["abstract"].replace("\n","").replace("\r","")+";"+content
     return content
@@ -1012,11 +1015,11 @@ def web_search_img(query):
             for r in ddgs_images_gen:
                 if i == random_number:
                     imgUrl = r["image"]
-                    print(f"图片地址：{imgUrl},搜索关键字:{query}")
+                    log.info(f"图片地址：{imgUrl},搜索关键字:{query}")
                     break
                 i = i + 1
         except Exception as e: 
-            print(f"web_search_img信息回复异常{e}")
+            log.info(f"web_search_img信息回复异常{e}")
             logging.error(traceback.format_exc())
     return imgUrl
 
@@ -1027,7 +1030,7 @@ def baidu_search_img(query):
     img_search_json = {"query": query, "width": 800, "height": 600}
     images = crawler.baidu_get_image_url_regx(img_search_json,imageNum)
     count = len(images)
-    print(f"1.搜图《{query}》数量：{count}")
+    log.info(f"1.搜图《{query}》数量：{count}")
 
     # 第二次搜图
     if count<imageNum:
@@ -1036,7 +1039,7 @@ def baidu_search_img(query):
        sec_count = len(sec)
        count = count + sec_count
        images += sec
-       print(f"2.搜图《{query}》数量：{sec_count}")
+       log.info(f"2.搜图《{query}》数量：{sec_count}")
 
     if count>0:
         random_number = random.randrange(0, count)
@@ -1057,7 +1060,7 @@ def check_text_search():
         searchStr = baidu_web_search(prompt)
         #llm模型处理
         llm_prompt = f'[{traceid}]帮我在答案"{searchStr}"中提取"{prompt}"的信息'
-        print(f"[{traceid}]重置提问:{llm_prompt}")
+        log.info(f"[{traceid}]重置提问:{llm_prompt}")
         #询问LLM
         llm_json = {"traceid":traceid, "query": prompt, "prompt": llm_prompt, "uid": uid, "username": username}
         QuestionList.put(llm_json)
@@ -1085,7 +1088,7 @@ def check_dance():
 def dance(dance_json):
     global dance_now_path
     video_path = dance_json["video_path"]
-    print(dance_json)
+    log.info(dance_json)
     obs.control_video("背景音乐",VideoControl.PAUSE.value)
     # ============== 跳舞视频 ==============
     # 第一次播放
@@ -1120,7 +1123,7 @@ def searchimg_output(img_search_json):
         # 百度搜图
         imgUrl = baidu_search_img(prompt)
         img_search_json2 = {"prompt": prompt, "username": username, "imgUrl": imgUrl}
-        print(f"搜图内容:{img_search_json2}")
+        log.info(f"搜图内容:{img_search_json2}")
         if imgUrl is not None:
             image = output_search_img(imgUrl,prompt,username)
             # 虚拟摄像头输出
@@ -1135,7 +1138,7 @@ def searchimg_output(img_search_json):
                 return 1
         return 0
     except Exception as e:
-        print(f"【searchimg_output】发生了异常：{e}")
+        log.info(f"【searchimg_output】发生了异常：{e}")
         logging.error(traceback.format_exc())
         return 0
 
@@ -1156,10 +1159,10 @@ def output_img_thead(img_search_json):
         else:
             tts_say(f"回复{username}：搜索图片《{prompt}》失败")
     except Exception as e:
-        print(f"【output_img_thead】发生了异常：{e}")
+        log.info(f"【output_img_thead】发生了异常：{e}")
         logging.error(traceback.format_exc())
     finally:
-        print(f"‘{username}’搜图《{prompt}》结束")
+        log.info(f"‘{username}’搜图《{prompt}》结束")
 
 
 # 图片转换字节流
@@ -1173,17 +1176,17 @@ def output_search_img(imgUrl,prompt,username):
     # 鉴黄失败
     if status==-1:
         outputTxt=f"回复{username}：搜图鉴黄失败《{prompt}》-nsfw:{nsfw}，禁止执行"
-        print(outputTxt)
+        log.info(outputTxt)
         tts_say(outputTxt)
         return
     # 黄图情况
     if status==0:
         outputTxt=f"回复{username}：搜图发现一张黄图《{prompt}》-nsfw:{nsfw}，禁止执行"
-        print(outputTxt)
+        log.info(outputTxt)
         tts_say(outputTxt)
         return
     outputTxt=f"回复{username}：搜图为绿色图片《{prompt}》-nsfw:{nsfw}，输出显示"
-    print(outputTxt)
+    log.info(outputTxt)
     #========================================================
 
     # 读取二进制字节流
@@ -1202,17 +1205,17 @@ def nsfw_fun(imgb64,prompt,username,retryCount,tip,nsfw_limit):
         nsfw_lock.acquire()
         nsfwJson = nsfw_deal(imgb64)
     except Exception as e:
-        print(f"《{prompt}》【nsfw】鉴黄{tip}发生了异常：{e}")
+        log.info(f"《{prompt}》【nsfw】鉴黄{tip}发生了异常：{e}")
         logging.error(traceback.format_exc())
         return -1,-1
     finally:
         nsfw_lock.release()
 
     #===============鉴黄判断====================
-    print(f"《{prompt}》【nsfw】{tip}鉴黄结果:{nsfwJson}")
+    log.info(f"《{prompt}》【nsfw】{tip}鉴黄结果:{nsfwJson}")
     status = nsfwJson["status"]
     if status=="失败":
-        print(f"《{prompt}》【nsfw】【重试剩余{retryCount}次】{tip}鉴黄失败，图片不明确跳出")
+        log.info(f"《{prompt}》【nsfw】【重试剩余{retryCount}次】{tip}鉴黄失败，图片不明确跳出")
         retryCount=retryCount-1
         if retryCount>0:
             nsfw_fun(imgb64,prompt,username,retryCount,tip,nsfw_limit)
@@ -1221,7 +1224,7 @@ def nsfw_fun(imgb64,prompt,username,retryCount,tip,nsfw_limit):
     #发现黄图
     try:
         if status=="成功" and nsfw>nsfw_limit:
-            print(f"《{prompt}》【nsfw】{tip}完成，发现黄图:{nsfw},马上退出")
+            log.info(f"《{prompt}》【nsfw】{tip}完成，发现黄图:{nsfw},马上退出")
             # 摄像头显示禁止黄图标识
             obs.show_image("绘画图片","J:\\ai\\ai-yinmei\\images\\黄图950.jpg")
             # 保存用户的黄图，留底观察
@@ -1233,7 +1236,7 @@ def nsfw_fun(imgb64,prompt,username,retryCount,tip,nsfw_limit):
             return 1,nsfw
         return -1,nsfw
     except Exception as e:
-        print(f"《{prompt}》【nsfw】鉴黄{tip}发生了异常：{e}")
+        log.info(f"《{prompt}》【nsfw】鉴黄{tip}发生了异常：{e}")
         logging.error(traceback.format_exc())
         return -1,nsfw
     #========================================================
@@ -1260,7 +1263,7 @@ def check_tts():
         json = AnswerList.get()
         traceid = json["traceid"]
         text = json["text"]
-        print(f"[{traceid}]text:{text},is_tts_ready:{is_tts_ready},is_stream_out:{is_stream_out},SayCount:{SayCount},is_singing:{is_singing}")
+        log.info(f"[{traceid}]text:{text},is_tts_ready:{is_tts_ready},is_stream_out:{is_stream_out},SayCount:{SayCount},is_singing:{is_singing}")
         # 合成语音
         tts_chat_say_pool.submit(tts_chat_say, json)
 
@@ -1302,7 +1305,7 @@ def tts_say(text):
         json =  {"voiceType":"other","traceid":traceid,"chatStatus":"end","question":"","text":text,"lanuage":""}
         tts_say_do(json)
     except Exception as e:
-        print(f"【tts_say】发生了异常：{e}")
+        log.info(f"【tts_say】发生了异常：{e}")
         logging.error(traceback.format_exc())
 
 
@@ -1315,7 +1318,7 @@ def tts_chat_say(json):
     except Exception as e:
         is_tts_ready = True
         is_stream_out = False
-        print(f"【tts_chat_say】发生了异常：{e}")
+        log.info(f"【tts_chat_say】发生了异常：{e}")
         logging.error(traceback.format_exc())
 
 # 直接合成语音播放 {"question":question,"text":text,"lanuage":"ja"}
@@ -1338,7 +1341,7 @@ def tts_say_do(json):
     if text == "" and chatStatus=="end":
         say_lock.acquire()
         replyText_json={"traceid":traceid,"chatStatus":chatStatus,"text":""}
-        print(replyText_json)
+        log.info(replyText_json)
         ReplyTextList.put(replyText_json)
         is_stream_out = False
         say_lock.release()
@@ -1346,7 +1349,7 @@ def tts_say_do(json):
 
     # 识别表情
     jsonstr = emote_content(text)
-    print(f"[{traceid}]输出表情{jsonstr}")
+    log.info(f"[{traceid}]输出表情{jsonstr}")
     emotion = "happy"
     if len(jsonstr)>0:
         emotion = jsonstr[0]["content"]
@@ -1356,7 +1359,7 @@ def tts_say_do(json):
 
     # 触发翻译日语
     if lanuage=="AutoChange":
-        print(f"[{traceid}]当前感情值:{moodNum}")
+        log.info(f"[{traceid}]当前感情值:{moodNum}")
         if moodNum>270 or "日语" in question or emotion=="angry":
            trans_json = translate(text,"zh-Hans","ja")
            if has_field(trans_json,"translated"):
@@ -1398,7 +1401,7 @@ def tts_say_do(json):
     
     # 输出回复字幕
     replyText_json={"traceid":traceid,"chatStatus":chatStatus,"text":replyText}
-    print(replyText_json)
+    log.info(replyText_json)
     ReplyTextList.put(replyText_json)
     
     # 循环摇摆动作
@@ -1441,7 +1444,7 @@ def auto_swing():
     global swing_motion
     # 触发器-设置开始摇摆: 停止摇摆+（唱歌中 或者 聊天中）= 可以设置摇摆动作
     if swing_motion == 2 and (is_singing==1 or is_tts_ready==False):
-       print(f"进入摇摆状态:{swing_motion},{is_singing},{is_tts_ready}")
+       log.info(f"进入摇摆状态:{swing_motion},{is_singing},{is_tts_ready}")
        swing_motion = 1
     else:
        auto_swing_lock.release()
@@ -1465,7 +1468,7 @@ def auto_swing():
         emote_show_json = []
         emote_show_json.append(jsonstr[num])
         # 执行【摇摆动作】
-        print(f"执行摇摆：{emote_show_json}")
+        log.info(f"执行摇摆：{emote_show_json}")
         emote_show_thread = Thread(target=emote_show,args=(emote_show_json,))
         emote_show_thread.start()
         # 当前【摇摆动作】等待结束时间
@@ -1476,10 +1479,10 @@ def auto_swing():
            # 唱歌完毕并且聊天完毕：停止摇摆动作
            if is_singing==2 and is_tts_ready==True:
               swing_motion=2
-              print(f"强制停止摇摆：{swing_motion}")
+              log.info(f"强制停止摇摆：{swing_motion}")
               break
     swing_motion = 2
-    print(f"结束摇摆：{emote_show_json}")    
+    log.info(f"结束摇摆：{emote_show_json}")    
     
 
 
@@ -1487,7 +1490,7 @@ def auto_swing():
 def stop_motion():
     while swing_motion==1:
         time.sleep(1)
-    print(f"静止：{swing_motion}")
+    log.info(f"静止：{swing_motion}")
     emote_ws(1, 0, "静止")
 
 # 文本识别表情内容
@@ -1616,7 +1619,7 @@ def emote_do(text, response, keyboard, startTime, key):
         keyboard.press(key)
         time.sleep(1)
         keyboard.release(key)
-        print(f"{response}:输出表情({start}){key}")
+        log.info(f"{response}:输出表情({start}){key}")
 
 # ws协议：发送表情到Vtuber
 # num：表情第几个执行   interval：间隔秒数  key：按键
@@ -1640,7 +1643,7 @@ def emote_ws(num, interval, key):
             ws.send(data)
         except Exception as e:
             error = f"【表情发送】发生了异常：{e}"
-            print(error)
+            log.info(error)
             if error in "Connection is already closed":
                 ws = websocket.WebSocketApp(f"ws://{vst_websocket}",on_open = on_open)
                 # ws服务心跳包
@@ -1707,7 +1710,7 @@ def mpv_play(mpv_name, song_path, volume, start):
 def check_sing():
     if not SongQueueList.empty():
         song_json = SongQueueList.get()
-        print(f"启动唱歌:{song_json}")
+        log.info(f"启动唱歌:{song_json}")
         # 启动唱歌
         sing_thread = Thread(
             target=singTry, args=(song_json["prompt"], song_json["username"])
@@ -1722,7 +1725,7 @@ def singTry(songname, username):
         if songname!="":
            sing(songname, username)
     except Exception as e:
-        print(f"【singTry】发生了异常：{e}")
+        log.info(f"【singTry】发生了异常：{e}")
         logging.error(traceback.format_exc())
         is_singing = 2
         is_creating_song=2
@@ -1747,7 +1750,7 @@ def sing(songname, username):
 
     if id==0:
         outputTxt=f"{font_text}歌库不存在《{query}》这首歌曲哦"
-        print(outputTxt)
+        log.info(outputTxt)
         tts_say(outputTxt)
         return 
     song_path = f"./output/{songname}/"
@@ -1762,7 +1765,7 @@ def sing(songname, username):
 
     # =============== 开始-判断本地是否有歌 =================
     if os.path.exists(f"{song_path}/accompany.wav") or os.path.exists(f"{song_path}/vocal.wav"):
-        print(f"找到存在本地歌曲:{song_path}")
+        log.info(f"找到存在本地歌曲:{song_path}")
         outputTxt=f"回复{username}：{font_text}{Ai_Name}会唱《{songname}》这首歌曲哦"
         tts_say(outputTxt)
         is_created = 1
@@ -1776,13 +1779,13 @@ def sing(songname, username):
             down_song_file(songname,"get_accompany","accompany",song_path)
             # 下载人声
             down_song_file(songname,"get_vocal","vocal",song_path)
-            print(f"找到服务已经转换的歌曲《{songname}》")
+            log.info(f"找到服务已经转换的歌曲《{songname}》")
     # =============== 结束-调用已经转换的歌曲 =================
 
     # =============== 开始：如果不存在歌曲，生成歌曲 =================
     if is_created == 0:
         # 播报学习歌曲
-        print(f"歌曲不存在，需要生成歌曲《{songname}》")
+        log.info(f"歌曲不存在，需要生成歌曲《{songname}》")
         outputTxt=f"回复{username}：{font_text}{Ai_Name}需要学唱歌曲《{songname}》，请耐心等待"
         tts_say(outputTxt)
         # 其他歌曲在生成的时候等待
@@ -1791,13 +1794,13 @@ def sing(songname, username):
         # 调用Ai学唱歌服务：生成歌曲
         is_created=create_song(songname,query,song_path,is_created)
     if is_created==2:
-        print(f"生成歌曲失败《{songname}》")
+        log.info(f"生成歌曲失败《{songname}》")
         return
     obs.show_text("状态提示",f"{Ai_Name}已经学会歌曲《{songname}》")
     # =============== 结束：如果不存在歌曲，生成歌曲 =================
 
     #等待播放
-    print(f"等待播放{username}点播的歌曲《{songname}》：{is_singing}")
+    log.info(f"等待播放{username}点播的歌曲《{songname}》：{is_singing}")
     #加入播放歌单
     SongMenuList.put({"username": username, "songname": songname,"is_created":is_created,"song_path":song_path,"query":query})
   
@@ -1835,7 +1838,7 @@ def create_song(songname,query,song_path,is_created):
         for song_regx in song_not_convert:
             match = re.match(song_regx, songname)
             if match:
-               print(f"当前歌曲只下载不转换《{songname}》")
+               log.info(f"当前歌曲只下载不转换《{songname}》")
                # 直接生成原始音乐
                jsonStr = requests.get(url=f"http://{singUrl}/download_origin_song/{songname}",timeout=(5, 120))
                status_json = json.loads(jsonStr.text)
@@ -1854,7 +1857,7 @@ def create_song(songname,query,song_path,is_created):
 
         status = status_json["status"]  #status: "processing" "processed" "waiting"
         songname = status_json["songName"]
-        print(f"准备生成歌曲内容：{status_json}")
+        log.info(f"准备生成歌曲内容：{status_json}")
         if status=="processing" or status=="processed" or status=="waiting":
             timout = 2400  # 生成歌曲等待时间
             i = 0
@@ -1876,11 +1879,11 @@ def create_song(songname,query,song_path,is_created):
                 if i >= timout:
                     break
                 obs.show_text("状态提示",f"当前{Ai_Name}学唱歌曲《{songname}》第{i}秒")
-                print(f"生成《{songname}》歌曲第[{i}]秒,生成状态:{is_created}")
+                log.info(f"生成《{songname}》歌曲第[{i}]秒,生成状态:{is_created}")
                 time.sleep(1)
         # =============== 结束生成歌曲 =================
     except Exception as e:
-        print(f"《{songname}》create_song异常{e}")
+        log.info(f"《{songname}》create_song异常{e}")
         return 2
     finally:
         is_creating_song = 2
@@ -1905,7 +1908,7 @@ def play_song(is_created,songname,song_path,username,query):
     try:
         # 播放歌曲
         if is_created == 1:
-            print(f"准备唱歌《{songname}》,播放路径:{song_path}")
+            log.info(f"准备唱歌《{songname}》,播放路径:{song_path}")
             # =============== 开始-触发搜图 =================
             img_search_json = {"prompt": query, "username": username}
             searchimg_output_thread = Thread(target=searchimg_output,args=(img_search_json,))
@@ -1943,12 +1946,12 @@ def play_song(is_created,songname,song_path,username,query):
             return 1
         else:
             tip=f"已经跳过歌曲《{songname}》，请稍后再点播"
-            print(tip)
+            log.info(tip)
             # 加入回复列表，并且后续合成语音
             tts_say(f"回复{username}：{tip}")
             return 2
     except Exception as e:
-        print(f"《{songname}》play_song异常{e}")
+        log.info(f"《{songname}》play_song异常{e}")
         return 3
 
 # 唱歌跳舞
@@ -2004,10 +2007,10 @@ def translate(text,from_lanuage,to_lanuage):
     with DDGS(proxies=duckduckgo_proxies, timeout=20) as ddgs:
         try:
             r = ddgs.translate(text,from_=from_lanuage, to=to_lanuage)
-            print(f"翻译：{r}")
+            log.info(f"翻译：{r}")
             return r
         except Exception as e: 
-            print(f"translate信息回复异常{e}")
+            log.info(f"translate信息回复异常{e}")
             logging.error(traceback.format_exc())
         return text
 
@@ -2021,7 +2024,7 @@ def draw_prompt_do(query,limit,num):
         if len(jsonEnd)>=limit:
            jsonEnd=json[:limit]
            return jsonEnd
-        print(f"{query}抽取:"+len(jsonEnd))
+        log.info(f"{query}抽取:"+len(jsonEnd))
         i=i+1
         offset=offset+limit
     return jsonEnd
@@ -2075,7 +2078,7 @@ def draw_prompt(query,offset,limit):
 
         #条数处理
         count = len(hits)
-        print(f"{query}>>条数：{count}")
+        log.info(f"{query}>>条数：{count}")
         if count>limit:
             hits=hits[:limit]
 
@@ -2100,10 +2103,10 @@ def draw_prompt(query,offset,limit):
                seed = hits[num]["meta"]["seed"]
             jsonStr = {"prompt":isNone(prompt),"negativePrompt":isNone(negativePrompt),"cfgScale":cfgScale,"steps":steps,"sampler":isNone(sampler),"seed":seed}
             logstr = hits[num]
-            print(f"C站提示词:{logstr}")
+            log.info(f"C站提示词:{logstr}")
             return jsonStr
     except Exception as e:
-        print(f"draw_prompt信息回复异常{e}")
+        log.info(f"draw_prompt信息回复异常{e}")
         logging.error(traceback.format_exc())
         return ""
     return ""
@@ -2133,7 +2136,7 @@ def check_draw():
     global DrawQueueList
     if not DrawQueueList.empty() and is_drawing == 3:
         draw_json = DrawQueueList.get()
-        print(f"启动绘画:{draw_json}")
+        log.info(f"启动绘画:{draw_json}")
         # 开始绘画
         draw_thread = Thread(target=draw, args=(draw_json["prompt"], draw_json["drawcontent"], draw_json["username"], draw_json["isExtend"]))
         draw_thread.start()
@@ -2167,9 +2170,9 @@ def draw(prompt, drawcontent, username, isExtend):
             #C站抽取提示词：扩展提示词-扩大Ai想象力
             jsonPrompt = draw_prompt(prompt,0,50)
             if jsonPrompt=="":
-               print(f"《{drawName}》没找到绘画扩展提示词")
+               log.info(f"《{drawName}》没找到绘画扩展提示词")
                jsonPrompt = {"prompt":"","negativePrompt":"","cfgScale":cfgScale,"steps":steps,"sampler":sampler,"seed":seed}
-            print(f"绘画扩展提示词:{jsonPrompt}")
+            log.info(f"绘画扩展提示词:{jsonPrompt}")
 
         # 女孩
         # text = ["漫画", "女"]
@@ -2219,7 +2222,7 @@ def draw(prompt, drawcontent, username, isExtend):
             "width": width,
             "height": height,
         }
-        print(f"画画参数：{payload}")
+        log.info(f"画画参数：{payload}")
     
         # stable-diffusion绘图
         # 绘画进度
@@ -2231,7 +2234,7 @@ def draw(prompt, drawcontent, username, isExtend):
         r = response.json()
         #错误码跳出
         if(has_field(r, "error") and r["error"]!=""):
-           print(f"绘画生成错误:{r}")
+           log.info(f"绘画生成错误:{r}")
            return
         # 读取二进制字节流
         imgb64=r["images"][0]
@@ -2240,13 +2243,13 @@ def draw(prompt, drawcontent, username, isExtend):
         # 鉴黄失败
         if status==-1:
             outputTxt=f"回复{username}：绘画鉴黄失败《{drawName}》，禁止执行"
-            print(outputTxt)
+            log.info(outputTxt)
             tts_say(outputTxt)
             return
         # 黄图情况
         if status==0:
             outputTxt=f"回复{username}：绘画发现一张黄图《{drawName}》，禁止执行"
-            print(outputTxt)
+            log.info(outputTxt)
             tts_say(outputTxt)
             return
         #========================================================
@@ -2263,10 +2266,10 @@ def draw(prompt, drawcontent, username, isExtend):
         obs.show_image("绘画图片",path)
         # 播报绘画
         outputTxt=f"回复{username}：我给你画了一张画《{drawName}》"
-        print(outputTxt)
+        log.info(outputTxt)
         tts_say(outputTxt)
     except Exception as e:
-        print(f"【draw】发生了异常：{e}")
+        log.info(f"【draw】发生了异常：{e}")
         logging.error(traceback.format_exc())
     finally:
         is_drawing = 3
@@ -2290,18 +2293,18 @@ def progress(prompt, username):
                         status,nsfw = nsfw_fun(imgb64,prompt,username,1,"绘画进度",nsfw_progress_limit)
                         #异常鉴黄
                         if status==-1:
-                            print(f"《{prompt}》进度{p}%鉴黄失败，图片不明确跳出")
+                            log.info(f"《{prompt}》进度{p}%鉴黄失败，图片不明确跳出")
                             continue 
                         #发现黄图
                         if status==0:
-                            print(f"《{prompt}》进度{p}%发现黄图-nsfw:{nsfw},进度跳过")
+                            log.info(f"《{prompt}》进度{p}%发现黄图-nsfw:{nsfw},进度跳过")
                             continue
-                        print(f"《{prompt}》进度{p}%绿色图片-nsfw:{nsfw},输出进度图")
+                        log.info(f"《{prompt}》进度{p}%绿色图片-nsfw:{nsfw},输出进度图")
                         obs.show_text("状态提示",f"{Ai_Name}正在绘图《{prompt}》,进度{p}%")
                     else:
-                        print(f"《{prompt}》输出进度：{p}%")
+                        log.info(f"《{prompt}》输出进度：{p}%")
                 except Exception as e:
-                    print(f"【鉴黄】发生了异常：{e}")
+                    log.info(f"【鉴黄】发生了异常：{e}")
                     logging.error(traceback.format_exc())
                     continue
                 #========================================================
@@ -2316,7 +2319,7 @@ def progress(prompt, username):
                 obs.show_image("绘画图片",path)
             time.sleep(1)
         elif is_drawing >= 2:
-            print(f"《{prompt}》输出进度：100%")
+            log.info(f"《{prompt}》输出进度：100%")
             obs.show_text("状态提示",f"{Ai_Name}绘图《{prompt}》完成")
             break    
 
@@ -2338,6 +2341,7 @@ def check_welcome_room():
     if len(WelcomeList) > 0:
         traceid = str(uuid.uuid4())
         text = f"欢迎\"{userlist}\"{numstr}同学来到{Ai_Name}的直播间,跪求关注一下{Ai_Name}的直播间"
+        log.info(f"[{traceid}]{text}")
         WelcomeList.clear()
         #询问LLM
         llm_json = {"traceid":traceid, "prompt": text, "uid": 0, "username": Ai_Name}
@@ -2349,7 +2353,7 @@ def check_scene_time():
     # 判断时间
     # 白天
     if "06:00:00" <= now_time <= "16:59:59":
-        print("现在是白天") 
+        log.info("现在是白天") 
         obs.show_image("海岸花坊背景","J:\\ai\\vup背景\\海岸花坊\\白昼.jpg")
         obs.show_image("粉色房间背景","J:\\ai\\vup背景\\粉色房间\\白天.jpg")
         obs.show_image("粉色房间桌面","J:\\ai\\vup背景\\粉色房间\\白天桌子.png")
@@ -2357,13 +2361,13 @@ def check_scene_time():
     
     # 黄昏
     if "17:00:00" <= now_time <= "17:59:59":
-        print("现在是黄昏") 
+        log.info("现在是黄昏") 
         obs.show_image("粉色房间背景","J:\\ai\\vup背景\\粉色房间\\黄昏.jpg")
         obs.show_image("粉色房间桌面","J:\\ai\\vup背景\\粉色房间\\黄昏桌子.png")
 
     # 晚上
     if "18:00:00" <= now_time <= "24:00:00" or "00:00:00" < now_time < "06:00:00":
-        print("现在是晚上") 
+        log.info("现在是晚上") 
         obs.show_image("海岸花坊背景","J:\\ai\\vup背景\\海岸花坊\\夜晚.jpg")
         obs.show_image("粉色房间背景","J:\\ai\\vup背景\\粉色房间\\晚上开灯.jpg")
         obs.show_image("粉色房间桌面","J:\\ai\\vup背景\\粉色房间\\晚上开灯桌子.png")
@@ -2450,7 +2454,7 @@ def main():
     else:
         while True:
            time.sleep(10)
-    print("结束")
+    log.info("结束")
 
 # 监听B站直播间两个监听组合【开放平台+SessData会话】
 async def listen_blivedm_task():
