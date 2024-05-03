@@ -1358,14 +1358,18 @@ def tts_say_do(json):
     # 触发翻译日语
     if lanuage=="AutoChange":
         log.info(f"[{traceid}]当前感情值:{moodNum}")
-        if moodNum>270 or re.search(".*日[文|语].*", question) or emotion=="angry" or re.search(".*日[文|语].*说.*", text):
+        if re.search(".*日[文|语].*", question) or re.search(".*日[文|语].*说.*", text):
            trans_json = translate(text,"zh-Hans","ja")
            if has_field(trans_json,"translated"):
                 text = trans_json["translated"]
         elif re.search(".*英[文|语].*", question) or re.search(".*英[文|语].*说.*", text):
            trans_json = translate(text,"zh-Hans","en")
            if has_field(trans_json,"translated"):
-                text = trans_json["translated"] 
+                text = trans_json["translated"]
+        elif moodNum>270 or emotion=="angry":
+           trans_json = translate(text,"zh-Hans","ja")
+           if has_field(trans_json,"translated"):
+                text = trans_json["translated"]       
     
      # 微软合成语音
     # with open(f"./output/{filename}.txt", "w", encoding="utf-8") as f:
