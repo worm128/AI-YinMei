@@ -137,29 +137,43 @@ python bilibili-live-api.py
 
 #### 修改内容须知：
 
-人工智能名称：Ai_Name="吟美"
-直播间配置：yml 配置-room_id
-B 站直播间鉴权：yml 配置-sessdata、ACCESS_KEY_ID、ACCESS_KEY_SECRET、APP_ID、ROOM_OWNER_AUTH_CODE<br>
-sessdata：直播间会话值<br>
-ACCESS_KEY_ID、ACCESS_KEY_SECRET：在开放平台申请的开发者密钥<br>
-APP_ID：在开放平台创建的项目 ID<br>
-ROOM_OWNER_AUTH_CODE：B 站身份码<br>
-Vtuber Studio 表情 websocket 服务： <br>
-ws = websocket.WebSocketApp("ws://127.0.0.1:8001",on_open = on_open)<br>
-以下是表情鉴权，详细看文档【十三、Vtuber 表情控制-获取令牌和授权】：<br>
-vtuber_pluginName="自定义插件名称"<br>
-vtuber_pluginDeveloper="winlone"<br>
-vtuber_authenticationToken="这个令牌从获取令牌接口获取"<br>
-鉴黄服务：nsfw_server="192.168.2.198:1801"<br>
-唱歌服务 Auto-Convert-Music 地址：singUrl = "192.168.2.58:1717"<br>
-绘画服务 stable-diffusion-webui 地址：drawUrl = "192.168.2.58:7860"<br>
-聊天服务 text-generation-webui 地址：tgwUrl = "192.168.2.58:5000"<br>
-聊天服务 fastgpt 知识库地址：fastgpt_url = "192.168.2.198:3000"<br>
-fastgpt 令牌：fastgpt_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"<br>
-搜索服务代理：duckduckgo_proxies="socks5://127.0.0.1:10806"<br>
-搜图服务代理：proxies = {"http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806"}<br>
-流式分割字符：split_flag=",|，|。|!|！|?|？|\n"
-流式分割字符数量：split_num = 4
+- 人工智能名称：Ai_Name="吟美"
+- B 站直播间鉴权：yml 配置-room_id、sessdata、ACCESS_KEY_ID、ACCESS_KEY_SECRET、APP_ID、ROOM_OWNER_AUTH_CODE<br>
+  room_id：B 站直播间编号<br>
+  sessdata：直播间会话值<br>
+  ACCESS_KEY_ID、ACCESS_KEY_SECRET：在开放平台申请的开发者密钥<br>
+  APP_ID：在开放平台创建的项目 ID<br>
+  ROOM_OWNER_AUTH_CODE：B 站身份码<br>
+- Vtuber Studio 表情 websocket 服务： <br>
+  ws = websocket.WebSocketApp("ws://127.0.0.1:8001",on_open = on_open)<br>
+  以下是表情鉴权，详细看文档【十三、Vtuber 表情控制-获取令牌和授权】：<br>
+  vtuber_pluginName="自定义插件名称"<br>
+  vtuber_pluginDeveloper="winlone"<br>
+  vtuber_authenticationToken="这个令牌从获取令牌接口获取"<br>
+- 鉴黄服务：nsfw_server="192.168.2.198:1801"<br>
+- 语音合成：gtp_vists_url="192.168.2.58:9880"<br>
+- 跳舞功能：<br>
+  OBS 软件的 websocket 服务【用于跳舞、表情播放、场景切换、背景音乐播放等】<br>
+  obs = ObsWebSocket(host="192.168.2.198",port=4455,password="123456")<br>
+  跳舞视频抽取路径【支持子文件夹】<br>
+  dance_path = 'H:\\人工智能\\ai\\跳舞视频\\横屏'<br>
+  表情视频抽取路径【支持子文件夹】<br>
+  emote_path = 'H:\\人工智能\\ai\\跳舞视频\\表情'<br>
+- 场景音乐：<br>
+  song_background={"海岸花坊":"J:\\ai\\背景音乐\\海岸花坊.rm",
+  "神社":"J:\\ai\\背景音乐\\神社.mp3",
+  "清晨房间":"J:\\ai\\背景音乐\\清晨房间.mp3",
+  "粉色房间":"J:\\ai\\背景音乐\\粉色房间.rm",
+  "花房":"J:\\ai\\背景音乐\\花房.mp3"}<br>
+- 唱歌服务 Auto-Convert-Music 地址：singUrl = "192.168.2.58:1717"<br>
+- 绘画服务 stable-diffusion-webui 地址：drawUrl = "192.168.2.58:7860"<br>
+- 聊天服务 text-generation-webui 地址：tgwUrl = "192.168.2.58:5000"<br>
+- 聊天服务 fastgpt 知识库地址：fastgpt_url = "192.168.2.198:3000"<br>
+- fastgpt 令牌：fastgpt_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"<br>
+- 搜索服务代理：duckduckgo_proxies="socks5://127.0.0.1:10806"<br>
+- 搜图服务代理：proxies = {"http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806"}<br>
+- 流式分割字符：split_flag=",|，|。|!|！|?|？|\n"
+- 流式分割字符数量：split_num = 4
 
 #### 2-1、(可选)启动 LLM 聊天服务 【fastgpt】+【one-api】+【Xinference】<br>
 
