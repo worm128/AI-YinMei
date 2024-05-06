@@ -119,27 +119,6 @@
 
 - Python 3.11.6
 
-### 调用类库
-
-- 轻量安装（推荐-不包含 LLM 语言模型）：requirements.txt<br>
-- 全量安装（包含 LLM 语言模型、LLM 训练模型等）：requirements-all.txt<br>
-- 对应重要的 py 包<br>
-  torch：2.1.0+cu121<br>
-  peft：0.6.2<br>
-  bilibili-api-python：16.1.1<br>
-  edge-tts：6.1.9<br>
-  pynput：1.7.6<br>
-  APScheduler：3.10.4<br>
-  transformers：4.35.2<br>
-  websocket-client：1.6.4v<br>
-  duckduckgo_search：4.1.1<br>
-  pyvirtualcam：0.11.0<br>
-  opencv-python：4.8.1.78<br>
-  Flask：3.0.0<br>
-  Flask-APScheduler：1.13.1<br>
-  duckduckgo_search：4.1.1<br>
-  obs-websocket-py：1.0<br>
-
 ### 启动方式
 
 #### 1、(必选)启动应用层，在根目录
@@ -158,13 +137,20 @@ python bilibili-live-api.py
 
 #### 修改内容须知：
 
-B 站直播间鉴权（B 站浏览器获取 cookie）：sessdata、buvid3<br>
+人工智能名称：Ai_Name="吟美"
+直播间配置：yml 配置-room_id
+B 站直播间鉴权：yml 配置-sessdata、ACCESS_KEY_ID、ACCESS_KEY_SECRET、APP_ID、ROOM_OWNER_AUTH_CODE<br>
+sessdata：直播间会话值<br>
+ACCESS_KEY_ID、ACCESS_KEY_SECRET：在开放平台申请的开发者密钥<br>
+APP_ID：在开放平台创建的项目 ID<br>
+ROOM_OWNER_AUTH_CODE：B 站身份码<br>
 Vtuber Studio 表情 websocket 服务： <br>
 ws = websocket.WebSocketApp("ws://127.0.0.1:8001",on_open = on_open)<br>
 以下是表情鉴权，详细看文档【十三、Vtuber 表情控制-获取令牌和授权】：<br>
 vtuber_pluginName="自定义插件名称"<br>
 vtuber_pluginDeveloper="winlone"<br>
 vtuber_authenticationToken="这个令牌从获取令牌接口获取"<br>
+鉴黄服务：nsfw_server="192.168.2.198:1801"<br>
 唱歌服务 Auto-Convert-Music 地址：singUrl = "192.168.2.58:1717"<br>
 绘画服务 stable-diffusion-webui 地址：drawUrl = "192.168.2.58:7860"<br>
 聊天服务 text-generation-webui 地址：tgwUrl = "192.168.2.58:5000"<br>
@@ -172,6 +158,8 @@ vtuber_authenticationToken="这个令牌从获取令牌接口获取"<br>
 fastgpt 令牌：fastgpt_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"<br>
 搜索服务代理：duckduckgo_proxies="socks5://127.0.0.1:10806"<br>
 搜图服务代理：proxies = {"http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806"}<br>
+流式分割字符：split_flag=",|，|。|!|！|?|？|\n"
+流式分割字符数量：split_num = 4
 
 #### 2-1、(可选)启动 LLM 聊天服务 【fastgpt】+【one-api】+【Xinference】<br>
 
