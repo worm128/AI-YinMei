@@ -14,3 +14,6 @@ Flask-APScheduler==1.13.1
 obs-websocket-py==1.0
 PySocks==1.7.1
 requests==2.31.0
+aiohttp==3.9.5
+Brotli~=1.1.0
+yarl~=1.9.3

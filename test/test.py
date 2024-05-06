@@ -44,9 +44,26 @@ def is_index_contain_string(string_array, target_string):
             return num + len(s)
     return 0
 
+# 判断字符位置（不含搜索字符）- 如，搜索“画画女孩”，则输出“女孩”位置
+def rfind_index_contain_string(string_array, target_string):
+    i = 0
+    for s in string_array:
+        i = i + 1
+        num = target_string.rfind(s)
+        if num>0:
+           return num + len(s)
+    return 0
+
 def has_string_reg(regx,s):
     return re.search(regx, s)
 
+str=",\"winlone\",说渣渣美"
+split_flag=",|，|。|!|！|?|？|\n"
+text = split_flag.split("|")
+num = rfind_index_contain_string(text, str)
+print(num)
+split_content = str[0 : num]
+print(split_content)
 # text = ["唱一下", "唱一首", "唱歌", "唱"]
 # num = is_index_contain_string(text, "又是这个高端歌，吟美唱死")
 # print(num)
@@ -86,6 +103,14 @@ for i in range(100):
     uuid_value = uuid.uuid4()
     timestamp = time.time()
     print(uuid_value)
+
+str = "Hello, World!"
+char = "o"
+split_flag=",|，|。|!|！|?|？|\n"
+text = split_flag.split("|")
+
+last_index = str.rfind(text)
+print(f"The last occurrence of '{char}' is at index {last_index}.")
 
 if re.search("[,|，|。|!|！|。|?|？]", "\""):
    print("match")

@@ -885,7 +885,9 @@ def ai_response():
     all_content=""
     temp=""
     split_flag=",|，|。|!|！|?|？|\n"  #文本分隔符
-    linenum = 1
+    text = split_flag.split("|")
+    split_num = 4 #分割字符数量
+    chatStatus="start"
     for line in response.iter_lines():
         if line:
             # 处理收到的JSON响应
@@ -900,30 +902,32 @@ def ai_response():
                     stream_content = response_json["choices"][0]["delta"]["content"]
                     if stream_content=="":
                         continue
+                    # 原始全文本
+                    all_content = all_content + stream_content
                     # 过滤特殊符号
                     stream_content = filter_html_tags(stream_content)
                     content = temp + stream_content
+                    
+                    # 从右边出现的符号开始计算
+                    num = rfind_index_contain_string(text, content)
+                    if num>0:
+                        # 文本分割处理
+                        split_content = content[0 : num]
+                        log.info(f"[{traceid}]分割后文本:"+split_content)
 
-                    if re.search(f"[{split_flag}]", content):
-                        text = split_flag.split("|")
-                        num = is_index_contain_string(text, content)
-                        temp = content[num : len(content)]
-                        content = content[0 : num]
-                        log.info(f"[{traceid}]分割后文本:"+content)
-                        
-                        # 判断是否起始数据
-                        chatStatus=""
-                        if linenum==1:
-                            chatStatus="start"
-                        linenum=linenum+1
-
-                        # 合成语音：文本碎片化段落
-                        jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":chatStatus,"question":title,"text":content,"lanuage":"AutoChange"}
-                        AnswerList.put(jsonStr)
+                        # 判断字符数量大于x个时候才会切割，字符太短切割音频太碎
+                        if len(split_content)>split_num:
+                            temp = content[num : len(content)]
+                            # 合成语音：文本碎片化段落
+                            jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":chatStatus,"question":title,"text":split_content,"lanuage":"AutoChange"}
+                            AnswerList.put(jsonStr)
+                            # 第二行后面就为空
+                            chatStatus=""
+                        else:
+                            temp = content
                     else:
+                        # 拼接到一下轮分割文本输出
                         temp = content
-
-                    all_content = all_content + response_json["choices"][0]["delta"]["content"]
                 else:
                     # 结束把剩余文本输出语音
                     if temp!="":
@@ -934,7 +938,7 @@ def ai_response():
                         # 结尾：空值
                         jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":"end","question":title,"text":"","lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
-                    log.info(f"[{traceid}]end:"+response_json["choices"][0]["finish_reason"])
+                    log.info(f"[{traceid}]end:"+temp)
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
     # 切换场景
@@ -1505,7 +1509,7 @@ def emote_content(response):
     jsonstr = []
     # =========== 随机动作 ==============
     # text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "欢迎", "搜", "唱"]
-    # num = is_array_contain_string(text, response)
+    # num = is_index_nocontain_string(text, response)
     # if num > 0:
     #     press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
     #     press = random.randrange(0, len(press_arry))
@@ -1514,17 +1518,17 @@ def emote_content(response):
 
     # =========== 开心 ==============
     text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "搜", "有趣"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"happy","key":"开心","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 哭 ==============
     text = ["哭", "悲伤", "伤心", "凄惨", "好惨", "呜呜", "悲哀"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"sad","key":"哭","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 招呼 ==============
     text = ["你好", "在吗", "干嘛", "名字", "欢迎", "我在", "玩笑", "逗"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         press1 = random.randrange(1, 3)
         if press1==1:
@@ -1540,12 +1544,12 @@ def emote_content(response):
            jsonstr.append({"content":"call","key":"米米","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 有钱 ==============
     text = ["钱", "money", "有米"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
        jsonstr.append({"content":"call","key":"米米","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 温柔 ==============
     text = ["温柔", "抚摸", "抚媚", "骚", "唱歌"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         press1 = random.randrange(1, 3)
         if press1==1:
@@ -1559,42 +1563,42 @@ def emote_content(response):
            jsonstr.append({"content":"call","key":"头右倾","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 生气 ==============
     text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "可恶"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"angry","key":"生气","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 尴尬 ==============
     text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋", "傻逼", "逗比", "逗逼", "忘记", "怎么可能", "调侃"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"blush","key":"尴尬","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 认同 ==============
     text = ["认同", "点头", "嗯", "哦", "女仆"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"approve","key":"认同","num":num,"timesleep":0.002,"donum":5,"endwait":0})
     # =========== 汗颜 ==============
     text = ["汗颜", "流汗", "郁闷", "笑死", "白痴", "渣渣", "搞笑", "恶心"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"sweat","key":"汗颜","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 晕 ==============
     text = ["晕", "头晕", "晕死", "呕"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"blush","key":"晕","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 吐血 ==============
     text = ["吐血", "血"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"blood","key":"血","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 可爱 ==============
     text = ["可爱", "害羞", "爱你", "天真", "搞笑", "喜欢", "全知全能"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"love","key":"可爱","num":num,"timesleep":0,"donum":0,"endwait":0})
     # =========== 摸摸头 ==============
     text = ["摸摸头", "摸摸脑袋", "乖", "做得好"]
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         jsonstr.append({"content":"happy","key":"摸摸头","num":num,"timesleep":5,"donum":1,"endwait":0})
         jsonstr.append({"content":"blush","key":"晕","num":num,"timesleep":0,"donum":0,"endwait":0})
@@ -1617,7 +1621,7 @@ def emote_show(emote_content):
 
 # 键盘触发-带按键时长
 def emote_do(text, response, keyboard, startTime, key):
-    num = is_array_contain_string(text, response)
+    num = is_index_nocontain_string(text, response)
     if num > 0:
         start = round(num * startTime, 2)
         time.sleep(start)
@@ -1676,7 +1680,17 @@ def has_string_reg_list(regxlist,s):
     regx = regxlist.replace("[","(").replace("]",")").replace(",","|").replace("'","").replace(" ","")
     return re.search(regx, s)
 
-# 判断字符位置（不含搜索字符）- 如，搜索“画画女孩”，则输出“女孩”位置
+# 判断字符位置（包含搜索字符）- 如，搜索“画画女孩”，则输出“女孩”位置
+def rfind_index_contain_string(string_array, target_string):
+    i = 0
+    for s in string_array:
+        i = i + 1
+        num = target_string.rfind(s)
+        if num>0:
+           return num + len(s)
+    return 0
+
+# 判断字符位置（包含搜索字符）- 如，搜索“画画女孩”，则输出“女孩”位置
 def is_index_contain_string(string_array, target_string):
     i = 0
     for s in string_array:
@@ -1686,8 +1700,8 @@ def is_index_contain_string(string_array, target_string):
             return num + len(s)
     return 0
 
-# 判断字符位置（含搜索字符）- 如，搜索“画画女孩”，则输出“画画女孩”位置
-def is_array_contain_string(string_array, target_string):
+# 判断字符位置（不含搜索字符）- 如，搜索“画画女孩”，则输出“画画女孩”位置
+def is_index_nocontain_string(string_array, target_string):
     i = 0
     for s in string_array:
         i = i + 1

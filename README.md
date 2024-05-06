@@ -6,13 +6,21 @@
 - B 站频道：程序猿的退休生活
 - B 站视频教程：https://www.bilibili.com/video/BV18b4y1V7Qm/
 - Q 群：27831318
-- 版本：1.7
+- 版本：1.7.6
 - 详细笔记：<br>
   现在发现有道云笔记网页版本不能查看笔记图片，需要完整教案请进入 Q 群 27831318 获取 pdf 文档<br>
   https://note.youdao.com/s/1k0x7BLt<br>
 - 吟美 pdf 完整说明文档：<br>
-  百度网盘：https://pan.baidu.com/s/1wB1aNTpN5X2WSPCq3GADJw?pwd=1kz2<br>
-  在百度网盘->人工智能->吟美说明文档->AI 虚拟主播 Vtuber 研发(N 卡版本)-v1.7.pdf<br>
+  百度网盘：https://pan.baidu.com/s/13tKUI2sFLyJAWrqzYkRaCw?pwd=1kz2<br>
+  在百度网盘->人工智能->吟美说明文档->AI 虚拟主播 Vtuber 研发(N 卡版本)-v1.7.x.pdf<br>
+- 吟美整合包下载地址：<br>
+  视频教程：https://www.bilibili.com/video/BV1zD421H76q
+  百度网盘：https://pan.baidu.com/s/13tKUI2sFLyJAWrqzYkRaCw?pwd=1kz2
+  提取码：1kz2
+  夸克：https://pan.quark.cn/s/ade5c2d30ae7
+  提取码：ci9B
+  整合包下载(4 个)：自媒体 -> 人工智能 -> Ai 吟美整合包
+  整合包说明文档：自媒体 -> 人工智能 -> Ai 吟美整合包->Ai 吟美整合包.pdf
 - 旧版吟美项目【因集成过多内置第三方项目，已废弃】：<br>https://github.com/worm128/AI-YinMei-backup
 
 ## **支持技术**
@@ -40,6 +48,7 @@
 - 支持多场景切换、背景音乐切换、白天黑夜自动切换场景
 - 支持开放性唱歌和绘画，让 AI 自动判断内容
 - 支持流式聊天，提速 LLM 回复与语音合成
+- 对接 bilibili 开放平台弹幕【稳定性高】
 
 ## **吟美直播间功能说明**
 
@@ -76,6 +85,15 @@
   7、绘画提示词对接 C 站，丰富绘画内容<br>
   8、智能判断是否需要唱歌、画画<br>
   9、根据关键字进行场景切换<br>
+
+### 应用模块
+
+- Ai-YinMei：Ai 吟美核心<br>
+- stable-diffusion-webui：绘画模块<br>
+- public-NSFW-y-distinguish：鉴黄模块<br>
+- gpt-SoVITS：语音合成模块<br>
+- Auto-Convert-Music：唱歌模块<br>
+- fastgpt + one-api + Xinference：聊天模块<br>
 
 ### 软件下载
 
