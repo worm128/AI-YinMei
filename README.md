@@ -19,8 +19,8 @@
   提取码：1kz2
   夸克：https://pan.quark.cn/s/ade5c2d30ae7
   提取码：ci9B
-  整合包下载(4 个)：自媒体 -> 人工智能 -> Ai 吟美整合包
-  整合包说明文档：自媒体 -> 人工智能 -> Ai 吟美整合包->Ai 吟美整合包.pdf
+  整合包下载(4 个)：自媒体 -> 人工智能 -> yinmei-all
+  整合包说明文档：自媒体 -> 人工智能 -> yinmei-all -> Ai 吟美整合包.pdf
 - 旧版吟美项目【因集成过多内置第三方项目，已废弃】：<br>https://github.com/worm128/AI-YinMei-backup
 
 ## **支持技术**
@@ -135,7 +135,7 @@ pip install -r requirements.txt
 python bilibili-live-api.py
 ```
 
-#### 修改内容须知：
+#### 配置内容须知：
 
 - 人工智能名称：Ai_Name="吟美"
 - B 站直播间鉴权：yml 配置-room_id、sessdata、ACCESS_KEY_ID、ACCESS_KEY_SECRET、APP_ID、ROOM_OWNER_AUTH_CODE<br>
