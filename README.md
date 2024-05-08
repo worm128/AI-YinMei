@@ -4,7 +4,7 @@
 - AI 名称：吟美
 - 开发者：Winlone
 - B 站频道：程序猿的退休生活
-- B 站视频教程：https://www.bilibili.com/video/BV18b4y1V7Qm/
+- B 站基础教程：https://www.bilibili.com/video/BV18b4y1V7Qm/
 - Q 群：27831318
 - 版本：1.7.6
 - 详细笔记：<br>
@@ -14,14 +14,15 @@
   百度网盘：https://pan.baidu.com/s/13tKUI2sFLyJAWrqzYkRaCw?pwd=1kz2<br>
   在百度网盘->人工智能->吟美说明文档->AI 虚拟主播 Vtuber 研发(N 卡版本)-v1.7.x.pdf<br>
 - 吟美整合包下载地址：<br>
-  视频教程：https://www.bilibili.com/video/BV1zD421H76q
-  百度网盘：https://pan.baidu.com/s/13tKUI2sFLyJAWrqzYkRaCw?pwd=1kz2
-  提取码：1kz2
-  夸克：https://pan.quark.cn/s/ade5c2d30ae7
-  提取码：ci9B
-  整合包下载(4 个)：自媒体 -> 人工智能 -> yinmei-all
-  整合包说明文档：自媒体 -> 人工智能 -> yinmei-all -> Ai 吟美整合包.pdf
-- 旧版吟美项目【因集成过多内置第三方项目，已废弃】：<br>https://github.com/worm128/AI-YinMei-backup
+  整合包教程：https://www.bilibili.com/video/BV1zD421H76q<br>
+  百度网盘：https://pan.baidu.com/s/13tKUI2sFLyJAWrqzYkRaCw?pwd=1kz2<br>
+  提取码：1kz2<br>
+  夸克：https://pan.quark.cn/s/ade5c2d30ae7<br>
+  提取码：ci9B<br>
+  整合包下载(4 个)：自媒体 -> 人工智能 -> yinmei-all<br>
+  整合包说明文档：自媒体 -> 人工智能 -> yinmei-all -> Ai 吟美整合包.pdf<br>
+- 旧版吟美项目【因集成过多内置第三方项目，已废弃】：<br>
+  https://github.com/worm128/AI-YinMei-backup<br>
 
 ## **支持技术**
 
@@ -97,7 +98,11 @@
 
 ### 软件下载
 
-- 在百度网盘：https://pan.baidu.com/s/1wB1aNTpN5X2WSPCq3GADJw?pwd=1kz2
+百度网盘：https://pan.baidu.com/s/13tKUI2sFLyJAWrqzYkRaCw?pwd=1kz2<br>
+提取码：1kz2<br>
+夸克：https://pan.quark.cn/s/ade5c2d30ae7<br>
+提取码：ci9B<br>
+
 - 语音播放器 mpv：语音播放、音乐播放使用<br>
   在百度网盘->人工智能->软件->mpv.exe<br>
   注意：项目需要在根目录放两个播放器，分别是：mpv.exe【播放语音】、song.exe【播放音乐】<br>
@@ -109,11 +114,6 @@
   人工智能->软件->nosqlbooster4mongo-8.1.7.exe<br>
 - fastgpt 的 docker-compose 配置<br>
   人工智能->软件->docker 知识库<br>
-- 整合包路径<br>
-  百度网盘：https://pan.baidu.com/s/1wB1aNTpN5X2WSPCq3GADJw?pwd=1kz2<br>
-  提取码：1kz2<br>
-  夸克：https://pan.quark.cn/s/ade5c2d30ae7<br>
-  提取码：ci9B<br>
 
 ### 运行环境
 
@@ -181,6 +181,7 @@ fastgpt：https://github.com/labring/FastGPT<br>
 one-api：https://github.com/songquanpeng/one-api<br>
 Xinference：https://github.com/xorbitsai/inference<br>
 启动：使用 window WSL 的 docker 启动，启动流程看教程文档第 23 点<br>
+教程视频：https://www.bilibili.com/video/BV1SH4y1J7Wy/<br>
 
 #### 2-2、(可选)启动 LLM 聊天服务 text-generation-webui<br>
 

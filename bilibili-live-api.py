@@ -67,11 +67,10 @@ log.info("开发者：Winlone")
 log.info("QQ群：27831318")
 log.info("=====================================================================")
 
-os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
+# 定时器
 sched1 = AsyncIOScheduler(timezone="Asia/Shanghai")
 
-
-#1.b站直播间 2.api web 3.双开
+# 1.b站直播间 2.api web
 mode=int(input("接口对接(1.b站直播间 2.api web):") or "1")
 
 #代理
