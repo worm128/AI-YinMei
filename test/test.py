@@ -57,6 +57,16 @@ def rfind_index_contain_string(string_array, target_string):
 def has_string_reg(regx,s):
     return re.search(regx, s)
 
+pattern = r'\[.*?\]|<.*?>|\(.*?\)|\n'
+ss=re.sub(pattern, '', "dsf(三国演义)123")
+print(ss)
+
+pattern="(三国演义\d+|粤剧|京剧|易经)"
+ss=re.search(pattern,  "dsf三国演义123")
+if ss:
+    print("xxx")
+
+
 str=",\"winlone\",说渣渣美"
 split_flag=",|，|。|!|！|?|？|\n"
 text = split_flag.split("|")

@@ -99,7 +99,8 @@ local_llm_type = int(input("本地LLM模型类型(1.fastgpt 2.text-generation-we
 tgw_url = "192.168.2.58:5000"
 fastgpt_url = "192.168.2.198:3000"
 fastgpt_authorization="Bearer fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBWQhMLxDUck6W6Oeio4sx"
-#ai吟美：fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBWQhMLxDUck6W6Oeio4sx
+#ai吟美【怒怼版】：fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBWQhMLxDUck6W6Oeio4sx
+#ai吟美【女仆版】：fastgpt-yjuDaV7O4kyzK1DY7PuOGvOjqUJCSmdCENKowhDSAi6PwdoG4247bs2yL
 #openku-chatgpt3.5：fastgpt-ySHfeoltpvRV4lyqvGBqiUvJpzMiC0d3nOFaheT1dTHlk9KA4EHR6EujKzX
 # ============================================
 
@@ -129,8 +130,8 @@ SongMenuList = queue.Queue()  # 唱歌显示
 SongNowName={} # 当前歌曲
 is_singing = 2  # 1.唱歌中 2.唱歌完成
 is_creating_song = 2  # 1.生成中 2.生成完毕
-song_not_convert=["三国演义\d+","粤剧","京剧","易经"]  #不需要学习的歌曲【支持正则】
 sing_play_flag=0  # 1.正在播放唱歌 0.未播放唱歌 【用于监听歌曲播放器是否停止】
+song_not_convert="(三国演义\d+|粤剧|京剧|易经)"  #不需要学习的歌曲【支持正则】
 # ============================================
 
 # ============= B站直播间 =====================
@@ -1361,11 +1362,11 @@ def tts_say_do(json):
     # 触发翻译日语
     if lanuage=="AutoChange":
         log.info(f"[{traceid}]当前感情值:{moodNum}")
-        if re.search(".*日[文|语].*", question) or re.search(".*日[文|语].*说.*", text):
+        if re.search(".*日(文|语).*", question) or re.search(".*日(文|语).*说.*", text):
            trans_json = translate(text,"zh-Hans","ja")
            if has_field(trans_json,"translated"):
                 text = trans_json["translated"]
-        elif re.search(".*英[文|语].*", question) or re.search(".*英[文|语].*说.*", text):
+        elif re.search(".*英(文|语).*", question) or re.search(".*英(文|语).*说.*", text):
            trans_json = translate(text,"zh-Hans","en")
            if has_field(trans_json,"translated"):
                 text = trans_json["translated"]
@@ -1387,6 +1388,8 @@ def tts_say_do(json):
     # status = bert_vits2(filename,text,emotion)
 
     # gtp-vists合成语音
+    pattern="(《|》)"  #过滤特殊字符，这些字符会影响语音合成
+    text=re.sub(pattern, '', text)
     status = gtp_vists(filename,text,emotion)
     if status == 0:
        return
@@ -1853,17 +1856,16 @@ def create_song(songname,query,song_path,is_created):
         status_json={}
         is_download=False
         # =============== 开始-选择一、当前歌曲只下载不转换 =================
-        for song_regx in song_not_convert:
-            match = re.match(song_regx, songname)
-            if match:
-               log.info(f"当前歌曲只下载不转换《{songname}》")
-               # 直接生成原始音乐
-               jsonStr = requests.get(url=f"http://{singUrl}/download_origin_song/{songname}",timeout=(5, 120))
-               status_json = json.loads(jsonStr.text)
-               # 下载原始音乐
-               down_song_file(songname,"get_audio","vocal",song_path)
-               is_download=True
-               return 1
+        match = re.search(song_not_convert, songname)
+        if match:
+            log.info(f"当前歌曲只下载不转换《{songname}》")
+            # 直接生成原始音乐
+            jsonStr = requests.get(url=f"http://{singUrl}/download_origin_song/{songname}",timeout=(5, 120))
+            status_json = json.loads(jsonStr.text)
+            # 下载原始音乐
+            down_song_file(songname,"get_audio","vocal",song_path)
+            is_download=True
+            return 1
         # =============== 结束-当前歌曲只下载不转换 =================
         
         # =============== 开始-选择二、学习唱歌任务 =================
@@ -2455,7 +2457,7 @@ def main():
         # 时间判断场景[白天黑夜切换]
         sched1.add_job(func=check_scene_time, trigger="cron", hour="6,17,18", id=f"scene_time")
         # 欢迎语
-        sched1.add_job(func=check_welcome_room, trigger="interval", seconds=8, id=f"welcome_room", max_instances=50)
+        sched1.add_job(func=check_welcome_room, trigger="interval", seconds=20, id=f"welcome_room", max_instances=50)
         sched1.start()
     
     if mode==1 or mode==2:
