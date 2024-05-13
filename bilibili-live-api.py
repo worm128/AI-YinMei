@@ -870,10 +870,17 @@ def ai_response():
     if local_llm_type == 1:
         username_prompt = f"{shenfen}{prompt}"
         log.info(f"[{traceid}]{username_prompt}")
-        authorization = fastgpt_authorization.get("怒怼版")
+        authorization = ""
         # 后续改成舆情判断，当前是简易字符串判断
         if re.search(public_sentiment_key, prompt):
             authorization = fastgpt_authorization.get("女仆版")
+        else:
+            # 摇骰子选择性格
+            random_number = random.randrange(1, 11)
+            if random_number>4:
+               authorization = fastgpt_authorization.get("怒怼版")
+            else:
+               authorization = fastgpt_authorization.get("女仆版") 
         # fastgpt聊天
         response = chat_fastgpt(username_prompt, uid, username, authorization)
     # text-generation-webui
