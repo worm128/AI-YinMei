@@ -1,3 +1,9 @@
+AiName: "吟美"
+mode: 1 # 1.b站直播间 2.api web
+proxies: #代理
+  HttpProxies:
+    { "http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806" }
+  DuckduckgoProxies: "socks5://127.0.0.1:10806"
 blivedm:
   room_id: ""
   sessdata: ""
@@ -5,3 +11,60 @@ blivedm:
   ACCESS_KEY_SECRET: ""
   APP_ID: 0
   ROOM_OWNER_AUTH_CODE: ""
+llm: #大模型聊天
+  local_llm_type: 1
+  tgw_url: "192.168.2.58:5000"
+  fastgpt_url: "192.168.2.198:3000"
+  fastgpt_authorization:
+    {
+      "怒怼版": "Bearer fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBWQhMLxDUck6W6Oeio4sx",
+      "女仆版": "Bearer fastgpt-yjuDaV7O4kyzK1DY7PuOGvOjqUJCSmdCENKowhDSAi6PwdoG4247bs2yL",
+    }
+  split_flag: ",|，|。|!|！|?|？|\n" #流式回复的分割符
+  split_limit: 4 #流式回复分割的最小字符数量
+  public_sentiment_key: "(爱|喵|女仆|老婆|男朋友|比心|好|媳妇|喜欢|乖)"
+draw: #绘画
+  drawUrl: "192.168.2.58:7860" #Stable Diffusion服务ip
+  width: 980 # 图片宽度
+  height: 500 # 图片高度
+  physical_save_folder: "J:\\ai\\ai-yinmei\\porn\\" #绘画保存图片物理路径
+sing: #唱歌
+  singUrl: "192.168.2.58:1717"
+  song_not_convert: "(三国演义\\d+|粤剧|京剧|易经)" #不需要学习的歌曲【支持正则】
+emote: #vts表情
+  vst_websocket: "127.0.0.1:8001"
+  vtuber_pluginName: "winlonebot"
+  vtuber_pluginDeveloper: "winlone"
+  vtuber_authenticationToken: "6f80e2aa087daa949cada5f4adb6c15d67f109aa3cbc3076e6de5eda79ed145d"
+nsfw: #鉴黄
+  nsfw_server: "192.168.2.198:1801"
+  filterEn: "huge breasts,open clothes,topless,voluptuous,breast,prostitution,erotic,armpit,milk,leaking,spraying,woman,cupless latex,latex,tits,boobs,lingerie,chest,seductive,poses,pose,leg,posture,alluring,milf,on bed,mature,slime,open leg,full body,bra,lace,bikini,full nude,nude,bare,one-piece,navel,cleavage,swimsuit,naked,adult,nudity,beautiful breasts,nipples,sex,Sexual,vaginal,penis,large penis,pantie,leotards,anal"
+  filterCh: "奶子,乳房" #过滤弹幕
+  progress_limit: 1 #绘图大于多少百分比进行鉴黄，这里设置了1%
+  nsfw_limit: 0.2 #nsfw黄图值大于多少进行绘画屏蔽【值越大越是黄图，值范围0~1】
+  nsfw_progress_limit: 0.2 #nsfw黄图-绘画进度鉴黄【值越大越是黄图，值范围0~1】
+speech: #语音
+  #bert-vists
+  bert_vists_url: "192.168.2.58:5000"
+  speaker_name: "珊瑚宫心海[中]"
+  sdp_ratio: 0.2 #SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
+  noise: 0.2 #控制感情变化程度，默认0.2
+  noisew: 0.9 #控制音节发音变化程度，默认0.9
+  speed: 1 #语速
+  #gpt-SoVITS
+  gtp_vists_url: "192.168.2.58:9880"
+obs: #obs直播软件
+  url: "192.168.2.198"
+  port: 4455
+  password: "123456"
+  dance_path: "H:\\人工智能\\ai\\跳舞视频\\横屏"
+  emote_path: "H:\\人工智能\\ai\\跳舞视频\\表情"
+  emote_font: "H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号"
+  song_background:
+    {
+      "海岸花坊": "J:\\ai\\背景音乐\\海岸花坊.rm",
+      "神社": "J:\\ai\\背景音乐\\神社.mp3",
+      "清晨房间": "J:\\ai\\背景音乐\\清晨房间.mp3",
+      "粉色房间": "J:\\ai\\背景音乐\\粉色房间.rm",
+      "花房": "J:\\ai\\背景音乐\\花房.mp3",
+    }

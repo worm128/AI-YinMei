@@ -56,7 +56,7 @@ my_logging.setLevel('ERROR')
 def print(*args, **kwargs):
     log.info(*args, **kwargs)
 
-Ai_Name="吟美"  #Ai名称
+Ai_Name=config["AiName"]  #Ai名称
 log.info("=====================================================================")
 log.info(f"开始启动人工智能{Ai_Name}！")
 log.info(
@@ -71,11 +71,11 @@ log.info("====================================================================="
 sched1 = AsyncIOScheduler(timezone="Asia/Shanghai")
 
 # 1.b站直播间 2.api web
-mode=int(input("接口对接(1.b站直播间 2.api web):") or "1")
+mode = config["mode"]
 
 #代理
-proxies = {"http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806"}
-duckduckgo_proxies="socks5://127.0.0.1:10806"
+proxies = config["proxies"]["HttpProxies"]
+duckduckgo_proxies= config["proxies"]["DuckduckgoProxies"]
 
 #线程锁
 create_song_lock = threading.Lock()
@@ -91,26 +91,30 @@ history = []
 is_ai_ready = True  # 定义ai回复是否转换完成标志
 is_tts_ready = True  # 定义语音是否生成完成标志
 SayCount = 0
+split_flag = config["llm"]["split_flag"]
+split_str = split_flag.split("|")
+split_limit = config["llm"]["split_limit"]  #分割的最小字符数量
 # ============================================
 
 # ============= 本地模型加载 =====================
 # 模型加载方式
-local_llm_type = int(input("本地LLM模型类型(1.fastgpt 2.text-generation-webui): ") or "1")
-tgw_url = "192.168.2.58:5000"
-fastgpt_url = "192.168.2.198:3000"
-fastgpt_authorization="Bearer fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBWQhMLxDUck6W6Oeio4sx"
+local_llm_type = config["llm"]["local_llm_type"]
+tgw_url = config["llm"]["tgw_url"]
+fastgpt_url = config["llm"]["fastgpt_url"]
+fastgpt_authorization = config["llm"]["fastgpt_authorization"]
 #ai吟美【怒怼版】：fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBWQhMLxDUck6W6Oeio4sx
 #ai吟美【女仆版】：fastgpt-yjuDaV7O4kyzK1DY7PuOGvOjqUJCSmdCENKowhDSAi6PwdoG4247bs2yL
 #openku-chatgpt3.5：fastgpt-ySHfeoltpvRV4lyqvGBqiUvJpzMiC0d3nOFaheT1dTHlk9KA4EHR6EujKzX
+public_sentiment_key = config["llm"]["public_sentiment_key"]
 # ============================================
 
 # ============= 绘画参数 =====================
-drawUrl = "192.168.2.58:7860"
+drawUrl = config["draw"]["drawUrl"]
 is_drawing = 3  # 1.绘画中 2.绘画完成 3.绘画任务结束
-width = 980  # 图片宽度
-height = 500  # 图片高度
+width = config["draw"]["width"]  # 图片宽度
+height = config["draw"]["height"]  # 图片高度
 DrawQueueList = queue.Queue()  # 画画队列
-physical_save_folder="J:\\ai\\ai-yinmei\\porn\\"  #绘画保存图片物理路径
+physical_save_folder = config["draw"]["physical_save_folder"]  #绘画保存图片物理路径
 # ============================================
 
 # ============= 搜图参数 =====================
@@ -124,14 +128,14 @@ is_SearchText = 2  # 1.搜文中 2.搜文完成
 # ============================================
 
 # ============= 唱歌参数 =====================
-singUrl = "192.168.2.58:1717"
+singUrl = config["sing"]["singUrl"]
 SongQueueList = queue.Queue()  # 唱歌队列
 SongMenuList = queue.Queue()  # 唱歌显示
-SongNowName={} # 当前歌曲
+SongNowName = {} # 当前歌曲
 is_singing = 2  # 1.唱歌中 2.唱歌完成
 is_creating_song = 2  # 1.生成中 2.生成完毕
 sing_play_flag=0  # 1.正在播放唱歌 0.未播放唱歌 【用于监听歌曲播放器是否停止】
-song_not_convert="(三国演义\d+|粤剧|京剧|易经)"  #不需要学习的歌曲【支持正则】
+song_not_convert = config["sing"]["song_not_convert"]  #不需要学习的歌曲【支持正则】
 # ============================================
 
 # ============= B站直播间 =====================
@@ -152,9 +156,8 @@ ROOM_OWNER_AUTH_CODE = config["blivedm"]["ROOM_OWNER_AUTH_CODE"]
 
 # ============= api web =====================
 app = Flask(__name__,template_folder='./html')
-if mode==1 or mode==2:
-   sched1 = APScheduler()
-   sched1.init_app(app)
+sched1 = APScheduler()
+sched1.init_app(app)
 # ============================================
    
 # ============= Vtuber表情 =====================
@@ -162,42 +165,42 @@ def run_forever():
     ws.run_forever(ping_timeout=1)
 def on_open(ws):
     auth()
-vst_websocket="127.0.0.1:8001"
+vst_websocket=config["emote"]["vst_websocket"]
 ws = websocket.WebSocketApp(f"ws://{vst_websocket}",on_open = on_open)
-vtuber_pluginName="winlonebot"
-vtuber_pluginDeveloper="winlone"
-vtuber_authenticationToken="6f80e2aa087daa949cada5f4adb6c15d67f109aa3cbc3076e6de5eda79ed145d"
+vtuber_pluginName=config["emote"]["vtuber_pluginName"]
+vtuber_pluginDeveloper=config["emote"]["vtuber_pluginDeveloper"]
+vtuber_authenticationToken=config["emote"]["vtuber_authenticationToken"]
 # ============================================
 
 # ============= 鉴黄 =====================
-nsfw_server="192.168.2.198:1801"
-filterEn="huge breasts,open clothes,topless,voluptuous,breast,prostitution,erotic,armpit,milk,leaking,spraying,woman,cupless latex,latex,tits,boobs,lingerie,chest,seductive,poses,pose,leg,posture,alluring,milf,on bed,mature,slime,open leg,full body,bra,lace,bikini,full nude,nude,bare,one-piece,navel,cleavage,swimsuit,naked,adult,nudity,beautiful breasts,nipples,sex,Sexual,vaginal,penis,large penis,pantie,leotards,anal"
-filterCh="奶子,乳房"
-progress_limit=1   #绘图大于多少百分比进行鉴黄，这里设置了1%
-nsfw_limit=0.2  #nsfw黄图值大于多少进行绘画屏蔽【值越大越是黄图，值范围0~1】
-nsfw_progress_limit=0.2 #nsfw黄图-绘画进度鉴黄【值越大越是黄图，值范围0~1】
+nsfw_server=config["nsfw"]["nsfw_server"]
+filterEn=config["nsfw"]["filterEn"]
+filterCh=config["nsfw"]["filterCh"]
+progress_limit=config["nsfw"]["progress_limit"]   #绘图大于多少百分比进行鉴黄，这里设置了1%
+nsfw_limit=config["nsfw"]["nsfw_limit"]  #nsfw黄图值大于多少进行绘画屏蔽【值越大越是黄图，值范围0~1】
+nsfw_progress_limit=config["nsfw"]["nsfw_progress_limit"] #nsfw黄图-绘画进度鉴黄【值越大越是黄图，值范围0~1】
 nsfw_lock = threading.Lock()
 # ============================================
 
 # ============= 语音合成 =====================
 #bert-vists
-bert_vists_url="192.168.2.58:5000"
-speaker_name="珊瑚宫心海[中]"
-sdp_ratio=0.2  #SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
-noise=0.2 #控制感情变化程度，默认0.2
-noisew=0.9 #控制音节发音变化程度，默认0.9
-speed=1  #语速
+bert_vists_url=config["speech"]["bert_vists_url"]
+speaker_name=config["speech"]["speaker_name"]
+sdp_ratio=config["speech"]["sdp_ratio"]  #SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
+noise=config["speech"]["noise"] #控制感情变化程度，默认0.2
+noisew=config["speech"]["noisew"] #控制音节发音变化程度，默认0.9
+speed=config["speech"]["speed"]  #语速
 #gpt-SoVITS
-gtp_vists_url="192.168.2.58:9880"
+gtp_vists_url=config["speech"]["gtp_vists_url"]
 
 # ============================================
 
 # ============= OBS直播软件控制 =====================
-obs = ObsWebSocket(host="192.168.2.198",port=4455,password="123456")
-dance_path = 'H:\\人工智能\\ai\\跳舞视频\\横屏'
+obs = ObsWebSocket(host=config["obs"]["url"],port=config["obs"]["port"],password=config["obs"]["password"])
+dance_path = config["obs"]["dance_path"]
 dance_video = FileUtil.get_child_file_paths(dance_path)  #跳舞视频
-emote_path = 'H:\\人工智能\\ai\\跳舞视频\\表情'
-emote_font = 'H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号'
+emote_path = config["obs"]["emote_path"]
+emote_font = config["obs"]["emote_font"]
 emote_video = FileUtil.get_child_file_paths(emote_path)  #表情视频
 emote_list = FileUtil.get_subfolder_names(emote_font) #表情清单显示
 DanceQueueList = queue.Queue()  # 跳舞队列
@@ -213,11 +216,7 @@ now_clothes=""  #当前服装穿着
 # ========================================
 
 # ============= 场景 =====================
-song_background={"海岸花坊":"J:\\ai\\背景音乐\\海岸花坊.rm",
-                 "神社":"J:\\ai\\背景音乐\\神社.mp3",
-                 "清晨房间":"J:\\ai\\背景音乐\\清晨房间.mp3",
-                 "粉色房间":"J:\\ai\\背景音乐\\粉色房间.rm",
-                 "花房":"J:\\ai\\背景音乐\\花房.mp3"}
+song_background=config["obs"]["song_background"]
 # ========================================
 
 # ============= 欢迎列表 =====================
@@ -756,9 +755,9 @@ def cmd(query):
     return 0
 
 # fastgpt知识库接口调用-LLM回复
-def chat_fastgpt(content, uid, username):
+def chat_fastgpt(content, uid, username, authorization):
     url = f"http://{fastgpt_url}/api/v1/chat/completions"
-    headers = {"Content-Type": "application/json","Authorization":fastgpt_authorization}
+    headers = {"Content-Type": "application/json","Authorization":authorization}
     timestamp = int(time.time())
     data={
             "chatId": timestamp,
@@ -871,11 +870,16 @@ def ai_response():
     if local_llm_type == 1:
         username_prompt = f"{shenfen}{prompt}"
         log.info(f"[{traceid}]{username_prompt}")
-        response = chat_fastgpt(username_prompt, uid, username)
+        authorization = fastgpt_authorization.get("怒怼版")
+        # 后续改成舆情判断，当前是简易字符串判断
+        if re.search(public_sentiment_key, prompt):
+            authorization = fastgpt_authorization.get("女仆版")
+        # fastgpt聊天
+        response = chat_fastgpt(username_prompt, uid, username, authorization)
     # text-generation-webui
     elif local_llm_type == 2:
-        username_prompt = f"[{traceid}]{shenfen}{prompt}"
-        log.info(username_prompt)
+        username_prompt = f"{shenfen}{prompt}"
+        log.info(f"[{traceid}]{username_prompt}")
         response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     # 过滤表情<>或者()标签
@@ -884,9 +888,7 @@ def ai_response():
     # 处理流式回复
     all_content=""
     temp=""
-    split_flag=",|，|。|!|！|?|？|\n"  #文本分隔符
-    text = split_flag.split("|")
-    split_num = 4 #分割字符数量
+    
     chatStatus="start"
     for line in response.iter_lines():
         if line:
@@ -909,14 +911,14 @@ def ai_response():
                     content = temp + stream_content
                     
                     # 从右边出现的符号开始计算
-                    num = rfind_index_contain_string(text, content)
+                    num = rfind_index_contain_string(split_str, content)
                     if num>0:
                         # 文本分割处理
                         split_content = content[0 : num]
                         log.info(f"[{traceid}]分割后文本:"+split_content)
 
                         # 判断字符数量大于x个时候才会切割，字符太短切割音频太碎
-                        if len(split_content)>split_num:
+                        if len(split_content)>split_limit:
                             temp = content[num : len(content)]
                             # 合成语音：文本碎片化段落
                             jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":chatStatus,"question":title,"text":split_content,"lanuage":"AutoChange"}
