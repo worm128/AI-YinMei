@@ -12,27 +12,27 @@ blivedm:
   APP_ID: 0
   ROOM_OWNER_AUTH_CODE: ""
 llm: #大模型聊天
-  local_llm_type: 1
-  tgw_url: "192.168.2.58:5000"
-  fastgpt_url: "192.168.2.198:3000"
-  fastgpt_authorization:
+  local_llm_type: 1 #1.fastgpt   1.text-generation-webui
+  tgw_url: "192.168.2.58:5000" #text-generation-webui服务地址
+  fastgpt_url: "192.168.2.198:3000" #fastgpt服务地址
+  fastgpt_authorization: #fastgpt秘钥
     {
       "怒怼版": "Bearer fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBWQhMLxDUck6W6Oeio4sx",
       "女仆版": "Bearer fastgpt-yjuDaV7O4kyzK1DY7PuOGvOjqUJCSmdCENKowhDSAi6PwdoG4247bs2yL",
     }
   split_flag: ",|，|。|!|！|?|？|\n" #流式回复的分割符
   split_limit: 4 #流式回复分割的最小字符数量
-  public_sentiment_key: "(爱|喵|女仆|老婆|男朋友|比心|好|媳妇|喜欢|乖)"
+  public_sentiment_key: "(爱|喵|女仆|老婆|男朋友|比心|好|媳妇|喜欢|乖)" #舆情关键字判断
 draw: #绘画
   drawUrl: "192.168.2.58:7860" #Stable Diffusion服务ip
   width: 980 # 图片宽度
   height: 500 # 图片高度
   physical_save_folder: "J:\\ai\\ai-yinmei\\porn\\" #绘画保存图片物理路径
 sing: #唱歌
-  singUrl: "192.168.2.58:1717"
+  singUrl: "192.168.2.58:1717" #Auto-Convert-Music服务ip
   song_not_convert: "(三国演义\\d+|粤剧|京剧|易经)" #不需要学习的歌曲【支持正则】
 emote: #vts表情
-  vst_websocket: "127.0.0.1:8001"
+  vst_websocket: "127.0.0.1:8001" #Vtuber Studio服务ip
   vtuber_pluginName: "winlonebot"
   vtuber_pluginDeveloper: "winlone"
   vtuber_authenticationToken: "6f80e2aa087daa949cada5f4adb6c15d67f109aa3cbc3076e6de5eda79ed145d"
@@ -52,14 +52,14 @@ speech: #语音
   noisew: 0.9 #控制音节发音变化程度，默认0.9
   speed: 1 #语速
   #gpt-SoVITS
-  gtp_vists_url: "192.168.2.58:9880"
+  gtp_vists_url: "192.168.2.58:9880" #gtp-vists服务ip
 obs: #obs直播软件
-  url: "192.168.2.198"
+  url: "192.168.2.198" #OBS直播软件的websocket ip
   port: 4455
   password: "123456"
-  dance_path: "H:\\人工智能\\ai\\跳舞视频\\横屏"
-  emote_path: "H:\\人工智能\\ai\\跳舞视频\\表情"
-  emote_font: "H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号"
+  dance_path: "H:\\人工智能\\ai\\跳舞视频\\横屏" #跳舞视频所在路径，支持子文件夹
+  emote_path: "H:\\人工智能\\ai\\跳舞视频\\表情" #表情视频所在路径，支持子文件夹
+  emote_font: "H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号" #表情视频的名称列表
   song_background:
     {
       "海岸花坊": "J:\\ai\\背景音乐\\海岸花坊.rm",

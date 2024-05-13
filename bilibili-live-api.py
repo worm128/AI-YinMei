@@ -145,12 +145,12 @@ room_id = config["blivedm"]["room_id"]  # 输入直播间编号
 SESSDATA = config["blivedm"]["sessdata"]
 session: Optional[aiohttp.ClientSession] = None
 
-# 在开放平台申请的开发者密钥
+# 在B站开放平台申请的开发者密钥
 ACCESS_KEY_ID = config["blivedm"]["ACCESS_KEY_ID"]
 ACCESS_KEY_SECRET = config["blivedm"]["ACCESS_KEY_SECRET"]
-# 在开放平台创建的项目ID
+# 在B站开放平台创建的项目ID
 APP_ID = config["blivedm"]["APP_ID"]
-# 主播身份码
+# 在B站主播身份码
 ROOM_OWNER_AUTH_CODE = config["blivedm"]["ROOM_OWNER_AUTH_CODE"]
 # ============================================
 
