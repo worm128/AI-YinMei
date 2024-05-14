@@ -287,7 +287,8 @@ def input_msg():
     query = data["msg"]  # 获取弹幕内容
     uid = data["uid"]  # 获取用户昵称
     user_name = data["username"]  # 获取用户昵称
-    msg_deal(query,uid,user_name)
+    traceid = str(uuid.uuid4())
+    msg_deal(traceid,query,uid,user_name)
     return jsonify({"status": "成功"})
 
 # 聊天回复弹框处理
@@ -302,10 +303,34 @@ def chatreply():
         traceid = json_str["traceid"]
         chatStatus = json_str["chatStatus"]
         status = "成功"
-    str = "({\"traceid\": \""+traceid+"\",\"chatStatus\": \""+chatStatus+"\",\"status\": \""+status+"\",\"content\": \""+text.replace("\"","'").replace("\r"," ").replace("\n","<br/>")+"\"})"
+    jsonStr = "({\"traceid\": \""+traceid+"\",\"chatStatus\": \""+chatStatus+"\",\"status\": \""+status+"\",\"content\": \""+text.replace("\"","'").replace("\r"," ").replace("\n","<br/>")+"\"})"
     if CallBackForTest is not None:
-        str=CallBackForTest+str
-    return str
+        jsonStr=CallBackForTest+jsonStr
+    return jsonStr
+
+# 聊天
+@app.route("/chat", methods=["POST","GET"])
+def chat():
+    global ReplyTextList
+    CallBackForTest=request.args.get('CallBack')
+    status="成功"
+    traceid = str(uuid.uuid4())
+    text = request.args.get('text')
+    if text is None:
+        jsonStr = "({\"traceid\": \""+traceid+"\",\"status\": \"值为空\",\"content\": \""+text+"\"})"
+        if CallBackForTest is not None:
+           jsonStr=CallBackForTest+jsonStr
+           return jsonStr
+
+    uid = request.args.get('uid')
+    username = request.args.get('username')
+    #消息处理
+    msg_deal(traceid,text, uid, username)
+
+    jsonStr = "({\"traceid\": \""+traceid+"\",\"status\": \""+status+"\",\"content\": \""+text+"\"})"
+    if CallBackForTest is not None:
+        jsonStr=CallBackForTest+jsonStr
+    return jsonStr
 
 # 点播歌曲列表
 @app.route("/songlist", methods=["GET"])
@@ -423,7 +448,8 @@ class MyHandler(blivedm.BaseHandler):
     # 弹幕获取
     def _on_open_live_danmaku(self, client: blivedm.OpenLiveClient, message: open_models.DanmakuMessage):
         log.info(f'{message.uname}：{message.msg}')
-        msg_deal(message.msg, message.room_id, message.uname)
+        traceid = str(uuid.uuid4())
+        msg_deal(traceid, message.msg, message.msg_id, message.uname)
 
     # 赠送礼物
     def _on_open_live_gift(self, client: blivedm.OpenLiveClient, message: open_models.GiftMessage):
@@ -473,11 +499,11 @@ class MyHandler(blivedm.BaseHandler):
         tts_say_thread.start()
 
 
-def msg_deal(query,uid,user_name):
+def msg_deal(traceid,query,uid,user_name):
     """
     处理弹幕消息
     """
-    traceid = str(uuid.uuid4())
+    #traceid = str(uuid.uuid4())
     query=filter(query,filterCh)
     log.info(f"[{traceid}]弹幕捕获：[{user_name}]:{query}")  # 打印弹幕信息
 
