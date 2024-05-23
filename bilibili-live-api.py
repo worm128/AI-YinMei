@@ -192,7 +192,8 @@ noisew=config["speech"]["noisew"] #控制音节发音变化程度，默认0.9
 speed=config["speech"]["speed"]  #语速
 #gpt-SoVITS
 gtp_vists_url=config["speech"]["gtp_vists_url"]
-
+#语音合成线程池
+speech_max_threads=config["speech"]["speech_max_threads"]
 # ============================================
 
 # ============= OBS直播软件控制 =====================
@@ -1294,7 +1295,7 @@ def check_answer():
         answers_thread.start()
 
 # 语音合成线程池
-tts_chat_say_pool = ThreadPoolExecutor(max_workers=5, thread_name_prefix='tts_chat_say')
+tts_chat_say_pool = ThreadPoolExecutor(max_workers=speech_max_threads, thread_name_prefix='tts_chat_say')
 # 如果语音已经放完且队列中还有回复 则创建一个生成并播放TTS的线程
 def check_tts():
     global AnswerList

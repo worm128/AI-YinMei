@@ -6,7 +6,7 @@
 - B 站频道：程序猿的退休生活
 - B 站基础教程：https://www.bilibili.com/video/BV18b4y1V7Qm/
 - Q 群：27831318
-- 版本：1.7.6
+- 版本：1.7.7
 - 详细笔记：<br>
   现在发现有道云笔记网页版本不能查看笔记图片，需要完整教案请进入 Q 群 27831318 获取 pdf 文档<br>
   https://note.youdao.com/s/1k0x7BLt<br>
@@ -50,6 +50,7 @@
 - 支持开放性唱歌和绘画，让 AI 自动判断内容
 - 支持流式聊天，提速 LLM 回复与语音合成
 - 对接 bilibili 开放平台弹幕【稳定性高】
+- 支持 funasr 阿里语音识别系统
 
 ## **吟美直播间功能说明**
 
@@ -165,10 +166,15 @@ python bilibili-live-api.py
   "清晨房间":"J:\\ai\\背景音乐\\清晨房间.mp3",
   "粉色房间":"J:\\ai\\背景音乐\\粉色房间.rm",
   "花房":"J:\\ai\\背景音乐\\花房.mp3"}<br>
-- 唱歌服务 Auto-Convert-Music 地址：singUrl = "192.168.2.58:1717"<br>
-- 绘画服务 stable-diffusion-webui 地址：drawUrl = "192.168.2.58:7860"<br>
-- 聊天服务 text-generation-webui 地址：tgwUrl = "192.168.2.58:5000"<br>
-- 聊天服务 fastgpt 知识库地址：fastgpt_url = "192.168.2.198:3000"<br>
+- 唱歌服务 Auto-Convert-Music<br>
+  地址：singUrl = "192.168.2.58:1717"<br>
+  排除不需要学习的歌曲【支持正则】:song_not_convert
+- 绘画服务 stable-diffusion-webui<br>
+  地址：drawUrl = "192.168.2.58:7860"<br>
+- 聊天服务 text-generation-webui<br>
+  地址：tgwUrl = "192.168.2.58:5000"<br>
+- 聊天服务 fastgpt<br>
+  知识库地址：fastgpt_url = "192.168.2.198:3000"<br>
 - fastgpt 令牌：fastgpt_authorization="Bearer fastgpt-GNtIO9ApmbiFdC0R5IVkoXN5TGdGyiURh7bJ8i8CTyVINpU3GjN4Wr"<br>
 - 搜索服务代理：duckduckgo_proxies="socks5://127.0.0.1:10806"<br>
 - 搜图服务代理：proxies = {"http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806"}<br>
@@ -334,6 +340,8 @@ py nsfw_web.py
   https://github.com/hiyouga/LLaMA-Factory<br>
 - MPV 播放器：MPV<br>
   https://github.com/mpv-player/mpv<br>
+- 语音识别系统：FunASR<br>
+  https://github.com/alibaba-damo-academy/FunASR/<br>
 - 其他：<br>
   Lora 训练：https://github.com/yuanzhoulvpi2017/zero_nlp<br>
   ChatGLM 训练：https://github.com/hiyouga/ChatGLM-Efficient-Tuning<br>
