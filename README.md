@@ -87,6 +87,7 @@
   7、绘画提示词对接 C 站，丰富绘画内容<br>
   8、智能判断是否需要唱歌、画画<br>
   9、根据关键字进行场景切换<br>
+  10、funasr 语音识别客户端<br>
 
 ### 应用模块
 
@@ -96,6 +97,7 @@
 - gpt-SoVITS：语音合成模块<br>
 - Auto-Convert-Music：唱歌模块<br>
 - fastgpt + one-api + Xinference：聊天模块<br>
+- funasr-html-client：语音识别客户端<br>
 
 ### 软件下载
 
@@ -152,7 +154,9 @@ python bilibili-live-api.py
   vtuber_pluginDeveloper="winlone"<br>
   vtuber_authenticationToken="这个令牌从获取令牌接口获取"<br>
 - 鉴黄服务：nsfw_server="192.168.2.198:1801"<br>
-- 语音合成：gtp_vists_url="192.168.2.58:9880"<br>
+- 语音合成：<br>
+  gtp_vists_url="192.168.2.58:9880"<br>
+  语音合成线程池：speech_max_threads: 5<br>
 - 跳舞功能：<br>
   OBS 软件的 websocket 服务【用于跳舞、表情播放、场景切换、背景音乐播放等】<br>
   obs = ObsWebSocket(host="192.168.2.198",port=4455,password="123456")<br>
@@ -296,6 +300,15 @@ py nsfw_web.py
 效果：输入#rnd 或者 #表情视频文件名，立即进行表情视频播放，#rnd 为随机播放表情视频<br>
 表情视频的名称展示【支持子文件夹存放】： emote_font = 'H:\\人工智能\\ai\\跳舞视频\\表情\\表情符号'<br>
 效果：表情名称会显示在 obs 的字体控件，提示用户可以输入这些表情名称<br>
+
+#### 14、(可选)funasr 语音识别客户端<br>
+
+打开客户端页面：./funasr/html-client/index.html<br>
+服务端：需要根据[阿里 funasr](https://github.com/alibaba-damo-academy/FunASR/)进行配置, 建议安装容器，参考[服务器部署文档](https://github.com/alibaba-damo-academy/FunASR/blob/main/runtime/docs/SDK_advanced_guide_online_zh.md)：<br>
+
+```bash
+docker run -p 10095:10095 --name funasr -it --privileged=true -v /j/ai/ai-code/funasr/models:/workspace/models registry.cn-hangzhou.aliyuncs.com/funasr_repo/funasr:funasr-runtime-sdk-online-cpu-0.1.9
+```
 
 ### 目录说明
 
