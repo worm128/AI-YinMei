@@ -1,16 +1,16 @@
-AiName: "吟美"
+AiName: "吟美" #ai名称
 mode: 1 # 1.b站直播间 2.api web
 proxies: #代理
   HttpProxies:
     { "http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806" }
   DuckduckgoProxies: "socks5://127.0.0.1:10806"
-blivedm:
-  room_id: ""
+blivedm: #b站弹幕
+  room_id: "" #b站直播间号
   sessdata: ""
   ACCESS_KEY_ID: ""
   ACCESS_KEY_SECRET: ""
-  APP_ID: 0
-  ROOM_OWNER_AUTH_CODE: ""
+  APP_ID: 0 # 在B站开放平台创建的项目ID
+  ROOM_OWNER_AUTH_CODE: "" # 在B站主播身份码
 llm: #大模型聊天
   local_llm_type: 1 #1.fastgpt   1.text-generation-webui
   tgw_url: "192.168.2.58:5000" #text-generation-webui服务地址
@@ -22,7 +22,7 @@ llm: #大模型聊天
     }
   split_flag: ",|，|。|!|！|?|？|\n" #流式回复的分割符
   split_limit: 4 #流式回复分割的最小字符数量
-  public_sentiment_key: "(爱|喵|女仆|老婆|男朋友|比心|好|媳妇|喜欢|乖)" #舆情关键字判断
+  public_sentiment_key: "(爱|喵|女仆|老婆|男朋友|比心|媳妇|喜欢|乖|不理你|美|老公)" #舆情关键字判断
 draw: #绘画
   drawUrl: "192.168.2.58:7860" #Stable Diffusion服务ip
   width: 980 # 图片宽度
@@ -53,6 +53,7 @@ speech: #语音
   speed: 1 #语速
   #gpt-SoVITS
   gtp_vists_url: "192.168.2.58:9880" #gtp-vists服务ip
+  speech_max_threads: 5 #语音合成线程池
 obs: #obs直播软件
   url: "192.168.2.198" #OBS直播软件的websocket ip
   port: 4455
