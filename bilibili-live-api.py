@@ -38,7 +38,7 @@ from flask_apscheduler import APScheduler
 from urllib import parse
 
 # 加载配置
-f = open('config-prod.yml','r',encoding='utf-8')
+f = open('config.yml','r',encoding='utf-8')
 cont = f.read()
 config = yaml.load(cont,Loader=yaml.FullLoader)
 
