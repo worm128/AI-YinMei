@@ -641,6 +641,7 @@ def msg_deal(traceid,query,uid,user_name):
     if num > 0:
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
+       queryExtract=re.sub("(。|,|，)", '', queryExtract)
        log.info(f"[{traceid}]换装提示：" + queryExtract)
        # 开始唱歌服装穿戴
        emote_ws(1, 0, now_clothes)  #解除当前衣服
@@ -654,6 +655,7 @@ def msg_deal(traceid,query,uid,user_name):
     if num > 0:
        queryExtract = query[num : len(query)]  # 提取提问语句
        queryExtract = queryExtract.strip()
+       queryExtract=re.sub("(。|,|，)", '', queryExtract)
        log.info(f"[{traceid}]切换场景：" + queryExtract)
        changeScene(queryExtract)
        return
