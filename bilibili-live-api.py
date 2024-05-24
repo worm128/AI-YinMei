@@ -136,6 +136,7 @@ is_singing = 2  # 1.唱歌中 2.唱歌完成
 is_creating_song = 2  # 1.生成中 2.生成完毕
 sing_play_flag=0  # 1.正在播放唱歌 0.未播放唱歌 【用于监听歌曲播放器是否停止】
 song_not_convert = config["sing"]["song_not_convert"]  #不需要学习的歌曲【支持正则】
+create_song_timout = config["sing"]["create_song_timout"] #超时生成歌曲
 # ============================================
 
 # ============= B站直播间 =====================
@@ -1917,7 +1918,6 @@ def create_song(songname,query,song_path,is_created):
         songname = status_json["songName"]
         log.info(f"准备生成歌曲内容：{status_json}")
         if status=="processing" or status=="processed" or status=="waiting":
-            timout = 2400  # 生成歌曲等待时间
             i = 0
             vocal_downfile=None
             accompany_downfile=None
@@ -1934,7 +1934,8 @@ def create_song(songname,query,song_path,is_created):
                     # 下载人声
                     vocal_downfile = down_song_file(songname,"get_vocal","vocal",song_path)
                 i = i + 1
-                if i >= timout:
+                if i >= create_song_timout:
+                    is_created = 2
                     break
                 obs.show_text("状态提示",f"当前{Ai_Name}学唱歌曲《{songname}》第{i}秒")
                 log.info(f"生成《{songname}》歌曲第[{i}]秒,生成状态:{is_created}")
@@ -1942,7 +1943,7 @@ def create_song(songname,query,song_path,is_created):
         # =============== 结束生成歌曲 =================
     except Exception as e:
         log.info(f"《{songname}》create_song异常{e}")
-        return 2
+        is_created = 2
     finally:
         is_creating_song = 2
         create_song_lock.release()

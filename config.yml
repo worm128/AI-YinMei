@@ -31,6 +31,7 @@ draw: #绘画
 sing: #唱歌
   singUrl: "192.168.2.58:1717" #Auto-Convert-Music服务ip
   song_not_convert: "(三国演义\\d+|粤剧|京剧|易经)" #不需要学习的歌曲【支持正则】
+  create_song_timout: 500 #超时生成歌曲
 emote: #vts表情
   vst_websocket: "127.0.0.1:8001" #Vtuber Studio服务ip
   vtuber_pluginName: "winlonebot"
