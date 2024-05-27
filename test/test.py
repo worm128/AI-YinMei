@@ -33,6 +33,14 @@ from urllib import parse
 #         print("该文本的编码为:", encoding)
 
 # check_encoding('å\x8f\x88æ\x98¯æ¸\x85æ\x98\x8eé\x9b¨ä¸\x8a æ\x8a\x98è\x8f\x8aå¯\x84å\x88°ä½\xa0èº«æ\x97\x81')
+import yaml
+f = open('config-prod.yml','r',encoding='utf-8')
+cont = f.read()
+config = yaml.load(cont,Loader=yaml.FullLoader)
+welcome_not_allow = config["welcome"]["welcome_not_allow"]
+if all([333472479!=not_allow_userid for not_allow_userid in welcome_not_allow]):
+       # 加入欢迎列表
+       print("fff")
 
 # 判断字符位置（不含搜索字符）- 如，搜索“画画女孩”，则输出“女孩”位置
 def is_index_contain_string(string_array, target_string):

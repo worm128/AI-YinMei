@@ -38,7 +38,7 @@ from flask_apscheduler import APScheduler
 from urllib import parse
 
 # 加载配置
-f = open('config.yml','r',encoding='utf-8')
+f = open('config-prod.yml','r',encoding='utf-8')
 cont = f.read()
 config = yaml.load(cont,Loader=yaml.FullLoader)
 
@@ -94,6 +94,11 @@ SayCount = 0
 split_flag = config["llm"]["split_flag"]
 split_str = split_flag.split("|")
 split_limit = config["llm"]["split_limit"]  #分割的最小字符数量
+# ============================================
+
+# ============= 进入房间的欢迎语 =====================
+is_llm_welcome = config["welcome"]["is_llm_welcome"]
+welcome_not_allow = config["welcome"]["welcome_not_allow"]
 # ============================================
 
 # ============= 本地模型加载 =====================
@@ -432,7 +437,7 @@ class MyHandler2(blivedm.BaseHandler):
         time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
         log.info(f"{time1}:粉丝[{user_name}]进入了直播间")
         # 46130941：老爸  333472479：吟美
-        if user_id!=46130941 and user_id!=333472479:
+        if all([user_id!=not_allow_userid for not_allow_userid in welcome_not_allow]):
             # 加入欢迎列表
             WelcomeList.append(user_name)
             
@@ -1902,7 +1907,7 @@ def create_song(songname,query,song_path,is_created):
             jsonStr = requests.get(url=f"http://{singUrl}/download_origin_song/{songname}",timeout=(5, 120))
             status_json = json.loads(jsonStr.text)
             # 下载原始音乐
-            down_song_file(songname,"get_audio","vocal",song_path)
+            down_song_file(status_json["songName"],"get_audio","vocal",song_path)
             is_download=True
             return 1
         # =============== 结束-当前歌曲只下载不转换 =================
@@ -2402,9 +2407,12 @@ def check_welcome_room():
         text = f"欢迎\"{userlist}\"{numstr}同学来到{Ai_Name}的直播间,跪求关注一下{Ai_Name}的直播间"
         log.info(f"[{traceid}]{text}")
         WelcomeList.clear()
-        #询问LLM
-        llm_json = {"traceid":traceid, "prompt": text, "uid": 0, "username": Ai_Name}
-        QuestionList.put(llm_json)  # 将弹幕消息放入队列
+        if is_llm_welcome==True:
+            #询问LLM
+            llm_json = {"traceid":traceid, "prompt": text, "uid": 0, "username": Ai_Name}
+            QuestionList.put(llm_json)  # 将弹幕消息放入队列
+        else:
+            tts_say(text)
 
 # 时间判断场景
 def check_scene_time():
