@@ -171,8 +171,8 @@ def run_forever():
     ws.run_forever(ping_timeout=1)
 def on_open(ws):
     auth()
-vst_websocket=config["emote"]["vst_websocket"]
-ws = websocket.WebSocketApp(f"ws://{vst_websocket}",on_open = on_open)
+vtuber_websocket=config["emote"]["vtuber_websocket"]
+ws = websocket.WebSocketApp(f"ws://{vtuber_websocket}",on_open = on_open)
 vtuber_pluginName=config["emote"]["vtuber_pluginName"]
 vtuber_pluginDeveloper=config["emote"]["vtuber_pluginDeveloper"]
 vtuber_authenticationToken=config["emote"]["vtuber_authenticationToken"]
@@ -1700,7 +1700,7 @@ def emote_ws(num, interval, key):
             error = f"【表情发送】发生了异常：{e}"
             log.info(error)
             if error in "Connection is already closed":
-                ws = websocket.WebSocketApp(f"ws://{vst_websocket}",on_open = on_open)
+                ws = websocket.WebSocketApp(f"ws://{vtuber_websocket}",on_open = on_open)
                 # ws服务心跳包
                 run_forever_thread = Thread(target=run_forever)
                 run_forever_thread.start()

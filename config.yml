@@ -36,7 +36,7 @@ sing: #唱歌
   song_not_convert: "(三国演义\\d+|粤剧|京剧|易经)" #不需要学习的歌曲【支持正则】
   create_song_timout: 500 #超时生成歌曲
 emote: #vts表情
-  vst_websocket: "127.0.0.1:8001" #Vtuber Studio服务ip
+  vtuber_websocket: "127.0.0.1:8001" #Vtuber Studio服务ip
   vtuber_pluginName: "winlonebot"
   vtuber_pluginDeveloper: "winlone"
   vtuber_authenticationToken: "6f80e2aa087daa949cada5f4adb6c15d67f109aa3cbc3076e6de5eda79ed145d"
