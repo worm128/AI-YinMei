@@ -70,6 +70,7 @@ class StringUtil:
         return field in json_data
 
     # 过滤函数
+    @staticmethod
     def filter(text, filterPromptStr):
         fstr = filterPromptStr.replace("\\n", "")
         fstr = fstr.lower()
@@ -79,6 +80,7 @@ class StringUtil:
         return text
 
     # 过滤html标签
+    @staticmethod
     def filter_html_tags(text):
         pattern = r"\[.*?\]|<.*?>|\(.*?\)|\n"  # 匹配尖括号内的所有内容
         return re.sub(pattern, "", text)
