@@ -38,7 +38,7 @@ from flask_apscheduler import APScheduler
 from urllib import parse
 
 # 加载配置
-f = open('config-prod.yml','r',encoding='utf-8')
+f = open('config.yml','r',encoding='utf-8')
 cont = f.read()
 config = yaml.load(cont,Loader=yaml.FullLoader)
 
@@ -2404,7 +2404,7 @@ def check_welcome_room():
     userlist = str(WelcomeList).replace("['","").replace("']","")
     if len(WelcomeList) > 0:
         traceid = str(uuid.uuid4())
-        text = f"欢迎\"{userlist}\"{numstr}同学来到{Ai_Name}的直播间,跪求关注一下{Ai_Name}的直播间"
+        text = f"欢迎\"{userlist}\"{numstr}同学来到{Ai_Name}的直播间,跪求关注一下"
         log.info(f"[{traceid}]{text}")
         WelcomeList.clear()
         if is_llm_welcome==True:
