@@ -5,7 +5,7 @@ proxies: #代理
     { "http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806" }
   DuckduckgoProxies: "socks5://127.0.0.1:10806"
 blivedm: #b站弹幕
-  room_id: "" #b站直播间号
+  room_id: 0 #b站直播间号
   sessdata: ""
   ACCESS_KEY_ID: ""
   ACCESS_KEY_SECRET: ""
