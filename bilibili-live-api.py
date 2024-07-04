@@ -24,10 +24,6 @@ import func.blivedm.models.web as web_models
 
 from concurrent.futures import ThreadPoolExecutor
 from typing import *
-from func.obs.obs_websocket import ObsWebSocket, VideoStatus, VideoControl
-from func.tools.file_util import FileUtil
-from func.tools.string_util import StringUtil
-from func.search import crawler, baidusearch
 from io import BytesIO
 from PIL import Image
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -36,23 +32,26 @@ from threading import Thread
 from flask import Flask, jsonify, request, render_template
 from flask_apscheduler import APScheduler
 from urllib import parse
-from func.log import logger
+
+from func.obs.obs_websocket import ObsWebSocket, VideoStatus, VideoControl
+from func.tools.file_util import FileUtil
+from func.tools.string_util import StringUtil
+from func.search import crawler, baidusearch
+from func.log.logger import Logger
+from func.config.config_init import configInit
 
 # 加载配置
-f = open("config-prod.yml", "r", encoding="utf-8")
-cont = f.read()
-config = yaml.load(cont, Loader=yaml.FullLoader)
+config = configInit("config-prod.yml","utf-8").get_config()
 
-# 设置控制台日志
+# 设置日志
 today = datetime.date.today().strftime("%Y-%m-%d")
-log = logger.getLogger(f"./logs/log_{today}.txt", "bilibili-live")
+log = Logger(f"./logs/log_{today}.txt","utf-8", "bilibili-live").getLogger()
 # 定时器只输出error
 my_logging = logging.getLogger("apscheduler.executors.default")
 my_logging.setLevel("ERROR")
 # 关闭页面访问日志
 my_logging = logging.getLogger("werkzeug")
 my_logging.setLevel("ERROR")
-
 
 # 重定向print输出到日志文件
 def print(*args, **kwargs):
@@ -191,15 +190,12 @@ sched1 = APScheduler()
 sched1.init_app(app)
 # ============================================
 
-
 # ============= Vtuber表情 =====================
 def run_forever():
     ws.run_forever(ping_timeout=1)
 
-
 def on_open(ws):
     auth()
-
 
 vtuber_websocket = config["emote"]["vtuber_websocket"]
 ws = websocket.WebSocketApp(f"ws://{vtuber_websocket}", on_open=on_open)
@@ -277,7 +273,6 @@ log.info("AI虚拟主播-启动成功！")
 log.info("--------------------")
 log.info("======================================")
 
-
 # 执行指令
 @app.route("/cmd", methods=["GET"])
 def http_cmd():
@@ -285,7 +280,6 @@ def http_cmd():
     log.info(f'执行指令："{cmd}"')
     cmd(cmdstr)
     return jsonify({"status": "成功"})
-
 
 # http说话复读
 @app.route("/say", methods=["POST"])
@@ -295,7 +289,6 @@ def http_say():
     tts_say_thread.start()
     return jsonify({"status": "成功"})
 
-
 # http人物表情输出
 @app.route("/emote", methods=["POST"])
 def http_emote():
@@ -304,7 +297,6 @@ def http_emote():
     emote_thread1 = Thread(target=emote_ws, args=(1, 0.2, text))
     emote_thread1.start()
     return "ok"
-
 
 # http唱歌接口处理
 @app.route("/http_sing", methods=["GET"])
@@ -316,7 +308,6 @@ def http_sing():
     SongQueueList.put(song_json)
     return jsonify({"status": "成功"})
 
-
 # http绘画接口处理
 @app.route("/http_draw", methods=["GET"])
 def http_draw():
@@ -324,12 +315,7 @@ def http_draw():
     drawcontent = request.args["drawcontent"]
     username = "所有人"
     log.info(f'http绘画接口处理："{username}"绘画《{drawname}》，{drawcontent}')
-    draw_json = {
-        "prompt": drawname,
-        "drawcontent": drawcontent,
-        "username": username,
-        "isExtend": False,
-    }
+    draw_json = {"prompt": drawname, "drawcontent":drawcontent, "username": username, "isExtend": False}
     DrawQueueList.put(draw_json)
     return jsonify({"status": "成功"})
 
@@ -366,17 +352,7 @@ def chatreply():
         traceid = json_str["traceid"]
         chatStatus = json_str["chatStatus"]
         status = "成功"
-    jsonStr = (
-        '({"traceid": "'
-        + traceid
-        + '","chatStatus": "'
-        + chatStatus
-        + '","status": "'
-        + status
-        + '","content": "'
-        + text.replace('"', "'").replace("\r", " ").replace("\n", "<br/>")
-        + '"})'
-    )
+    jsonStr = "({\"traceid\": \""+traceid+"\",\"chatStatus\": \""+chatStatus+"\",\"status\": \""+status+"\",\"content\": \""+text.replace("\"","'").replace("\r"," ").replace("\n","<br/>")+"\"})"
     if CallBackForTest is not None:
         jsonStr = CallBackForTest + jsonStr
     return jsonStr
@@ -391,13 +367,7 @@ def chat():
     traceid = str(uuid.uuid4())
     text = request.args.get("text")
     if text is None:
-        jsonStr = (
-            '({"traceid": "'
-            + traceid
-            + '","status": "值为空","content": "'
-            + text
-            + '"})'
-        )
+        jsonStr = "({\"traceid\": \""+traceid+"\",\"status\": \"值为空\",\"content\": \""+text+"\"})"
         if CallBackForTest is not None:
             jsonStr = CallBackForTest + jsonStr
             return jsonStr
@@ -407,15 +377,7 @@ def chat():
     # 消息处理
     msg_deal(traceid, text, uid, username)
 
-    jsonStr = (
-        '({"traceid": "'
-        + traceid
-        + '","status": "'
-        + status
-        + '","content": "'
-        + text
-        + '"})'
-    )
+    jsonStr = "({\"traceid\": \""+traceid+"\",\"status\": \""+status+"\",\"content\": \""+text+"\"})"
     if CallBackForTest is not None:
         jsonStr = CallBackForTest + jsonStr
     return jsonStr
@@ -517,10 +479,8 @@ class MyHandler2(blivedm.BaseHandler):
 
     # 入场消息回调
     def __interact_word_callback(self, client: blivedm.BLiveClient, command: dict):
-        log.info(
-            f"[{client.room_id}] INTERACT_WORD: self_type={type(self).__name__}, room_id={client.room_id},"
-            f" uname={command['data']['uname']}"
-        )
+        log.info(f"[{client.room_id}] INTERACT_WORD: self_type={type(self).__name__}, room_id={client.room_id},"
+                 f" uname={command['data']['uname']}")
         user_name = command["data"]["uname"]  # 获取用户昵称
         user_id = command["data"]["uid"]  # 获取用户uid
         time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -530,39 +490,29 @@ class MyHandler2(blivedm.BaseHandler):
             # 加入欢迎列表
             WelcomeList.append(user_name)
 
-    _CMD_CALLBACK_DICT["INTERACT_WORD"] = __interact_word_callback  # noqa
+    _CMD_CALLBACK_DICT['INTERACT_WORD'] = __interact_word_callback  # noqa
 
-    def _on_heartbeat(
-        self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage
-    ):
-        log.info(f"[{client.room_id}] 心跳2")
+    def _on_heartbeat(self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage):
+        log.info(f'[{client.room_id}] 心跳2')
 
 
 class MyHandler(blivedm.BaseHandler):
     # 心跳
-    def _on_heartbeat(
-        self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage
-    ):
-        log.info(f"[{client.room_id}] 心跳1")
+    def _on_heartbeat(self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage):
+        log.info(f'[{client.room_id}] 心跳1')
 
     # 弹幕获取
-    def _on_open_live_danmaku(
-        self, client: blivedm.OpenLiveClient, message: open_models.DanmakuMessage
-    ):
-        log.info(f"{message.uname}：{message.msg}")
+    def _on_open_live_danmaku(self, client: blivedm.OpenLiveClient, message: open_models.DanmakuMessage):
+        log.info(f'{message.uname}：{message.msg}')
         traceid = str(uuid.uuid4())
         msg_deal(traceid, message.msg, message.msg_id, message.uname)
 
     # 赠送礼物
-    def _on_open_live_gift(
-        self, client: blivedm.OpenLiveClient, message: open_models.GiftMessage
-    ):
-        coin_type = "金瓜子" if message.paid else "银瓜子"
+    def _on_open_live_gift(self, client: blivedm.OpenLiveClient, message: open_models.GiftMessage):
+        coin_type = '金瓜子' if message.paid else '银瓜子'
         total_coin = message.price * message.gift_num
-        log.info(
-            f"[{message.room_id}] {message.uname} 赠送{message.gift_name}x{message.gift_num}"
-            f" （{coin_type}x{total_coin}）"
-        )
+        log.info(f'[{message.room_id}] {message.uname} 赠送{message.gift_name}x{message.gift_num}'
+                 f' （{coin_type}x{total_coin}）')
         username = message.uname
         giftname = message.gift_name
         num = message.gift_num
@@ -571,12 +521,8 @@ class MyHandler(blivedm.BaseHandler):
         tts_say_thread = Thread(target=tts_say, args=(text,))
         tts_say_thread.start()
 
-    def _on_open_live_buy_guard(
-        self, client: blivedm.OpenLiveClient, message: open_models.GuardBuyMessage
-    ):
-        log.info(
-            f"[{message.room_id}] {message.user_info.uname} 购买 大航海等级={message.guard_level}"
-        )
+    def _on_open_live_buy_guard(self, client: blivedm.OpenLiveClient, message: open_models.GuardBuyMessage):
+        log.info(f'[{message.room_id}] {message.user_info.uname} 购买 大航海等级={message.guard_level}')
         username = message.user_info.uname
         level = message.guard_level
         text = f"非常谢谢‘{username}’购买 大航海等级{level},{Ai_Name}大小姐在这里给你跪下了"
@@ -585,29 +531,23 @@ class MyHandler(blivedm.BaseHandler):
         tts_say_thread.start()
 
     def _on_open_live_super_chat(
-        self, client: blivedm.OpenLiveClient, message: open_models.SuperChatMessage
+            self, client: blivedm.OpenLiveClient, message: open_models.SuperChatMessage
     ):
-        log.info(
-            f"[{message.room_id}] 醒目留言 ¥{message.rmb} {message.uname}：{message.message}"
-        )
+        log.info(f'[{message.room_id}] 醒目留言 ¥{message.rmb} {message.uname}：{message.message}')
         username = message.uname
         rmb = message.rmb
-        text = f'谢谢‘{username}’赠送的¥{rmb}元,她留言说"{message.message}"'
+        text = f"谢谢‘{username}’赠送的¥{rmb}元,她留言说\"{message.message}\""
         log.info(text)
         tts_say_thread = Thread(target=tts_say, args=(text,))
         tts_say_thread.start()
 
     def _on_open_live_super_chat_delete(
-        self,
-        client: blivedm.OpenLiveClient,
-        message: open_models.SuperChatDeleteMessage,
+            self, client: blivedm.OpenLiveClient, message: open_models.SuperChatDeleteMessage
     ):
-        log.info(f"[{message.room_id}] 删除醒目留言 message_ids={message.message_ids}")
+        log.info(f'[{message.room_id}] 删除醒目留言 message_ids={message.message_ids}')
 
-    def _on_open_live_like(
-        self, client: blivedm.OpenLiveClient, message: open_models.LikeMessage
-    ):
-        log.info(f"{message.uname} 点赞")
+    def _on_open_live_like(self, client: blivedm.OpenLiveClient, message: open_models.LikeMessage):
+        log.info(f'{message.uname} 点赞')
         username = message.uname
         text = f"谢谢‘{username}’点赞,{Ai_Name}大小姐最爱你了"
         log.info(text)
@@ -658,9 +598,7 @@ def msg_deal(traceid, query, uid, user_name):
                 emote_play_thread = Thread(target=emote_play, args=(video_path,))
                 emote_play_thread.start()
             else:
-                emote_play_thread = Thread(
-                    target=emote_play_nodance, args=(video_path,)
-                )
+                emote_play_thread = Thread(target=emote_play_nodance, args=(video_path,))
                 emote_play_thread.start()
         return
 
@@ -678,12 +616,7 @@ def msg_deal(traceid, query, uid, user_name):
         log.info(f"[{traceid}]搜索词：" + queryExtract)
         if queryExtract == "":
             return
-        text_search_json = {
-            "traceid": traceid,
-            "prompt": queryExtract,
-            "uid": uid,
-            "username": user_name,
-        }
+        text_search_json = {"traceid":traceid,"prompt": queryExtract, "uid": uid, "username": user_name}
         SearchTextList.put(text_search_json)
         return
 
@@ -697,11 +630,7 @@ def msg_deal(traceid, query, uid, user_name):
         log.info(f"[{traceid}]搜索图：" + queryExtract)
         if queryExtract == "":
             return
-        img_search_json = {
-            "traceid": traceid,
-            "prompt": queryExtract,
-            "username": user_name,
-        }
+        img_search_json = {"traceid":traceid,"prompt": queryExtract, "username": user_name}
         SearchImgList.put(img_search_json)
         return
 
@@ -715,13 +644,7 @@ def msg_deal(traceid, query, uid, user_name):
         log.info(f"[{traceid}]绘画提示：" + queryExtract)
         if queryExtract == "":
             return
-        draw_json = {
-            "traceid": traceid,
-            "prompt": queryExtract,
-            "drawcontent": "",
-            "username": user_name,
-            "isExtend": True,
-        }
+        draw_json = {"traceid":traceid,"prompt": queryExtract, "drawcontent":"", "username": user_name, "isExtend": True}
         # 加入绘画队列
         DrawQueueList.put(draw_json)
         return
@@ -760,12 +683,7 @@ def msg_deal(traceid, query, uid, user_name):
                 video_path = matches_list[rnd_video]
         # 加入跳舞队列
         if video_path != "":
-            dance_json = {
-                "traceid": traceid,
-                "prompt": queryExtract,
-                "username": user_name,
-                "video_path": video_path,
-            }
+            dance_json = {"traceid":traceid,"prompt": queryExtract, "username": user_name, "video_path": video_path}
             DanceQueueList.put(dance_json)
             return
         else:
@@ -936,7 +854,7 @@ def chat_fastgpt(content, uid, username, authorization):
         "stream": True,
         "detail": False,
         "variables": {"uid": uid, "name": username},
-        "messages": [{"content": content, "role": "user"}],
+        "messages": [{"content": content, "role": "user"}]
     }
     response = None
     try:
@@ -994,8 +912,6 @@ def aiResponseTry():
 
 
 is_stream_out = False  # 标识语音流式处理时候，其他音频合成不能干扰
-
-
 # LLM回复
 def ai_response():
     """
@@ -1055,9 +971,7 @@ def ai_response():
     elif local_llm_type == 2:
         username_prompt = f"{shenfen}{prompt}"
         log.info(f"[{traceid}]{username_prompt}")
-        response = chat_tgw(
-            username_prompt, "Aileen Voracious", "chat", "Winlone", username
-        )
+        response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
         response = response.replace("You", username)
     # 过滤表情<>或者()标签
     obs.show_text("状态提示", f'{Ai_Name}思考问题"{title}"完成')
@@ -1098,14 +1012,7 @@ def ai_response():
                         if len(split_content) > split_limit:
                             temp = content[num : len(content)]
                             # 合成语音：文本碎片化段落
-                            jsonStr = {
-                                "voiceType": "chat",
-                                "traceid": traceid,
-                                "chatStatus": chatStatus,
-                                "question": title,
-                                "text": split_content,
-                                "lanuage": "AutoChange",
-                            }
+                            jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":chatStatus,"question":title,"text":split_content,"lanuage":"AutoChange"}
                             AnswerList.put(jsonStr)
                             # 第二行后面就为空
                             chatStatus = ""
@@ -1118,37 +1025,17 @@ def ai_response():
                     # 结束把剩余文本输出语音
                     if temp != "":
                         # 结尾：剩余文本
-                        jsonStr = {
-                            "voiceType": "chat",
-                            "traceid": traceid,
-                            "chatStatus": "end",
-                            "question": title,
-                            "text": temp,
-                            "lanuage": "AutoChange",
-                        }
+                        jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":"end","question":title,"text":temp,"lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     else:
                         # 结尾：空值
-                        jsonStr = {
-                            "voiceType": "chat",
-                            "traceid": traceid,
-                            "chatStatus": "end",
-                            "question": title,
-                            "text": "",
-                            "lanuage": "AutoChange",
-                        }
+                        jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":"end","question":title,"text":"","lanuage":"AutoChange"}
                         AnswerList.put(jsonStr)
                     log.info(f"[{traceid}]end:" + temp)
     is_ai_ready = True  # 指示AI已经准备好回复下一个问题
 
     # 切换场景
-    if (
-        "粉色" in all_content
-        or "睡觉" in all_content
-        or "粉红" in all_content
-        or "房间" in all_content
-        or "晚上" in all_content
-    ):
+    if "粉色" in all_content or "睡觉" in all_content or "粉红" in all_content or "房间" in all_content or "晚上" in all_content:
         changeScene("粉色房间")
     elif "清晨" in all_content or "早" in all_content or "睡醒" in all_content:
         changeScene("清晨房间")
@@ -1162,16 +1049,10 @@ def ai_response():
     # 日志输出
     current_question_count = QuestionList.qsize()
     log.info(f"[{traceid}][AI回复]{all_content}")
-    log.info(
-        f"[{traceid}]System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}"
-    )
-
-
+    log.info(f"[{traceid}]System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
 
 # duckduckgo搜索引擎搜索
 textSearchNum = 5
-
-
 def duckduckgo_web_search(query):
     content = ""
     with DDGS(proxies=duckduckgo_proxies, timeout=20) as ddgs:
@@ -1502,7 +1383,6 @@ def check_tts():
         # 合成语音
         tts_chat_say_pool.submit(tts_chat_say, json)
 
-
 """
 bert-vits2语音合成
 filename：音频文件名
@@ -1524,7 +1404,6 @@ def bert_vits2(filename, text, emotion):
                 return 1
     return 0
 
-
 def gtp_vists(filename, text, emotion):
     save_path = f".\output\{filename}.mp3"
     text = parse.quote(text)
@@ -1544,14 +1423,7 @@ def gtp_vists(filename, text, emotion):
 def tts_say(text):
     try:
         traceid = str(uuid.uuid4())
-        json = {
-            "voiceType": "other",
-            "traceid": traceid,
-            "chatStatus": "end",
-            "question": "",
-            "text": text,
-            "lanuage": "",
-        }
+        json =  {"voiceType":"other","traceid":traceid,"chatStatus":"end","question":"","text":text,"lanuage":""}
         tts_say_do(json)
     except Exception as e:
         log.info(f"【tts_say】发生了异常：{e}")
@@ -1684,8 +1556,6 @@ def tts_say_do(json):
 
 
 mood_num = 0
-
-
 # 感情值判断
 def mood(emotion):
     global mood_num
@@ -1699,11 +1569,9 @@ def mood(emotion):
         mood_num = 0
     return mood_num
 
-
 # 摇摆
 swing_motion = 2  # 1.摇摆中 2.停止摇摆
 auto_swing_lock = threading.Lock()
-
 
 def auto_swing():
     auto_swing_lock.acquire()
@@ -1723,66 +1591,12 @@ def auto_swing():
     # 执行器-循环摇摆：唱歌中 或者 说话中 都会摇摆
     while swing_motion == 1 and (is_singing == 1 or is_tts_ready == False):
         jsonstr = []
-        jsonstr.append(
-            {
-                "content": "happy",
-                "key": "摇摆1",
-                "num": 1,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 24,
-            }
-        )
-        jsonstr.append(
-            {
-                "content": "happy",
-                "key": "摇摆2",
-                "num": 1,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 21,
-            }
-        )
-        jsonstr.append(
-            {
-                "content": "happy",
-                "key": "摇摆3",
-                "num": 1,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 30,
-            }
-        )
-        jsonstr.append(
-            {
-                "content": "happy",
-                "key": "摇摆4",
-                "num": 1,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 19,
-            }
-        )
-        jsonstr.append(
-            {
-                "content": "happy",
-                "key": "摇摆5",
-                "num": 1,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 30,
-            }
-        )
-        jsonstr.append(
-            {
-                "content": "happy",
-                "key": "摇摆6",
-                "num": 1,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 30,
-            }
-        )
+        jsonstr.append({"content": "happy", "key": "摇摆1", "num": 1, "timesleep": 0, "donum": 0, "endwait": 24})
+        jsonstr.append({"content": "happy", "key": "摇摆2", "num": 1, "timesleep": 0, "donum": 0, "endwait": 21})
+        jsonstr.append({"content": "happy", "key": "摇摆3", "num": 1, "timesleep": 0, "donum": 0, "endwait": 30})
+        jsonstr.append({"content": "happy", "key": "摇摆4", "num": 1, "timesleep": 0, "donum": 0, "endwait": 19})
+        jsonstr.append({"content": "happy", "key": "摇摆5", "num": 1, "timesleep": 0, "donum": 0, "endwait": 30})
+        jsonstr.append({"content": "happy", "key": "摇摆6", "num": 1, "timesleep": 0, "donum": 0, "endwait": 30})
         # 随机一个【摇摆动作】
         num = random.randrange(0, len(jsonstr))
         emote_show_json = []
@@ -1804,14 +1618,12 @@ def auto_swing():
     swing_motion = 2
     log.info(f"结束摇摆：{emote_show_json}")
 
-
 # 停止动作
 def stop_motion():
     while swing_motion == 1:
         time.sleep(1)
     log.info(f"静止：{swing_motion}")
     emote_ws(1, 0, "静止")
-
 
 # 文本识别表情内容
 # "content":语音情感,"key":按键名称,"num":执行,第几个字符开始执行表情,
@@ -1820,7 +1632,7 @@ def emote_content(response):
     jsonstr = []
     # =========== 随机动作 ==============
     # text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "欢迎", "搜", "唱"]
-    # num = StringUtil.is_index_nocontain_string(text, response)
+    # num = is_index_nocontain_string(text, response)
     # if num > 0:
     #     press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
     #     press = random.randrange(0, len(press_arry))
@@ -1831,290 +1643,88 @@ def emote_content(response):
     text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "搜", "有趣"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "happy",
-                "key": "开心",
-                "num": num,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "happy", "key": "开心", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 哭 ==============
     text = ["哭", "悲伤", "伤心", "凄惨", "好惨", "呜呜", "悲哀"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "sad",
-                "key": "哭",
-                "num": num,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "sad", "key": "哭", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 招呼 ==============
     text = ["你好", "在吗", "干嘛", "名字", "欢迎", "我在", "玩笑", "逗"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
         press1 = random.randrange(1, 3)
         if press1 == 1:
-            jsonstr.append(
-                {
-                    "content": "call",
-                    "key": "捂嘴",
-                    "num": num,
-                    "timesleep": 0,
-                    "donum": 0,
-                    "endwait": 0,
-                }
-            )
+            jsonstr.append({"content": "call", "key": "捂嘴", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
         else:
-            jsonstr.append(
-                {
-                    "content": "call",
-                    "key": "拿扇子",
-                    "num": num,
-                    "timesleep": 0,
-                    "donum": 0,
-                    "endwait": 0,
-                }
-            )
+            jsonstr.append({"content": "call", "key": "拿扇子", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
         press2 = random.randrange(1, 4)
         if press2 == 1:
-            jsonstr.append(
-                {
-                    "content": "call",
-                    "key": "星星眼",
-                    "num": num,
-                    "timesleep": 0,
-                    "donum": 0,
-                    "endwait": 0,
-                }
-            )
+            jsonstr.append({"content": "call", "key": "星星眼", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
         elif press2 == 2:
-            jsonstr.append(
-                {
-                    "content": "call",
-                    "key": "害羞",
-                    "num": num,
-                    "timesleep": 0,
-                    "donum": 0,
-                    "endwait": 0,
-                }
-            )
+            jsonstr.append({"content": "call", "key": "害羞", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
         elif press2 == 3:
-            jsonstr.append(
-                {
-                    "content": "call",
-                    "key": "米米",
-                    "num": num,
-                    "timesleep": 0,
-                    "donum": 0,
-                    "endwait": 0,
-                }
-            )
+            jsonstr.append({"content": "call", "key": "米米", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 有钱 ==============
     text = ["钱", "money", "有米"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "call",
-                "key": "米米",
-                "num": num,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "call", "key": "米米", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 温柔 ==============
     text = ["温柔", "抚摸", "抚媚", "骚", "唱歌"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
         press1 = random.randrange(1, 3)
         if press1 == 1:
-            jsonstr.append(
-                {
-                    "content": "call",
-                    "key": "左眼闭合",
-                    "num": num,
-                    "timesleep": 0,
-                    "donum": 0,
-                    "endwait": 0,
-                }
-            )
+            jsonstr.append({"content": "call", "key": "左眼闭合", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
         else:
-            jsonstr.append(
-                {
-                    "content": "call",
-                    "key": "右眼闭合",
-                    "num": num,
-                    "timesleep": 0,
-                    "donum": 0,
-                    "endwait": 0,
-                }
-            )
+            jsonstr.append({"content": "call", "key": "右眼闭合", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
         press2 = random.randrange(1, 3)
         if press2 == 1:
-            jsonstr.append(
-                {
-                    "content": "call",
-                    "key": "头左倾",
-                    "num": num,
-                    "timesleep": 0,
-                    "donum": 0,
-                    "endwait": 0,
-                }
-            )
+            jsonstr.append({"content": "call", "key": "头左倾", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
         else:
-            jsonstr.append(
-                {
-                    "content": "call",
-                    "key": "头右倾",
-                    "num": num,
-                    "timesleep": 0,
-                    "donum": 0,
-                    "endwait": 0,
-                }
-            )
+            jsonstr.append({"content": "call", "key": "头右倾", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 生气 ==============
     text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "可恶"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "angry",
-                "key": "生气",
-                "num": num,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "angry", "key": "生气", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 尴尬 ==============
-    text = [
-        "尴尬",
-        "无聊",
-        "无奈",
-        "傻子",
-        "郁闷",
-        "龟蛋",
-        "傻逼",
-        "逗比",
-        "逗逼",
-        "忘记",
-        "怎么可能",
-        "调侃",
-    ]
+    text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋", "傻逼", "逗比", "逗逼", "忘记", "怎么可能", "调侃"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "blush",
-                "key": "尴尬",
-                "num": num,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "blush", "key": "尴尬", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 认同 ==============
     text = ["认同", "点头", "嗯", "哦", "女仆"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "approve",
-                "key": "认同",
-                "num": num,
-                "timesleep": 0.002,
-                "donum": 5,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "approve", "key": "认同", "num": num, "timesleep": 0.002, "donum": 5, "endwait": 0})
     # =========== 汗颜 ==============
     text = ["汗颜", "流汗", "郁闷", "笑死", "白痴", "渣渣", "搞笑", "恶心"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "sweat",
-                "key": "汗颜",
-                "num": num,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "sweat", "key": "汗颜", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 晕 ==============
     text = ["晕", "头晕", "晕死", "呕"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "blush",
-                "key": "晕",
-                "num": num,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "blush", "key": "晕", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 吐血 ==============
     text = ["吐血", "血"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "blood",
-                "key": "血",
-                "num": num,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "blood", "key": "血", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 可爱 ==============
     text = ["可爱", "害羞", "爱你", "天真", "搞笑", "喜欢", "全知全能"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "love",
-                "key": "可爱",
-                "num": num,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "love", "key": "可爱", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     # =========== 摸摸头 ==============
     text = ["摸摸头", "摸摸脑袋", "乖", "做得好"]
     num = StringUtil.is_index_nocontain_string(text, response)
     if num > 0:
-        jsonstr.append(
-            {
-                "content": "happy",
-                "key": "摸摸头",
-                "num": num,
-                "timesleep": 5,
-                "donum": 1,
-                "endwait": 0,
-            }
-        )
-        jsonstr.append(
-            {
-                "content": "blush",
-                "key": "晕",
-                "num": num,
-                "timesleep": 0,
-                "donum": 0,
-                "endwait": 0,
-            }
-        )
+        jsonstr.append({"content": "happy", "key": "摸摸头", "num": num, "timesleep": 5, "donum": 1, "endwait": 0})
+        jsonstr.append({"content": "blush", "key": "晕", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
     return jsonstr
 
 
@@ -2306,16 +1916,7 @@ def sing(songname, username):
     # 等待播放
     log.info(f"等待播放{username}点播的歌曲《{songname}》：{is_singing}")
     # 加入播放歌单
-    SongMenuList.put(
-        {
-            "username": username,
-            "songname": songname,
-            "is_created": is_created,
-            "song_path": song_path,
-            "query": query,
-        }
-    )
-
+    SongMenuList.put({"username": username, "songname": songname,"is_created":is_created,"song_path":song_path,"query":query})
 
 # 播放歌曲清单
 def check_playSongMenuList():
@@ -2329,13 +1930,7 @@ def check_playSongMenuList():
         is_singing = 1  # 开始唱歌
         # =============== 开始：播放歌曲 =================
         obs.control_video("背景音乐", VideoControl.PAUSE.value)
-        play_song(
-            mlist["is_created"],
-            mlist["songname"],
-            mlist["song_path"],
-            mlist["username"],
-            mlist["query"],
-        )
+        play_song(mlist["is_created"],mlist["songname"],mlist["song_path"],mlist["username"],mlist["query"])
         if SongMenuList.qsize() == 0:
             obs.control_video("背景音乐", VideoControl.PLAY.value)
         # =============== 结束：播放歌曲 =================
@@ -2543,7 +2138,6 @@ def check_down_song(songname):
 
     return is_created
 
-
 # 翻译
 def translate(text, from_lanuage, to_lanuage):
     with DDGS(proxies=duckduckgo_proxies, timeout=20) as ddgs:
@@ -2555,7 +2149,6 @@ def translate(text, from_lanuage, to_lanuage):
             log.info(f"translate信息回复异常{e}")
             logging.error(traceback.format_exc())
         return text
-
 
 # 抽取固定扩展提示词：limit:限制条数  num:抽取次数
 def draw_prompt_do(query, limit, num):
@@ -2649,14 +2242,7 @@ def draw_prompt(query, offset, limit):
                 sampler = hits[num]["meta"]["sampler"]
             if StringUtil.has_field(hits[num]["meta"], "seed"):
                 seed = hits[num]["meta"]["seed"]
-            jsonStr = {
-                "prompt": StringUtil.isNone(prompt),
-                "negativePrompt": StringUtil.isNone(negativePrompt),
-                "cfgScale": cfgScale,
-                "steps": steps,
-                "sampler": StringUtil.isNone(sampler),
-                "seed": seed,
-            }
+            jsonStr = {"prompt": StringUtil.isNone(prompt),"negativePrompt": StringUtil.isNone(negativePrompt),"cfgScale": cfgScale,"steps": steps,"sampler": StringUtil.isNone(sampler),"seed": seed}
             logstr = hits[num]
             log.info(f"C站提示词:{logstr}")
             return jsonStr
@@ -2674,15 +2260,7 @@ def check_draw():
         draw_json = DrawQueueList.get()
         log.info(f"启动绘画:{draw_json}")
         # 开始绘画
-        draw_thread = Thread(
-            target=draw,
-            args=(
-                draw_json["prompt"],
-                draw_json["drawcontent"],
-                draw_json["username"],
-                draw_json["isExtend"],
-            ),
-        )
+        draw_thread = Thread(target=draw, args=(draw_json["prompt"], draw_json["drawcontent"], draw_json["username"], draw_json["isExtend"]))
         draw_thread.start()
 
 
@@ -2716,14 +2294,7 @@ def draw(prompt, drawcontent, username, isExtend):
             jsonPrompt = draw_prompt(prompt, 0, 50)
             if jsonPrompt == "":
                 log.info(f"《{drawName}》没找到绘画扩展提示词")
-                jsonPrompt = {
-                    "prompt": "",
-                    "negativePrompt": "",
-                    "cfgScale": cfgScale,
-                    "steps": steps,
-                    "sampler": sampler,
-                    "seed": seed,
-                }
+                jsonPrompt = {"prompt":"","negativePrompt":"","cfgScale":cfgScale,"steps":steps,"sampler":sampler,"seed":seed}
             log.info(f"绘画扩展提示词:{jsonPrompt}")
 
         # 女孩
@@ -2752,12 +2323,7 @@ def draw(prompt, drawcontent, username, isExtend):
             # 默认模型
             checkpoint = "realvisxlV30Turbo_v30TurboBakedvae"
             if jsonPrompt != "":
-                prompt = (
-                    f"(({prompt},{drawcontent})),"
-                    + jsonPrompt["prompt"]
-                    + ","
-                    + f"<lora:{prompt}>"
-                )
+                prompt = f"(({prompt},{drawcontent})),"+jsonPrompt["prompt"]+","+f"<lora:{prompt}>"
                 negativePrompt = StringUtil.isNone(jsonPrompt["negativePrompt"])
                 cfgScale = jsonPrompt["cfgScale"]
                 steps = jsonPrompt["steps"]
@@ -2786,9 +2352,7 @@ def draw(prompt, drawcontent, username, isExtend):
         progress_thread = Thread(target=progress, args=(drawName, username))
         progress_thread.start()
         # 生成绘画
-        response = requests.post(
-            url=f"http://{drawUrl}/sdapi/v1/txt2img", json=payload, timeout=(5, 60)
-        )
+        response = requests.post(url=f"http://{drawUrl}/sdapi/v1/txt2img", json=payload, timeout=(5, 60))
         is_drawing = 2
         r = response.json()
         # 错误码跳出
@@ -2841,9 +2405,7 @@ def progress(prompt, username):
         # 绘画中：输出进度图
         if is_drawing == 1:
             # stable-diffusion绘图进度
-            response = requests.get(
-                url=f"http://{drawUrl}/sdapi/v1/progress", timeout=(5, 60)
-            )
+            response = requests.get(url=f"http://{drawUrl}/sdapi/v1/progress", timeout=(5, 60))
             r = response.json()
             imgb64 = r["current_image"]
             if imgb64 != "" and imgb64 is not None:
@@ -2851,23 +2413,17 @@ def progress(prompt, username):
                 # ===============鉴黄, 大于**%进度进行鉴黄====================
                 try:
                     if p > progress_limit:
-                        status, nsfw = nsfw_fun(
-                            imgb64, prompt, username, 1, "绘画进度", nsfw_progress_limit
-                        )
+                        status, nsfw = nsfw_fun(imgb64, prompt, username, 1, "绘画进度", nsfw_progress_limit)
                         # 异常鉴黄
                         if status == -1:
                             log.info(f"《{prompt}》进度{p}%鉴黄失败，图片不明确跳出")
                             continue
-                        # 发现黄图
+                            # 发现黄图
                         if status == 0:
-                            log.info(
-                                f"《{prompt}》进度{p}%发现黄图-nsfw:{nsfw},进度跳过"
-                            )
+                            log.info(f"《{prompt}》进度{p}%发现黄图-nsfw:{nsfw},进度跳过")
                             continue
                         log.info(f"《{prompt}》进度{p}%绿色图片-nsfw:{nsfw},输出进度图")
-                        obs.show_text(
-                            "状态提示", f"{Ai_Name}正在绘图《{prompt}》,进度{p}%"
-                        )
+                        obs.show_text("状态提示", f"{Ai_Name}正在绘图《{prompt}》,进度{p}%")
                     else:
                         log.info(f"《{prompt}》输出进度：{p}%")
                 except Exception as e:
@@ -2881,9 +2437,7 @@ def progress(prompt, username):
                 img = img.resize((width, height), Image.LANCZOS)
                 # 保存图片
                 timestamp = int(time.time())
-                path = (
-                    f"{physical_save_folder}{prompt}_{username}_{nsfw}_{timestamp}.jpg"
-                )
+                path = (f"{physical_save_folder}{prompt}_{username}_{nsfw}_{timestamp}.jpg")
                 img.save(path)
                 obs.show_image("绘画图片", path)
             time.sleep(1)
@@ -2927,12 +2481,7 @@ def check_welcome_room():
         WelcomeList.clear()
         if is_llm_welcome == True:
             # 询问LLM
-            llm_json = {
-                "traceid": traceid,
-                "prompt": text,
-                "uid": 0,
-                "username": Ai_Name,
-            }
+            llm_json = {"traceid":traceid, "prompt": text, "uid": 0, "username": Ai_Name}
             QuestionList.put(llm_json)  # 将弹幕消息放入队列
         else:
             tts_say(text)
@@ -3011,69 +2560,25 @@ def main():
 
     if mode == 1 or mode == 2:
         # LLM回复
-        sched1.add_job(
-            func=check_answer,
-            trigger="interval",
-            seconds=1,
-            id=f"answer",
-            max_instances=100,
-        )
+        sched1.add_job(func=check_answer, trigger="interval", seconds=1, id=f"answer", max_instances=100)
         # tts语音合成
-        sched1.add_job(
-            func=check_tts, trigger="interval", seconds=1, id=f"tts", max_instances=1000
-        )
+        sched1.add_job(func=check_tts, trigger="interval", seconds=1, id=f"tts", max_instances=1000)
         # 绘画
-        sched1.add_job(
-            func=check_draw, trigger="interval", seconds=1, id=f"draw", max_instances=50
-        )
+        sched1.add_job(func=check_draw, trigger="interval", seconds=1, id=f"draw", max_instances=50)
         # 搜索资料
-        sched1.add_job(
-            func=check_text_search,
-            trigger="interval",
-            seconds=1,
-            id=f"text_search",
-            max_instances=50,
-        )
+        sched1.add_job(func=check_text_search, trigger="interval", seconds=1, id=f"text_search", max_instances=50)
         # 搜图
-        sched1.add_job(
-            func=check_img_search,
-            trigger="interval",
-            seconds=1,
-            id=f"img_search",
-            max_instances=50,
-        )
+        sched1.add_job(func=check_img_search, trigger="interval", seconds=1, id=f"img_search", max_instances=50)
         # 唱歌转换
-        sched1.add_job(
-            func=check_sing, trigger="interval", seconds=1, id=f"sing", max_instances=50
-        )
+        sched1.add_job(func=check_sing, trigger="interval", seconds=1, id=f"sing", max_instances=50)
         # 歌曲清单播放
-        sched1.add_job(
-            func=check_playSongMenuList,
-            trigger="interval",
-            seconds=1,
-            id=f"playSongMenuList",
-            max_instances=50,
-        )
+        sched1.add_job(func=check_playSongMenuList, trigger="interval", seconds=1, id=f"playSongMenuList", max_instances=50)
         # 跳舞
-        sched1.add_job(
-            func=check_dance,
-            trigger="interval",
-            seconds=1,
-            id=f"dance",
-            max_instances=10,
-        )
+        sched1.add_job(func=check_dance, trigger="interval", seconds=1, id=f"dance", max_instances=10)
         # 时间判断场景[白天黑夜切换]
-        sched1.add_job(
-            func=check_scene_time, trigger="cron", hour="6,17,18", id=f"scene_time"
-        )
+        sched1.add_job(func=check_scene_time, trigger="cron", hour="6,17,18", id=f"scene_time")
         # 欢迎语
-        sched1.add_job(
-            func=check_welcome_room,
-            trigger="interval",
-            seconds=20,
-            id=f"welcome_room",
-            max_instances=50,
-        )
+        sched1.add_job(func=check_welcome_room, trigger="interval", seconds=20, id=f"welcome_room", max_instances=50)
         sched1.start()
 
     if mode == 1 or mode == 2:

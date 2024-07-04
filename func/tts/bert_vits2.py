@@ -1,17 +1,21 @@
-# bert-vists
-bert_vists_url = config["speech"]["bert_vists_url"]
-speaker_name = config["speech"]["speaker_name"]
-sdp_ratio = config["speech"][
-    "sdp_ratio"
-]  # SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
-noise = config["speech"]["noise"]  # 控制感情变化程度，默认0.2
-noisew = config["speech"]["noisew"]  # 控制音节发音变化程度，默认0.9
-speed = config["speech"]["speed"]  # 语速
+from func.config.config_init import configInit
+import requests
+from urllib import parse
 
 class bertVis2:
+    config = configInit("config-prod.yml", "utf-8").get_config()
+    # bert-vists
+    bert_vists_url = config["speech"]["bert_vists_url"]
+    speaker_name = config["speech"]["speaker_name"]
+    sdp_ratio = config["speech"][
+        "sdp_ratio"
+    ]  # SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
+    noise = config["speech"]["noise"]  # 控制感情变化程度，默认0.2
+    noisew = config["speech"]["noisew"]  # 控制音节发音变化程度，默认0.9
+    speed = config["speech"]["speed"]  # 语速
 
     def __init__(self):
-        return
+        pass
 
     """
     bert-vits2语音合成
@@ -19,12 +23,11 @@ class bertVis2:
     text：说话文本
     emotion：情感描述
     """
-
-    def bert_vits2(filename, text, emotion):
+    def bert_vits2(self, filename, text, emotion):
         save_path = f".\output\{filename}.mp3"
         text = parse.quote(text)
         response = requests.get(
-            url=f"http://{bert_vists_url}/voice?text={text}&model_id=0&speaker_name={speaker_name}&sdp_ratio={sdp_ratio}&noise={noise}&noisew={noisew}&length={speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}",
+            url=f"http://{self.bert_vists_url}/voice?text={text}&model_id=0&speaker_name={self.speaker_name}&sdp_ratio={self.sdp_ratio}&noise={self.noise}&noisew={self.noisew}&length={self.speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}",
             timeout=(5, 60),
         )
         if response.status_code == 200:

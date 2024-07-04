@@ -11,17 +11,29 @@ from func.emote.emote_oper import EmoteOper
 from threading import Thread
 from func.tools.string_util import StringUtil
 from func.obs.obs_websocket import ObsWebSocket, VideoStatus, VideoControl
+from func.translate.duckduckgo_translate import DuckduckgoTranslate
+from .gtp_vists import gtpVists
+from .player import mpvPlay
 
+def singleton(cls):
+    instances = {}
+    def getinstance(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
+    return getinstance
 
-# 设置控制台日志
-today = datetime.date.today().strftime("%Y-%m-%d")
-log = logger.getLogger(f"./logs/log_{today}.txt", "bilibili-live")
-
-SayCount = 0
-say_lock = threading.Lock()
-ReplyTextList = queue.Queue()  # Ai回复框文本队列
-
+@singleton
 class ttsCore:
+    # 设置控制台日志
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    log = logger.getLogger(f"./logs/log_{today}.txt", "ttsCore")
+
+    SayCount = 0
+    say_lock = threading.Lock()
+    ReplyTextList = queue.Queue()  # Ai回复框文本队列
+
+    
     def __init__(self, obs, Ai_Name):
         self.obs = obs
         self.Ai_Name= Ai_Name
@@ -30,17 +42,10 @@ class ttsCore:
     def tts_say(self,text):
         try:
             traceid = str(uuid.uuid4())
-            json = {
-                "voiceType": "other",
-                "traceid": traceid,
-                "chatStatus": "end",
-                "question": "",
-                "text": text,
-                "lanuage": "",
-            }
+            json =  {"voiceType":"other","traceid":traceid,"chatStatus":"end","question":"","text":text,"lanuage":""}
             self.tts_say_do(json)
         except Exception as e:
-            log.info(f"【tts_say】发生了异常：{e}")
+            self.log.info(f"【tts_say】发生了异常：{e}")
             logging.error(traceback.format_exc())
 
     # 直接合成语音播放-聊天用
@@ -52,7 +57,7 @@ class ttsCore:
         except Exception as e:
             is_tts_ready = True
             is_stream_out = False
-            log.info(f"【tts_chat_say】发生了异常：{e}")
+            self.log.info(f"【tts_chat_say】发生了异常：{e}")
             logging.error(traceback.format_exc())
 
     # 直接合成语音播放 {"question":question,"text":text,"lanuage":"ja"}
@@ -73,17 +78,17 @@ class ttsCore:
 
         # 退出标识
         if text == "" and chatStatus == "end":
-            say_lock.acquire()
+            self.say_lock.acquire()
             replyText_json = {"traceid": traceid, "chatStatus": chatStatus, "text": ""}
-            log.info(replyText_json)
-            ReplyTextList.put(replyText_json)
+            self.log.info(replyText_json)
+            self.ReplyTextList.put(replyText_json)
             is_stream_out = False
-            say_lock.release()
+            self.say_lock.release()
             return
 
         # 识别表情
         jsonstr = EmoteOper.emote_content(text)
-        log.info(f"[{traceid}]输出表情{jsonstr}")
+        self.log.info(f"[{traceid}]输出表情{jsonstr}")
         emotion = "happy"
         if len(jsonstr) > 0:
             emotion = jsonstr[0]["content"]
@@ -93,19 +98,19 @@ class ttsCore:
 
         # 触发翻译日语
         if lanuage == "AutoChange":
-            log.info(f"[{traceid}]当前感情值:{moodNum}")
+            self.log.info(f"[{traceid}]当前感情值:{moodNum}")
             if re.search(".*日(文|语).*", question) or re.search(".*日(文|语).*说.*", text):
-                trans_json = translate(text, "zh-Hans", "ja")
+                trans_json = DuckduckgoTranslate.translate(text, "zh-Hans", "ja")
                 if StringUtil.has_field(trans_json, "translated"):
                     text = trans_json["translated"]
             elif re.search(".*英(文|语).*", question) or re.search(
                     ".*英(文|语).*说.*", text
             ):
-                trans_json = translate(text, "zh-Hans", "en")
+                trans_json = DuckduckgoTranslate.translate(text, "zh-Hans", "en")
                 if StringUtil.has_field(trans_json, "translated"):
                     text = trans_json["translated"]
             elif moodNum > 270 or emotion == "angry":
-                trans_json = translate(text, "zh-Hans", "ja")
+                trans_json = DuckduckgoTranslate.translate(text, "zh-Hans", "ja")
                 if StringUtil.has_field(trans_json, "translated"):
                     text = trans_json["translated"]
 
@@ -124,7 +129,7 @@ class ttsCore:
         # gtp-vists合成语音
         pattern = "(《|》)"  # 过滤特殊字符，这些字符会影响语音合成
         text = re.sub(pattern, "", text)
-        status = gtp_vists(filename, text, emotion)
+        status = gtpVists.gtp_vists(filename, text, emotion)
         if status == 0:
             return
         if question != "":
@@ -136,7 +141,7 @@ class ttsCore:
         #         time.sleep(1)
 
         # ============ 【线程锁】播放语音【时间会很长】 ==================
-        say_lock.acquire()
+        self.say_lock.acquire()
         is_tts_ready = False
         if chatStatus == "start":
             is_stream_out = True
@@ -147,20 +152,20 @@ class ttsCore:
 
         # 输出回复字幕
         replyText_json = {"traceid": traceid, "chatStatus": chatStatus, "text": replyText}
-        log.info(replyText_json)
-        ReplyTextList.put(replyText_json)
+        self.log.info(replyText_json)
+        self.ReplyTextList.put(replyText_json)
 
         # 循环摇摆动作
         yaotou_thread = Thread(target=auto_swing)
         yaotou_thread.start()
 
         # 播放声音
-        mpv_play("mpv.exe", f".\output\{filename}.mp3", 100, "0")
+        mpvPlay.mpv_play("mpv.exe", f".\output\{filename}.mp3", 100, "0")
 
         if chatStatus == "end":
             is_stream_out = False
         is_tts_ready = True
-        say_lock.release()
+        self.say_lock.release()
         # ========================= end =============================
 
         # 删除语音文件
