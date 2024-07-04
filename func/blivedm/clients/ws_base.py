@@ -283,6 +283,8 @@ class WebSocketClientBase:
 
             except (aiohttp.ClientConnectionError, asyncio.TimeoutError):
                 # 掉线重连
+                logger.exception('room=%d ClientConnectionError failed, trying init_room() again', self.room_id)
+                await asyncio.sleep(50)
                 pass
             except AuthError:
                 # 认证失败了，应该重新获取token再重连
