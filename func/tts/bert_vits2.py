@@ -1,15 +1,17 @@
-from func.config.config_init import configInit
+from func.config.default_config import defaultConfig
+from func.tools.singleton_mode import singleton
 import requests
 from urllib import parse
 
-class bertVis2:
-    config = configInit("config-prod.yml", "utf-8").get_config()
+@singleton
+class BertVis2:
+    # 加载配置
+    config = defaultConfig().get_config()
+
     # bert-vists
     bert_vists_url = config["speech"]["bert_vists_url"]
     speaker_name = config["speech"]["speaker_name"]
-    sdp_ratio = config["speech"][
-        "sdp_ratio"
-    ]  # SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
+    sdp_ratio = config["speech"]["sdp_ratio"]  # SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
     noise = config["speech"]["noise"]  # 控制感情变化程度，默认0.2
     noisew = config["speech"]["noisew"]  # 控制音节发音变化程度，默认0.9
     speed = config["speech"]["speed"]  # 语速
@@ -23,8 +25,8 @@ class bertVis2:
     text：说话文本
     emotion：情感描述
     """
-    def bert_vits2(self, filename, text, emotion):
-        save_path = f".\output\{filename}.mp3"
+    def get_vists(self, filename, text, emotion):
+        save_path = f"./output/{filename}.mp3"
         text = parse.quote(text)
         response = requests.get(
             url=f"http://{self.bert_vists_url}/voice?text={text}&model_id=0&speaker_name={self.speaker_name}&sdp_ratio={self.sdp_ratio}&noise={self.noise}&noisew={self.noisew}&length={self.speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}",

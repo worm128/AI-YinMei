@@ -1,6 +1,6 @@
 import yaml
 
-class configInit:
+class ConfigBase:
       def __init__(self,filename,encoding):
           f = open(filename, "r", encoding = encoding)
           cont = f.read()

@@ -1,21 +1,20 @@
-import re
 from duckduckgo_search import DDGS
-from func.config.config_init import configInit
-import datetime
-from func.log.logger import Logger
+from func.config.default_config import defaultConfig
+from func.log.default_log import DefaultLog
+from func.tools.singleton_mode import singleton
 
+@singleton
 class DuckduckgoTranslate:
+    # 设置控制台日志
+    log = DefaultLog().getLogger()
     # 加载配置
-    config = configInit("config-prod.yml", "utf-8").get_config()
-
-    # 设置日志
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    log = Logger(f"./logs/log_{today}.txt", "utf-8", "bilibili-live").getLogger()
-
+    config = defaultConfig().get_config()
     duckduckgo_proxies = config["proxies"]["DuckduckgoProxies"]
 
+    def __init__(self):
+        pass
+
     # 翻译
-    @staticmethod
     def translate(self, text, from_lanuage, to_lanuage):
         with DDGS(proxies=self.duckduckgo_proxies, timeout=20) as ddgs:
             try:

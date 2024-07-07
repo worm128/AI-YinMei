@@ -2,50 +2,17 @@ from func.tools.string_util import StringUtil
 import random
 import time
 import json
-import datetime
-import websocket
-from threading import Thread
-from func.log import logger
-
-# 设置控制台日志
-today = datetime.date.today().strftime("%Y-%m-%d")
-log = logger.getLogger(f"./logs/log_{today}.txt", "bilibili-live")
+from func.log.default_log import DefaultLog
+from func.vtuber.vtuber_init import VtuberInit
+from func.gobal.data import VtuberData
 
 class EmoteOper:
-    def __init__(self, obs, config):
-        self.obs = obs
-        self.config= config
-        vtuber_websocket = config["emote"]["vtuber_websocket"]
-        ws = websocket.WebSocketApp(f"ws://{vtuber_websocket}", on_open=self.on_open)
-        vtuber_pluginName = config["emote"]["vtuber_pluginName"]
-        vtuber_pluginDeveloper = config["emote"]["vtuber_pluginDeveloper"]
-        vtuber_authenticationToken = config["emote"]["vtuber_authenticationToken"]
+    # 设置控制台日志
+    log = DefaultLog().getLogger()
+    vtuberData = VtuberData()
 
-    # ============= Vtuber表情 =====================
-    def run_forever(self):
-        ws.run_forever(ping_timeout=1)
-
-    def on_open(self,ws):
-        self.auth()
-
-    # 授权Vtuber服务
-    def auth(self):
-        # 授权码
-        authstr = {
-            "apiName": "VTubeStudioPublicAPI",
-            "apiVersion": "1.0",
-            "requestID": "SomeID",
-            "messageType": "AuthenticationRequest",
-            "data": {
-                "pluginName": self.vtuber_pluginName,
-                "pluginDeveloper": self.vtuber_pluginDeveloper,
-                "authenticationToken": self.vtuber_authenticationToken,
-            },
-        }
-        data = json.dumps(authstr)
-        ws.send(data)
-
-    # ============================================
+    def __init__(self):
+        self.ws = VtuberInit().get_ws()
 
     # 文本识别表情内容
     # "content":语音情感,"key":按键名称,"num":执行,第几个字符开始执行表情,
@@ -188,25 +155,32 @@ class EmoteOper:
             data = json.dumps(jstr)
             # vtuber执行表情展示
             try:
-                ws.send(data)
+                self.ws.send(data)
             except Exception as e:
                 error = f"【表情发送】发生了异常：{e}"
-                log.info(error)
+                self.log.info(error)
                 if error in "Connection is already closed":
-                    ws = websocket.WebSocketApp(f"ws://{self.vtuber_websocket}", on_open=self.on_open)
-                    # ws服务心跳包
-                    run_forever_thread = Thread(target=self.run_forever)
-                    run_forever_thread.start()
+                    self.ws = VtuberInit().get_ws()
 
     # 感情值判断
     def mood(self,emotion):
-        global mood_num
         if emotion == "sad":
-            mood_num = mood_num + 1
+            self.vtuberData.mood_num = self.vtuberData.mood_num + 1
         if emotion == "happy":
-            mood_num = mood_num + 2
+            self.vtuberData.mood_num = self.vtuberData.mood_num + 2
         if emotion == "angry":
-            mood_num = mood_num + 3
-        if mood_num > 300:
-            mood_num = 0
-        return mood_num
+            self.vtuberData.mood_num = self.vtuberData.mood_num + 3
+        if self.vtuberData.mood_num > 300:
+            self.vtuberData.mood_num = 0
+        return self.vtuberData.mood_num
+
+    # 键盘触发-带按键时长
+    def emote_do(self,text, response, keyboard, startTime, key):
+        num = StringUtil.is_index_nocontain_string(text, response)
+        if num > 0:
+            start = round(num * startTime, 2)
+            time.sleep(start)
+            keyboard.press(key)
+            time.sleep(1)
+            keyboard.release(key)
+            self.log.info(f"{response}:输出表情({start}){key}")

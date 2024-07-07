@@ -2,7 +2,7 @@ import logging
 import colorlog
 import datetime
 
-class Logger:
+class LoggerBase:
 
     def __init__(self, fileName, encoding, logName):
         # 日志工具
@@ -38,8 +38,8 @@ class Logger:
         return self.logger
 
 
-if __name__ == "__main__":
-    log = Logger(f"log_11.txt","utf-8", "bilibili-live1").getLogger()
-    log.error("测试")
-    log = Logger(f"log_22.txt","utf-8", "bilibili-live2").getLogger()
-    log.error("测试2")
+# if __name__ == "__main__":
+#     log = Logger(f"log_11.txt","utf-8", "bilibili-live1").getLogger()
+#     log.error("测试")
+#     log = Logger(f"log_22.txt","utf-8", "bilibili-live2").getLogger()
+#     log.error("测试2")

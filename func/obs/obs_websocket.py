@@ -22,6 +22,7 @@ class ObsWebSocket:
           self.port = port
           self.password = password
           self.ws = obsws(self.host, self.port, self.password)
+          print(self.ws)
       
       def connect(self):
           self.ws.connect()

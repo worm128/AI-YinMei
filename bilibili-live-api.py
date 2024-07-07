@@ -37,15 +37,23 @@ from func.obs.obs_websocket import ObsWebSocket, VideoStatus, VideoControl
 from func.tools.file_util import FileUtil
 from func.tools.string_util import StringUtil
 from func.search import crawler, baidusearch
-from func.log.logger import Logger
-from func.config.config_init import configInit
+from func.log.default_log import DefaultLog
+from func.config.default_config import defaultConfig
+
+from func.vtuber.vtuber_init import VtuberInit
+from func.obs.obs_init import ObsInit
+from func.vtuber.emote_oper import EmoteOper
+from func.tts.tts_core import TTsCore
+from func.llm.llm_core import LLmCore
+from func.vtuber.action_oper import ActionOper
+from func.gobal.data import VtuberData
+from func.gobal.data import TTsData
+from func.gobal.data import LLmData
 
 # 加载配置
-config = configInit("config-prod.yml","utf-8").get_config()
-
-# 设置日志
-today = datetime.date.today().strftime("%Y-%m-%d")
-log = Logger(f"./logs/log_{today}.txt","utf-8", "bilibili-live").getLogger()
+config = defaultConfig().get_config()
+# 设置控制台日志
+log = DefaultLog().getLogger()
 # 定时器只输出error
 my_logging = logging.getLogger("apscheduler.executors.default")
 my_logging.setLevel("ERROR")
@@ -104,37 +112,15 @@ duckduckgo_proxies = config["proxies"]["DuckduckgoProxies"]
 # 线程锁
 create_song_lock = threading.Lock()
 play_song_lock = threading.Lock()
-say_lock = threading.Lock()
+
 # ============= LLM参数 =====================
-QuestionList = queue.Queue()  # LLM回复问题
-QuestionName = queue.Queue()
-AnswerList = queue.Queue()  # Ai回复队列
-EmoteList = queue.Queue()  # 表情队列
-ReplyTextList = queue.Queue()  # Ai回复框文本队列
-history = []
-is_ai_ready = True  # 定义ai回复是否转换完成标志
-is_tts_ready = True  # 定义语音是否生成完成标志
-SayCount = 0
-split_flag = config["llm"]["split_flag"]
-split_str = split_flag.split("|")
-split_limit = config["llm"]["split_limit"]  # 分割的最小字符数量
+llmData = LLmData()  # llm数据
+llmCore = LLmCore()  # llm核心
 # ============================================
 
 # ============= 进入房间的欢迎语 =====================
 is_llm_welcome = config["welcome"]["is_llm_welcome"]
 welcome_not_allow = config["welcome"]["welcome_not_allow"]
-# ============================================
-
-# ============= 本地模型加载 =====================
-# 模型加载方式
-local_llm_type = config["llm"]["local_llm_type"]
-tgw_url = config["llm"]["tgw_url"]
-fastgpt_url = config["llm"]["fastgpt_url"]
-fastgpt_authorization = config["llm"]["fastgpt_authorization"]
-# ai吟美【怒怼版】：fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBWQhMLxDUck6W6Oeio4sx
-# ai吟美【女仆版】：fastgpt-yjuDaV7O4kyzK1DY7PuOGvOjqUJCSmdCENKowhDSAi6PwdoG4247bs2yL
-# openku-chatgpt3.5：fastgpt-ySHfeoltpvRV4lyqvGBqiUvJpzMiC0d3nOFaheT1dTHlk9KA4EHR6EujKzX
-public_sentiment_key = config["llm"]["public_sentiment_key"]
 # ============================================
 
 # ============= 绘画参数 =====================
@@ -190,18 +176,26 @@ sched1 = APScheduler()
 sched1.init_app(app)
 # ============================================
 
-# ============= Vtuber表情 =====================
-def run_forever():
-    ws.run_forever(ping_timeout=1)
+# ============= OBS直播软件控制 =====================
+# obs直播软件连接
+obs = ObsInit().get_ws()
+# vtuber皮肤连接
+VtuberInit().get_ws()
+# 表情初始化
+emoteOper = EmoteOper()
 
-def on_open(ws):
-    auth()
-
-vtuber_websocket = config["emote"]["vtuber_websocket"]
-ws = websocket.WebSocketApp(f"ws://{vtuber_websocket}", on_open=on_open)
-vtuber_pluginName = config["emote"]["vtuber_pluginName"]
-vtuber_pluginDeveloper = config["emote"]["vtuber_pluginDeveloper"]
-vtuber_authenticationToken = config["emote"]["vtuber_authenticationToken"]
+dance_path = config["obs"]["dance_path"]
+dance_video = FileUtil.get_child_file_paths(dance_path)  # 跳舞视频
+emote_path = config["obs"]["emote_path"]
+emote_font = config["obs"]["emote_font"]
+emote_video = FileUtil.get_child_file_paths(emote_path)  # 表情视频
+emote_list = FileUtil.get_subfolder_names(emote_font)  # 表情清单显示
+DanceQueueList = queue.Queue()  # 跳舞队列
+is_dance = 2  # 1.正在跳舞 2.跳舞完成
+emote_video_lock = threading.Lock()
+emote_now_path = ""
+dance_now_path = ""
+singdance_now_path = ""
 # ============================================
 
 # ============= 鉴黄 =====================
@@ -221,47 +215,20 @@ nsfw_lock = threading.Lock()
 # ============================================
 
 # ============= 语音合成 =====================
-# bert-vists
-bert_vists_url = config["speech"]["bert_vists_url"]
-speaker_name = config["speech"]["speaker_name"]
-sdp_ratio = config["speech"][
-    "sdp_ratio"
-]  # SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
-noise = config["speech"]["noise"]  # 控制感情变化程度，默认0.2
-noisew = config["speech"]["noisew"]  # 控制音节发音变化程度，默认0.9
-speed = config["speech"]["speed"]  # 语速
-# gpt-SoVITS
-gtp_vists_url = config["speech"]["gtp_vists_url"]
-# 语音合成线程池
-speech_max_threads = config["speech"]["speech_max_threads"]
+#语音合成线程池
+speech_max_threads=config["speech"]["speech_max_threads"]
+ttsData = TTsData()  # 语音数据
+ttsCore = TTsCore() # 语音核心
 # ============================================
 
-# ============= OBS直播软件控制 =====================
-obs = ObsWebSocket(
-    host=config["obs"]["url"],
-    port=config["obs"]["port"],
-    password=config["obs"]["password"],
-)
-dance_path = config["obs"]["dance_path"]
-dance_video = FileUtil.get_child_file_paths(dance_path)  # 跳舞视频
-emote_path = config["obs"]["emote_path"]
-emote_font = config["obs"]["emote_font"]
-emote_video = FileUtil.get_child_file_paths(emote_path)  # 表情视频
-emote_list = FileUtil.get_subfolder_names(emote_font)  # 表情清单显示
-DanceQueueList = queue.Queue()  # 跳舞队列
-is_dance = 2  # 1.正在跳舞 2.跳舞完成
-emote_video_lock = threading.Lock()
-emote_now_path = ""
-dance_now_path = ""
-singdance_now_path = ""
-# ============================================
 
 # ============= 服装 =====================
 now_clothes = ""  # 当前服装穿着
 # ========================================
 
 # ============= 场景 =====================
-song_background = config["obs"]["song_background"]
+vtuberData = VtuberData()  # vtuber数据
+actionOper = ActionOper()  # 动作核心
 # ========================================
 
 # ============= 欢迎列表 =====================
@@ -285,7 +252,7 @@ def http_cmd():
 @app.route("/say", methods=["POST"])
 def http_say():
     text = request.data.decode("utf-8")
-    tts_say_thread = Thread(target=tts_say, args=(text,))
+    tts_say_thread = Thread(target=ttsCore.tts_say, args=(text,))
     tts_say_thread.start()
     return jsonify({"status": "成功"})
 
@@ -294,7 +261,7 @@ def http_say():
 def http_emote():
     data = request.json
     text = data["text"]
-    emote_thread1 = Thread(target=emote_ws, args=(1, 0.2, text))
+    emote_thread1 = Thread(target=emoteOper.emote_ws, args=(1, 0.2, text))
     emote_thread1.start()
     return "ok"
 
@@ -324,7 +291,7 @@ def http_draw():
 @app.route("/http_scene", methods=["GET"])
 def http_scene():
     scenename = request.args["scenename"]
-    changeScene(scenename)
+    actionOper.changeScene(scenename)
     return jsonify({"status": "成功"})
 
 
@@ -343,11 +310,10 @@ def input_msg():
 # 聊天回复弹框处理
 @app.route("/chatreply", methods=["GET"])
 def chatreply():
-    global ReplyTextList
     CallBackForTest = request.args.get("CallBack")
     status = "失败"
-    if not ReplyTextList.empty():
-        json_str = ReplyTextList.get()
+    if not ttsData.ReplyTextList.empty():
+        json_str = ttsData.ReplyTextList.get()
         text = json_str["text"]
         traceid = json_str["traceid"]
         chatStatus = json_str["chatStatus"]
@@ -361,7 +327,6 @@ def chatreply():
 # 聊天
 @app.route("/chat", methods=["POST", "GET"])
 def chat():
-    global ReplyTextList
     CallBackForTest = request.args.get("CallBack")
     status = "成功"
     traceid = str(uuid.uuid4())
@@ -518,7 +483,7 @@ class MyHandler(blivedm.BaseHandler):
         num = message.gift_num
         text = f"谢谢‘{username}’赠送的{num}个{giftname}"
         log.info(text)
-        tts_say_thread = Thread(target=tts_say, args=(text,))
+        tts_say_thread = Thread(target=ttsCore.tts_say, args=(text,))
         tts_say_thread.start()
 
     def _on_open_live_buy_guard(self, client: blivedm.OpenLiveClient, message: open_models.GuardBuyMessage):
@@ -527,7 +492,7 @@ class MyHandler(blivedm.BaseHandler):
         level = message.guard_level
         text = f"非常谢谢‘{username}’购买 大航海等级{level},{Ai_Name}大小姐在这里给你跪下了"
         log.info(text)
-        tts_say_thread = Thread(target=tts_say, args=(text,))
+        tts_say_thread = Thread(target=ttsCore.tts_say, args=(text,))
         tts_say_thread.start()
 
     def _on_open_live_super_chat(
@@ -538,7 +503,7 @@ class MyHandler(blivedm.BaseHandler):
         rmb = message.rmb
         text = f"谢谢‘{username}’赠送的¥{rmb}元,她留言说\"{message.message}\""
         log.info(text)
-        tts_say_thread = Thread(target=tts_say, args=(text,))
+        tts_say_thread = Thread(target=ttsCore.tts_say, args=(text,))
         tts_say_thread.start()
 
     def _on_open_live_super_chat_delete(
@@ -551,7 +516,7 @@ class MyHandler(blivedm.BaseHandler):
         username = message.uname
         text = f"谢谢‘{username}’点赞,{Ai_Name}大小姐最爱你了"
         log.info(text)
-        tts_say_thread = Thread(target=tts_say, args=(text,))
+        tts_say_thread = Thread(target=ttsCore.tts_say, args=(text,))
         tts_say_thread.start()
 
 
@@ -700,8 +665,8 @@ def msg_deal(traceid, query, uid, user_name):
         queryExtract = re.sub("(。|,|，)", "", queryExtract)
         log.info(f"[{traceid}]换装提示：" + queryExtract)
         # 开始唱歌服装穿戴
-        emote_ws(1, 0, now_clothes)  # 解除当前衣服
-        emote_ws(1, 0, queryExtract)  # 穿上新衣服
+        emoteOper.emote_ws(1, 0, now_clothes)  # 解除当前衣服
+        emoteOper.emote_ws(1, 0, queryExtract)  # 穿上新衣服
         now_clothes = queryExtract
         return
 
@@ -713,45 +678,12 @@ def msg_deal(traceid, query, uid, user_name):
         queryExtract = queryExtract.strip()
         queryExtract = re.sub("(。|,|，)", "", queryExtract)
         log.info(f"[{traceid}]切换场景：" + queryExtract)
-        changeScene(queryExtract)
+        actionOper.changeScene(queryExtract)
         return
 
     # 询问LLM
     llm_json = {"traceid": traceid, "prompt": query, "uid": uid, "username": user_name}
-    QuestionList.put(llm_json)  # 将弹幕消息放入队列
-
-
-# 场景切换
-def changeScene(sceneName):
-    if allow_scene(sceneName) == True:
-        # 切换场景
-        obs.change_scene(sceneName)
-        # 背景乐切换
-        if sceneName in song_background:
-            song = song_background[sceneName]
-            if obs.get_video_status("背景音乐") == VideoStatus.PAUSE.value:
-                obs.play_video("背景音乐", song)
-                time.sleep(1)
-                obs.control_video("背景音乐", VideoControl.PAUSE.value)
-            else:
-                obs.play_video("背景音乐", song)
-            return True
-        else:
-            AnswerList.put(f"晚上{Ai_Name}不敢过去{sceneName}哦")
-    return False
-
-
-# 判断每一种时间段允许移动的场景
-def allow_scene(queryExtract):
-    now_time = time.strftime("%H:%M:%S", time.localtime())
-    # 晚上允许进入的场景
-    night = ["神社", "粉色房间", "海岸花坊"]
-    if "18:00:00" <= now_time <= "24:00:00" or "00:00:00" < now_time < "06:00:00":
-        num = StringUtil.is_index_contain_string(night, queryExtract)
-        if num <= 0:
-            return False
-    return True
-
+    llmData.QuestionList.put(llm_json)  # 将弹幕消息放入队列
 
 # 表情播放[不用停止跳舞]
 def emote_play_nodance(eomte_path):
@@ -803,13 +735,11 @@ def emote_play(eomte_path):
 
 # 命令控制：优先
 def cmd(query):
-    global is_ai_ready
     global is_singing
     global is_creating_song
     global is_SearchText
     global is_SearchImg
     global is_drawing
-    global is_tts_ready
     global is_dance
 
     # 停止所有任务
@@ -819,8 +749,8 @@ def cmd(query):
         is_SearchText = 2  # 1.搜索中 2.搜索完毕
         is_SearchImg = 2  # 1.搜图中 2.搜图完成
         is_drawing = 3  # 1.绘画中 2.绘画完成 3.绘图任务结束
-        is_ai_ready = True  # 定义ai回复是否转换完成标志
-        is_tts_ready = True  # 定义语音是否生成完成标志
+        llmData.is_ai_ready = True  # 定义ai回复是否转换完成标志
+        ttsData.is_tts_ready = True  # 定义语音是否生成完成标志
         os.system("taskkill /T /F /IM song.exe")
         os.system("taskkill /T /F /IM mpv.exe")
         return 1
@@ -843,213 +773,6 @@ def cmd(query):
         return 1
     return 0
 
-
-# fastgpt知识库接口调用-LLM回复
-def chat_fastgpt(content, uid, username, authorization):
-    url = f"http://{fastgpt_url}/api/v1/chat/completions"
-    headers = {"Content-Type": "application/json", "Authorization": authorization}
-    timestamp = int(time.time())
-    data = {
-        "chatId": timestamp,
-        "stream": True,
-        "detail": False,
-        "variables": {"uid": uid, "name": username},
-        "messages": [{"content": content, "role": "user"}]
-    }
-    response = None
-    try:
-        response = requests.post(
-            url, headers=headers, json=data, verify=False, timeout=(5, 60), stream=True
-        )
-    except Exception as e:
-        log.info(f"【{content}】信息回复异常")
-        return "我听不懂你说什么"
-
-    return response
-
-
-# text-generation-webui接口调用-LLM回复
-# mode:instruct/chat/chat-instruct  preset:Alpaca/Winlone(自定义)  character:角色卡Rengoku/Ninya
-def chat_tgw(content, character, mode, preset, username):
-    url = f"http://{tgw_url}/v1/chat/completions"
-    headers = {"Content-Type": "application/json"}
-    history.append({"role": "user", "content": content})
-    data = {
-        "mode": mode,
-        "character": character,
-        "your_name": username,
-        "messages": history,
-        "preset": preset,
-        "do_sample": True,
-        "max_new_tokens": 200,
-        "seed": -1,
-        "add_bos_token": True,
-        "ban_eos_token": False,
-        "skip_special_tokens": True,
-        "instruction_template": "Alpaca",
-    }
-    try:
-        response = requests.post(
-            url, headers=headers, json=data, verify=False, timeout=(5, 60)
-        )
-    except Exception as e:
-        log.info(f"【{content}】信息回复异常")
-        return "我听不懂你说什么"
-    assistant_message = response.json()["choices"][0]["message"]["content"]
-    # history.append({"role": "assistant", "content": assistant_message})
-    return assistant_message
-
-
-# LLM回复
-def aiResponseTry():
-    global is_ai_ready
-    try:
-        ai_response()
-    except Exception as e:
-        log.info(f"【ai_response】发生了异常：{e}")
-        logging.error(traceback.format_exc())
-        is_ai_ready = True
-
-
-is_stream_out = False  # 标识语音流式处理时候，其他音频合成不能干扰
-# LLM回复
-def ai_response():
-    """
-    从问题队列中提取一条，生成回复并存入回复队列中
-    :return:
-    """
-    global is_ai_ready
-    global QuestionList
-    global history
-    global is_stream_out
-
-    is_ai_ready = False
-    llm_json = QuestionList.get()
-    # 参数提取
-    uid = llm_json["uid"]
-    username = llm_json["username"]
-    prompt = llm_json["prompt"]
-    traceid = llm_json["traceid"]
-
-    # 用户查询标题
-    title = prompt
-    # query有值是搜索任务，没有值是聊天任务
-    if "query" in llm_json:
-        # 搜索任务的查询字符，在query字段
-        title = llm_json["query"]
-        obs.show_text("状态提示", f'{Ai_Name}搜索问题"{title}"')
-    else:
-        obs.show_text("状态提示", f'{Ai_Name}思考问题"{title}"')
-
-    # 身份判定
-    shenfen = ""
-    if username == "程序猿的退休生活":
-        shenfen = "老爸说:"
-    elif uid == 0:
-        shenfen = ""
-    else:
-        shenfen = f'"{username}"说:'
-
-    # fastgpt
-    if local_llm_type == 1:
-        username_prompt = f"{shenfen}{prompt}"
-        log.info(f"[{traceid}]{username_prompt}")
-        authorization = ""
-        # 后续改成舆情判断，当前是简易字符串判断
-        if re.search(public_sentiment_key, prompt):
-            authorization = fastgpt_authorization.get("女仆版")
-        else:
-            # 摇骰子选择性格
-            random_number = random.randrange(1, 11)
-            if random_number > 4:
-                authorization = fastgpt_authorization.get("怒怼版")
-            else:
-                authorization = fastgpt_authorization.get("女仆版")
-        # fastgpt聊天
-        response = chat_fastgpt(username_prompt, uid, username, authorization)
-    # text-generation-webui
-    elif local_llm_type == 2:
-        username_prompt = f"{shenfen}{prompt}"
-        log.info(f"[{traceid}]{username_prompt}")
-        response = chat_tgw(username_prompt, "Aileen Voracious", "chat", "Winlone",username)
-        response = response.replace("You", username)
-    # 过滤表情<>或者()标签
-    obs.show_text("状态提示", f'{Ai_Name}思考问题"{title}"完成')
-
-    # 处理流式回复
-    all_content = ""
-    temp = ""
-
-    chatStatus = "start"
-    for line in response.iter_lines():
-        if line:
-            # 处理收到的JSON响应
-            # response_json = json.loads(line)
-            str_data = line.decode("utf-8")
-            str_data = str_data.replace("data: ", "")
-            log.info(f"[{traceid}]{str_data}")
-            if str_data != "[DONE]":
-                response_json = json.loads(str_data)
-                if response_json["choices"][0]["finish_reason"] != "stop":
-                    # 回复内容
-                    stream_content = response_json["choices"][0]["delta"]["content"]
-                    if stream_content == "":
-                        continue
-                    # 原始全文本
-                    all_content = all_content + stream_content
-                    # 过滤特殊符号
-                    stream_content = StringUtil.filter_html_tags(stream_content)
-                    content = temp + stream_content
-
-                    # 从右边出现的符号开始计算
-                    num = StringUtil.rfind_index_contain_string(split_str, content)
-                    if num > 0:
-                        # 文本分割处理
-                        split_content = content[0:num]
-                        log.info(f"[{traceid}]分割后文本:" + split_content)
-
-                        # 判断字符数量大于x个时候才会切割，字符太短切割音频太碎
-                        if len(split_content) > split_limit:
-                            temp = content[num : len(content)]
-                            # 合成语音：文本碎片化段落
-                            jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":chatStatus,"question":title,"text":split_content,"lanuage":"AutoChange"}
-                            AnswerList.put(jsonStr)
-                            # 第二行后面就为空
-                            chatStatus = ""
-                        else:
-                            temp = content
-                    else:
-                        # 拼接到一下轮分割文本输出
-                        temp = content
-                else:
-                    # 结束把剩余文本输出语音
-                    if temp != "":
-                        # 结尾：剩余文本
-                        jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":"end","question":title,"text":temp,"lanuage":"AutoChange"}
-                        AnswerList.put(jsonStr)
-                    else:
-                        # 结尾：空值
-                        jsonStr = {"voiceType":"chat","traceid":traceid,"chatStatus":"end","question":title,"text":"","lanuage":"AutoChange"}
-                        AnswerList.put(jsonStr)
-                    log.info(f"[{traceid}]end:" + temp)
-    is_ai_ready = True  # 指示AI已经准备好回复下一个问题
-
-    # 切换场景
-    if "粉色" in all_content or "睡觉" in all_content or "粉红" in all_content or "房间" in all_content or "晚上" in all_content:
-        changeScene("粉色房间")
-    elif "清晨" in all_content or "早" in all_content or "睡醒" in all_content:
-        changeScene("清晨房间")
-    elif "祭拜" in all_content or "神社" in all_content or "寺庙" in all_content:
-        changeScene("神社")
-    elif "花房" in all_content or "花香" in all_content:
-        changeScene("花房")
-    elif "岸" in all_content or "海" in all_content:
-        changeScene("海岸花坊")
-
-    # 日志输出
-    current_question_count = QuestionList.qsize()
-    log.info(f"[{traceid}][AI回复]{all_content}")
-    log.info(f"[{traceid}]System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
 
 # duckduckgo搜索引擎搜索
 textSearchNum = 5
@@ -1163,7 +886,7 @@ def check_text_search():
             "uid": uid,
             "username": username,
         }
-        QuestionList.put(llm_json)
+        llmData.QuestionList.put(llm_json)
 
         is_SearchText = 2  # 搜文完成
 
@@ -1177,7 +900,7 @@ def check_dance():
         sched1.pause()
         # 停止所有在执行的任务
         cmd("\\dance")
-        tts_say("开始跳舞了，大家嗨起来")
+        ttsCore.tts_say("开始跳舞了，大家嗨起来")
         dance_json = DanceQueueList.get()
         # 开始跳舞任务
         dance(dance_json)
@@ -1259,9 +982,9 @@ def output_img_thead(img_search_json):
         obs.show_text("状态提示", "")
         if status == 1:
             # 加入回复列表，并且后续合成语音
-            tts_say(f"回复{username}：我给你搜了一张图《{prompt}》")
+            ttsCore.tts_say(f"回复{username}：我给你搜了一张图《{prompt}》")
         else:
-            tts_say(f"回复{username}：搜索图片《{prompt}》失败")
+            ttsCore.tts_say(f"回复{username}：搜索图片《{prompt}》失败")
     except Exception as e:
         log.info(f"【output_img_thead】发生了异常：{e}")
         logging.error(traceback.format_exc())
@@ -1281,7 +1004,7 @@ def output_search_img(imgUrl, prompt, username):
     if status == -1:
         outputTxt = f"回复{username}：搜图鉴黄失败《{prompt}》-nsfw:{nsfw}，禁止执行"
         log.info(outputTxt)
-        tts_say(outputTxt)
+        ttsCore.tts_say(outputTxt)
         return
     # 黄图情况
     if status == 0:
@@ -1289,7 +1012,7 @@ def output_search_img(imgUrl, prompt, username):
             f"回复{username}：搜图发现一张黄图《{prompt}》-nsfw:{nsfw}，禁止执行"
         )
         log.info(outputTxt)
-        tts_say(outputTxt)
+        ttsCore.tts_say(outputTxt)
         return
     outputTxt = f"回复{username}：搜图为绿色图片《{prompt}》-nsfw:{nsfw}，输出显示"
     log.info(outputTxt)
@@ -1356,11 +1079,9 @@ def check_answer():
     如果AI没有在生成回复且队列中还有问题 则创建一个生成的线程
     :return:
     """
-    global is_ai_ready
-    global QuestionList
-    if not QuestionList.empty() and is_ai_ready:
-        is_ai_ready = False
-        answers_thread = Thread(target=aiResponseTry)
+    if not llmData.QuestionList.empty() and llmData.is_ai_ready:
+        llmData.is_ai_ready = False
+        answers_thread = Thread(target=llmCore.aiResponseTry)
         answers_thread.start()
 
 
@@ -1368,420 +1089,15 @@ def check_answer():
 tts_chat_say_pool = ThreadPoolExecutor(
     max_workers=speech_max_threads, thread_name_prefix="tts_chat_say"
 )
-
-
 # 如果语音已经放完且队列中还有回复 则创建一个生成并播放TTS的线程
 def check_tts():
-    global AnswerList
-    if not AnswerList.empty():
-        json = AnswerList.get()
+    if not llmData.AnswerList.empty():
+        json = llmData.AnswerList.get()
         traceid = json["traceid"]
         text = json["text"]
-        log.info(
-            f"[{traceid}]text:{text},is_tts_ready:{is_tts_ready},is_stream_out:{is_stream_out},SayCount:{SayCount},is_singing:{is_singing}"
-        )
+        log.info(f"[{traceid}]text:{text},is_tts_ready:{ttsData.is_tts_ready},is_stream_out:{llmData.is_stream_out},SayCount:{ttsData.SayCount},is_singing:{is_singing}")
         # 合成语音
-        tts_chat_say_pool.submit(tts_chat_say, json)
-
-"""
-bert-vits2语音合成
-filename：音频文件名
-text：说话文本
-emotion：情感描述
-"""
-def bert_vits2(filename, text, emotion):
-    save_path = f".\output\{filename}.mp3"
-    text = parse.quote(text)
-    response = requests.get(
-        url=f"http://{bert_vists_url}/voice?text={text}&model_id=0&speaker_name={speaker_name}&sdp_ratio={sdp_ratio}&noise={noise}&noisew={noisew}&length={speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}",
-        timeout=(5, 60),
-    )
-    if response.status_code == 200:
-        audio_data = response.content  # 获取音频数据
-        with open(save_path, "wb") as file:
-            filenum = file.write(audio_data)
-            if filenum > 0:
-                return 1
-    return 0
-
-def gtp_vists(filename, text, emotion):
-    save_path = f".\output\{filename}.mp3"
-    text = parse.quote(text)
-    response = requests.get(
-        url=f"http://{gtp_vists_url}/?text={text}&text_language=auto", timeout=(5, 60)
-    )
-    if response.status_code == 200:
-        audio_data = response.content  # 获取音频数据
-        with open(save_path, "wb") as file:
-            filenum = file.write(audio_data)
-            if filenum > 0:
-                return 1
-    return 0
-
-
-# 直接合成语音播放
-def tts_say(text):
-    try:
-        traceid = str(uuid.uuid4())
-        json =  {"voiceType":"other","traceid":traceid,"chatStatus":"end","question":"","text":text,"lanuage":""}
-        tts_say_do(json)
-    except Exception as e:
-        log.info(f"【tts_say】发生了异常：{e}")
-        logging.error(traceback.format_exc())
-
-
-# 直接合成语音播放-聊天用
-def tts_chat_say(json):
-    global is_tts_ready
-    global is_stream_out
-    try:
-        tts_say_do(json)
-    except Exception as e:
-        is_tts_ready = True
-        is_stream_out = False
-        log.info(f"【tts_chat_say】发生了异常：{e}")
-        logging.error(traceback.format_exc())
-
-
-# 直接合成语音播放 {"question":question,"text":text,"lanuage":"ja"}
-def tts_say_do(json):
-    global SayCount
-    global is_tts_ready
-    global is_stream_out
-    SayCount += 1
-    filename = f"say{SayCount}"
-
-    question = json["question"]
-    text = json["text"]
-    replyText = text
-    lanuage = json["lanuage"]
-    voiceType = json["voiceType"]
-    traceid = json["traceid"]
-    chatStatus = json["chatStatus"]
-
-    # 退出标识
-    if text == "" and chatStatus == "end":
-        say_lock.acquire()
-        replyText_json = {"traceid": traceid, "chatStatus": chatStatus, "text": ""}
-        log.info(replyText_json)
-        ReplyTextList.put(replyText_json)
-        is_stream_out = False
-        say_lock.release()
-        return
-
-    # 识别表情
-    jsonstr = emote_content(text)
-    log.info(f"[{traceid}]输出表情{jsonstr}")
-    emotion = "happy"
-    if len(jsonstr) > 0:
-        emotion = jsonstr[0]["content"]
-
-    # 感情值增加
-    moodNum = mood(emotion)
-
-    # 触发翻译日语
-    if lanuage == "AutoChange":
-        log.info(f"[{traceid}]当前感情值:{moodNum}")
-        if re.search(".*日(文|语).*", question) or re.search(".*日(文|语).*说.*", text):
-            trans_json = translate(text, "zh-Hans", "ja")
-            if StringUtil.has_field(trans_json, "translated"):
-                text = trans_json["translated"]
-        elif re.search(".*英(文|语).*", question) or re.search(
-            ".*英(文|语).*说.*", text
-        ):
-            trans_json = translate(text, "zh-Hans", "en")
-            if StringUtil.has_field(trans_json, "translated"):
-                text = trans_json["translated"]
-        elif moodNum > 270 or emotion == "angry":
-            trans_json = translate(text, "zh-Hans", "ja")
-            if StringUtil.has_field(trans_json, "translated"):
-                text = trans_json["translated"]
-
-    # 微软合成语音
-    # with open(f"./output/{filename}.txt", "w", encoding="utf-8") as f:
-    #     f.write(f"{text}")  # 将要读的回复写入临时文件
-    # 合成声音
-    # subprocess.run(
-    #     f"edge-tts --voice zh-CN-XiaoxiaoNeural --rate=+20% --f .\output\{filename}.txt --write-media .\output\{filename}.mp3 2>nul",
-    #     shell=True,
-    # )
-
-    # bert-vits2合成语音
-    # status = bert_vits2(filename,text,emotion)
-
-    # gtp-vists合成语音
-    pattern = "(《|》)"  # 过滤特殊字符，这些字符会影响语音合成
-    text = re.sub(pattern, "", text)
-    status = gtp_vists(filename, text, emotion)
-    if status == 0:
-        return
-    if question != "":
-        obs.show_text("状态提示", f'{Ai_Name}语音合成"{question}"完成')
-
-    # 判断同序列聊天语音合成时候，其他语音合成任务等待
-    # if voiceType!="chat":
-    #     while is_stream_out==True:
-    #         time.sleep(1)
-
-    # ============ 【线程锁】播放语音【时间会很长】 ==================
-    say_lock.acquire()
-    is_tts_ready = False
-    if chatStatus == "start":
-        is_stream_out = True
-
-    # 输出表情
-    emote_thread = Thread(target=emote_show, args=(jsonstr,))
-    emote_thread.start()
-
-    # 输出回复字幕
-    replyText_json = {"traceid": traceid, "chatStatus": chatStatus, "text": replyText}
-    log.info(replyText_json)
-    ReplyTextList.put(replyText_json)
-
-    # 循环摇摆动作
-    yaotou_thread = Thread(target=auto_swing)
-    yaotou_thread.start()
-
-    # 播放声音
-    mpv_play("mpv.exe", f".\output\{filename}.mp3", 100, "0")
-
-    if chatStatus == "end":
-        is_stream_out = False
-    is_tts_ready = True
-    say_lock.release()
-    # ========================= end =============================
-
-    # 删除语音文件
-    subprocess.run(f"del /f .\output\{filename}.mp3 1>nul", shell=True)
-
-
-mood_num = 0
-# 感情值判断
-def mood(emotion):
-    global mood_num
-    if emotion == "sad":
-        mood_num = mood_num + 1
-    if emotion == "happy":
-        mood_num = mood_num + 2
-    if emotion == "angry":
-        mood_num = mood_num + 3
-    if mood_num > 300:
-        mood_num = 0
-    return mood_num
-
-# 摇摆
-swing_motion = 2  # 1.摇摆中 2.停止摇摆
-auto_swing_lock = threading.Lock()
-
-def auto_swing():
-    auto_swing_lock.acquire()
-    global swing_motion
-    # 触发器-设置开始摇摆: 停止摇摆+（唱歌中 或者 聊天中）= 可以设置摇摆动作
-    if swing_motion == 2 and (is_singing == 1 or is_tts_ready == False):
-        log.info(f"进入摇摆状态:{swing_motion},{is_singing},{is_tts_ready}")
-        swing_motion = 1
-    else:
-        auto_swing_lock.release()
-        return
-    # 监听停止摇摆线程
-    stop_emote_thread = Thread(target=stop_motion)
-    stop_emote_thread.start()
-    auto_swing_lock.release()
-
-    # 执行器-循环摇摆：唱歌中 或者 说话中 都会摇摆
-    while swing_motion == 1 and (is_singing == 1 or is_tts_ready == False):
-        jsonstr = []
-        jsonstr.append({"content": "happy", "key": "摇摆1", "num": 1, "timesleep": 0, "donum": 0, "endwait": 24})
-        jsonstr.append({"content": "happy", "key": "摇摆2", "num": 1, "timesleep": 0, "donum": 0, "endwait": 21})
-        jsonstr.append({"content": "happy", "key": "摇摆3", "num": 1, "timesleep": 0, "donum": 0, "endwait": 30})
-        jsonstr.append({"content": "happy", "key": "摇摆4", "num": 1, "timesleep": 0, "donum": 0, "endwait": 19})
-        jsonstr.append({"content": "happy", "key": "摇摆5", "num": 1, "timesleep": 0, "donum": 0, "endwait": 30})
-        jsonstr.append({"content": "happy", "key": "摇摆6", "num": 1, "timesleep": 0, "donum": 0, "endwait": 30})
-        # 随机一个【摇摆动作】
-        num = random.randrange(0, len(jsonstr))
-        emote_show_json = []
-        emote_show_json.append(jsonstr[num])
-        # 执行【摇摆动作】
-        log.info(f"执行摇摆：{emote_show_json}")
-        emote_show_thread = Thread(target=emote_show, args=(emote_show_json,))
-        emote_show_thread.start()
-        # 当前【摇摆动作】等待结束时间
-        endwait = emote_show_json[0]["endwait"]
-        while endwait > 0:
-            time.sleep(1)
-            endwait = endwait - 1
-            # 唱歌完毕并且聊天完毕：停止摇摆动作
-            if is_singing == 2 and is_tts_ready == True:
-                swing_motion = 2
-                log.info(f"强制停止摇摆：{swing_motion}")
-                break
-    swing_motion = 2
-    log.info(f"结束摇摆：{emote_show_json}")
-
-# 停止动作
-def stop_motion():
-    while swing_motion == 1:
-        time.sleep(1)
-    log.info(f"静止：{swing_motion}")
-    emote_ws(1, 0, "静止")
-
-# 文本识别表情内容
-# "content":语音情感,"key":按键名称,"num":执行,第几个字符开始执行表情,
-# "donum":循环表情次数 timesleep:和donum联动，等待n秒开始循环执行当前表情,"endwait":表情等待结束时间，一般和执行表情的时间一致
-def emote_content(response):
-    jsonstr = []
-    # =========== 随机动作 ==============
-    # text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "欢迎", "搜", "唱"]
-    # num = is_index_nocontain_string(text, response)
-    # if num > 0:
-    #     press_arry = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-    #     press = random.randrange(0, len(press_arry))
-    #     jsonstr.append({"content":"happy","key":press_arry[press],"num":num})
-    # ===============================
-
-    # =========== 开心 ==============
-    text = ["笑", "不错", "哈", "开心", "呵", "嘻", "画", "搜", "有趣"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "happy", "key": "开心", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 哭 ==============
-    text = ["哭", "悲伤", "伤心", "凄惨", "好惨", "呜呜", "悲哀"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "sad", "key": "哭", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 招呼 ==============
-    text = ["你好", "在吗", "干嘛", "名字", "欢迎", "我在", "玩笑", "逗"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        press1 = random.randrange(1, 3)
-        if press1 == 1:
-            jsonstr.append({"content": "call", "key": "捂嘴", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-        else:
-            jsonstr.append({"content": "call", "key": "拿扇子", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-        press2 = random.randrange(1, 4)
-        if press2 == 1:
-            jsonstr.append({"content": "call", "key": "星星眼", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-        elif press2 == 2:
-            jsonstr.append({"content": "call", "key": "害羞", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-        elif press2 == 3:
-            jsonstr.append({"content": "call", "key": "米米", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 有钱 ==============
-    text = ["钱", "money", "有米"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "call", "key": "米米", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 温柔 ==============
-    text = ["温柔", "抚摸", "抚媚", "骚", "唱歌"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        press1 = random.randrange(1, 3)
-        if press1 == 1:
-            jsonstr.append({"content": "call", "key": "左眼闭合", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-        else:
-            jsonstr.append({"content": "call", "key": "右眼闭合", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-        press2 = random.randrange(1, 3)
-        if press2 == 1:
-            jsonstr.append({"content": "call", "key": "头左倾", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-        else:
-            jsonstr.append({"content": "call", "key": "头右倾", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 生气 ==============
-    text = ["生气", "不理你", "骂", "臭", "打死", "可恶", "白痴", "可恶"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "angry", "key": "生气", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 尴尬 ==============
-    text = ["尴尬", "无聊", "无奈", "傻子", "郁闷", "龟蛋", "傻逼", "逗比", "逗逼", "忘记", "怎么可能", "调侃"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "blush", "key": "尴尬", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 认同 ==============
-    text = ["认同", "点头", "嗯", "哦", "女仆"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "approve", "key": "认同", "num": num, "timesleep": 0.002, "donum": 5, "endwait": 0})
-    # =========== 汗颜 ==============
-    text = ["汗颜", "流汗", "郁闷", "笑死", "白痴", "渣渣", "搞笑", "恶心"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "sweat", "key": "汗颜", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 晕 ==============
-    text = ["晕", "头晕", "晕死", "呕"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "blush", "key": "晕", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 吐血 ==============
-    text = ["吐血", "血"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "blood", "key": "血", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 可爱 ==============
-    text = ["可爱", "害羞", "爱你", "天真", "搞笑", "喜欢", "全知全能"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "love", "key": "可爱", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    # =========== 摸摸头 ==============
-    text = ["摸摸头", "摸摸脑袋", "乖", "做得好"]
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        jsonstr.append({"content": "happy", "key": "摸摸头", "num": num, "timesleep": 5, "donum": 1, "endwait": 0})
-        jsonstr.append({"content": "blush", "key": "晕", "num": num, "timesleep": 0, "donum": 0, "endwait": 0})
-    return jsonstr
-
-
-# 表情加入:使用键盘控制VTube
-# key：表情按键  num:第几个字符开始执行表情 donum：循环表情次数 timesleep:和donum联动，等待n秒开始循环执行当前表情
-def emote_show(emote_content):
-    for data in emote_content:
-        key = data["key"]
-        num = data["num"]
-        timesleep = data["timesleep"]
-        donum = data["donum"]
-        emote_ws(num, 0.4, key)
-        # 有需要结束的表情按钮
-        while donum > 0:
-            time.sleep(timesleep)
-            emote_ws(1, 0, key)
-            donum = donum - 1
-
-
-# 键盘触发-带按键时长
-def emote_do(text, response, keyboard, startTime, key):
-    num = StringUtil.is_index_nocontain_string(text, response)
-    if num > 0:
-        start = round(num * startTime, 2)
-        time.sleep(start)
-        keyboard.press(key)
-        time.sleep(1)
-        keyboard.release(key)
-        log.info(f"{response}:输出表情({start}){key}")
-
-
-# ws协议：发送表情到Vtuber
-# num：表情第几个执行   interval：间隔秒数  key：按键
-def emote_ws(num, interval, key):
-    global ws
-    if num > 0:
-        start = round(num * interval, 2)
-        time.sleep(start)
-        jstr = {
-            "apiName": "VTubeStudioPublicAPI",
-            "apiVersion": "1.0",
-            "requestID": "SomeID11",
-            "messageType": "HotkeyTriggerRequest",
-            "data": {"hotkeyID": key},
-        }
-        data = json.dumps(jstr)
-        # vtuber执行表情展示
-        try:
-            ws.send(data)
-        except Exception as e:
-            error = f"【表情发送】发生了异常：{e}"
-            log.info(error)
-            if error in "Connection is already closed":
-                ws = websocket.WebSocketApp(f"ws://{vtuber_websocket}", on_open=on_open)
-                # ws服务心跳包
-                run_forever_thread = Thread(target=run_forever)
-                run_forever_thread.start()
+        tts_chat_say_pool.submit(ttsCore.tts_chat_say, json)
 
 
 # 判断字符是否存在歌曲此队列
@@ -1796,14 +1112,12 @@ def exist_song_queues(queues, name):
             return True
     return False
 
-
 # 播放唱歌
 def sing_play(mpv_name, song_path, volume, start):
     global sing_play_flag
     sing_play_flag = 1
     mpv_play(mpv_name, song_path, volume, start)
     sing_play_flag = 0
-
 
 # 播放器播放
 def mpv_play(mpv_name, song_path, volume, start):
@@ -1812,7 +1126,6 @@ def mpv_play(mpv_name, song_path, volume, start):
         f'{mpv_name} -vo null --volume={volume} --start={start} "{song_path}" 1>nul',
         shell=True,
     )
-
 
 # 唱歌线程
 def check_sing():
@@ -1861,7 +1174,7 @@ def sing(songname, username):
     if id == 0:
         outputTxt = f"{font_text}歌库不存在《{query}》这首歌曲哦"
         log.info(outputTxt)
-        tts_say(outputTxt)
+        ttsCore.tts_say(outputTxt)
         return
     song_path = f"./output/{songname}/"
     # =============== 结束-获取真实歌曲名称 =================
@@ -1871,7 +1184,7 @@ def sing(songname, username):
         outputTxt = (
             f"回复{username}：{font_text}歌单里已经有歌曲《{songname}》，请勿重新点播"
         )
-        tts_say(outputTxt)
+        ttsCore.tts_say(outputTxt)
         return
     # =============== 结束-重复点播判断 =================
 
@@ -1881,7 +1194,7 @@ def sing(songname, username):
     ):
         log.info(f"找到存在本地歌曲:{song_path}")
         outputTxt = f"回复{username}：{font_text}{Ai_Name}会唱《{songname}》这首歌曲哦"
-        tts_say(outputTxt)
+        ttsCore.tts_say(outputTxt)
         is_created = 1
     # =============== 结束-判断本地是否有歌 =================
     else:
@@ -1901,7 +1214,7 @@ def sing(songname, username):
         # 播报学习歌曲
         log.info(f"歌曲不存在，需要生成歌曲《{songname}》")
         outputTxt = f"回复{username}：{font_text}{Ai_Name}需要学唱歌曲《{songname}》，请耐心等待"
-        tts_say(outputTxt)
+        ttsCore.tts_say(outputTxt)
         # 其他歌曲在生成的时候等待
         while is_creating_song == 1:
             time.sleep(1)
@@ -2045,11 +1358,11 @@ def play_song(is_created, songname, song_path, username, query):
             searchimg_output_thread.start()
             # =============== 结束-触发搜图 =================
             # 开始唱歌服装穿戴
-            emote_ws(1, 0.2, "唱歌")
+            emoteOper.emote_ws(1, 0.2, "唱歌")
             # 播报唱歌文字
-            tts_say(f"回复{username}：我准备唱一首歌《{songname}》")
+            ttsCore.tts_say(f"回复{username}：我准备唱一首歌《{songname}》")
             # 循环摇摆动作
-            auto_swing_thread = Thread(target=auto_swing)
+            auto_swing_thread = Thread(target=actionOper.auto_swing)
             auto_swing_thread.start()
             # 唱歌视频播放
             # sing_dance_thread = Thread(target=sing_dance, args=(query,))
@@ -2075,13 +1388,13 @@ def play_song(is_created, songname, song_path, username, query):
             # 停止唱歌视频播放
             # obs.control_video("唱歌视频",VideoControl.STOP.value)
             # 结束唱歌穿戴
-            emote_ws(1, 0.2, "唱歌")
+            emoteOper.emote_ws(1, 0.2, "唱歌")
             return 1
         else:
             tip = f"已经跳过歌曲《{songname}》，请稍后再点播"
             log.info(tip)
             # 加入回复列表，并且后续合成语音
-            tts_say(f"回复{username}：{tip}")
+            ttsCore.tts_say(f"回复{username}：{tip}")
             return 2
     except Exception as e:
         log.info(f"《{songname}》play_song异常{e}")
@@ -2137,18 +1450,6 @@ def check_down_song(songname):
             return is_created
 
     return is_created
-
-# 翻译
-def translate(text, from_lanuage, to_lanuage):
-    with DDGS(proxies=duckduckgo_proxies, timeout=20) as ddgs:
-        try:
-            r = ddgs.translate(text, from_=from_lanuage, to=to_lanuage)
-            log.info(f"翻译：{r}")
-            return r
-        except Exception as e:
-            log.info(f"translate信息回复异常{e}")
-            logging.error(traceback.format_exc())
-        return text
 
 # 抽取固定扩展提示词：limit:限制条数  num:抽取次数
 def draw_prompt_do(query, limit, num):
@@ -2367,13 +1668,13 @@ def draw(prompt, drawcontent, username, isExtend):
         if status == -1:
             outputTxt = f"回复{username}：绘画鉴黄失败《{drawName}》，禁止执行"
             log.info(outputTxt)
-            tts_say(outputTxt)
+            ttsCore.tts_say(outputTxt)
             return
         # 黄图情况
         if status == 0:
             outputTxt = f"回复{username}：绘画发现一张黄图《{drawName}》，禁止执行"
             log.info(outputTxt)
-            tts_say(outputTxt)
+            ttsCore.tts_say(outputTxt)
             return
         # ========================================================
 
@@ -2390,7 +1691,7 @@ def draw(prompt, drawcontent, username, isExtend):
         # 播报绘画
         outputTxt = f"回复{username}：我给你画了一张画《{drawName}》"
         log.info(outputTxt)
-        tts_say(outputTxt)
+        ttsCore.tts_say(outputTxt)
     except Exception as e:
         log.info(f"【draw】发生了异常：{e}")
         logging.error(traceback.format_exc())
@@ -2482,9 +1783,9 @@ def check_welcome_room():
         if is_llm_welcome == True:
             # 询问LLM
             llm_json = {"traceid":traceid, "prompt": text, "uid": 0, "username": Ai_Name}
-            QuestionList.put(llm_json)  # 将弹幕消息放入队列
+            llmData.QuestionList.put(llm_json)  # 将弹幕消息放入队列
         else:
-            tts_say(text)
+            ttsCore.tts_say(text)
 
 
 # 时间判断场景
@@ -2515,17 +1816,11 @@ def check_scene_time():
 
 
 def main():
-    # ws表情服务心跳包
-    run_forever_thread = Thread(target=run_forever)
-    run_forever_thread.start()
-
-    # 连接obs
-    obs.connect()
 
     # 初始化衣服
     global now_clothes
-    emote_ws(1, 0.2, "初始化")  # 解除当前衣服
-    emote_ws(1, 0.2, "便衣")  # 穿上新衣服
+    emoteOper.emote_ws(1, 0.2, "初始化")  # 解除当前衣服
+    emoteOper.emote_ws(1, 0.2, "便衣")  # 穿上新衣服
     now_clothes = "便衣"
 
     # 跳舞表情
@@ -2547,8 +1842,8 @@ def main():
     scene_name = "海岸花坊"
     obs.change_scene(scene_name)
     # 背景乐切换
-    if scene_name in song_background:
-        song = song_background[scene_name]
+    if scene_name in vtuberData.song_background:
+        song = vtuberData.song_background[scene_name]
         obs.play_video("背景音乐", song)
         time.sleep(1)
         obs.control_video("背景音乐", VideoControl.RESTART.value)
@@ -2611,25 +1906,6 @@ def apprun():
     app.logger.disabled = True
     # 启动web应用
     app.run(host="0.0.0.0", port=1800)
-
-
-# 授权Vtuber服务
-def auth():
-    # 授权码
-    authstr = {
-        "apiName": "VTubeStudioPublicAPI",
-        "apiVersion": "1.0",
-        "requestID": "SomeID",
-        "messageType": "AuthenticationRequest",
-        "data": {
-            "pluginName": vtuber_pluginName,
-            "pluginDeveloper": vtuber_pluginDeveloper,
-            "authenticationToken": vtuber_authenticationToken,
-        },
-    }
-    data = json.dumps(authstr)
-    ws.send(data)
-
 
 if __name__ == "__main__":
     main()

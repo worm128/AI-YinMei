@@ -1,6 +1,8 @@
 import subprocess
+from func.tools.singleton_mode import singleton
 
-class mpvPlay:
+@singleton
+class MpvPlay:
      def __init__(self):
          pass
 
