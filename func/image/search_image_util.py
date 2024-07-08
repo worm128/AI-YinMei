@@ -1,9 +1,4 @@
-# -*- coding:utf-8 -*- 
-"""
-Author：SPIDERMAN
-Time: 2021/7/19 
-Software: PyCharm
-"""
+
 import json
 import re
 from bs4 import BeautifulSoup as bs

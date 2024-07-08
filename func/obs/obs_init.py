@@ -3,6 +3,7 @@ from func.config.default_config import defaultConfig
 from func.obs.obs_websocket import ObsWebSocket, VideoStatus, VideoControl
 from func.tools.singleton_mode import singleton
 
+@singleton
 class ObsInit:
     # 设置控制台日志
     log = DefaultLog().getLogger()

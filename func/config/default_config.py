@@ -1,15 +1,5 @@
 from func.config.config_base import ConfigBase
-
-def singleton(cls):
-    instances = {}
-    def getInstance(*args, **kwargs):
-        if cls not in instances:
-            instances[cls] = cls(*args, **kwargs)
-        return instances[cls]
-    def delInstance():
-        del instances[cls]
-    getInstance.delInstance = delInstance
-    return getInstance
+from func.tools.singleton_mode import singleton
 
 @singleton
 class defaultConfig:

@@ -2,6 +2,8 @@ from func.log.default_log import DefaultLog
 import re
 import random
 import json
+import uuid
+from threading import Thread
 from func.tools.singleton_mode import singleton
 from func.obs.obs_init import ObsInit
 from func.tools.string_util import StringUtil
@@ -9,6 +11,7 @@ from func.vtuber.action_oper import ActionOper
 from func.llm.fastgpt import FastGpt
 from func.llm.tgw import Tgw
 from func.gobal.data import LLmData
+
 
 @singleton
 class LLmCore:
@@ -37,7 +40,7 @@ class LLmCore:
         try:
             self.ai_response()
         except Exception as e:
-            self.log.info(f"【ai_response】发生了异常：{e}")
+            self.log.exception(f"【ai_response】发生了异常：{e}")
             self.llmData.is_ai_ready = True
 
     # LLM回复
@@ -80,7 +83,7 @@ class LLmCore:
             authorization = ""
             # 后续改成舆情判断，当前是简易字符串判断
             if re.search(self.llmData.public_sentiment_key, prompt):
-                authorization = self.fastgpt_authorization.get("女仆版")
+                authorization = self.llm.fastgpt_authorization.get("女仆版")
             else:
                 # 摇骰子选择性格
                 random_number = random.randrange(1, 11)
@@ -176,3 +179,34 @@ class LLmCore:
         current_question_count = self.llmData.QuestionList.qsize()
         self.log.info(f"[{traceid}][AI回复]{all_content}")
         self.log.info(f"[{traceid}]System>>[{username}]的回复已存入队列，当前剩余问题数:{current_question_count}")
+
+    # 检查LLM回复线程
+    def check_answer(self):
+        """
+        如果AI没有在生成回复且队列中还有问题 则创建一个生成的线程
+        :return:
+        """
+        if not self.llmData.QuestionList.empty() and self.llmData.is_ai_ready:
+            self.llmData.is_ai_ready = False
+            answers_thread = Thread(target=self.aiResponseTry)
+            answers_thread.start()
+
+    # http接口:聊天
+    def http_chat(self,text,uid,username):
+        status = "成功"
+        traceid = str(uuid.uuid4())
+        if text is None:
+            jsonStr = "({\"traceid\": \"" + traceid + "\",\"status\": \"值为空\",\"content\": \"" + text + "\"})"
+            return jsonStr
+
+        # 消息处理
+        self.msg_deal(traceid, text, uid, username)
+
+        jsonStr = "({\"traceid\": \"" + traceid + "\",\"status\": \"" + status + "\",\"content\": \"" + text + "\"})"
+        return jsonStr
+
+    # 聊天入口处理
+    def msg_deal(self, traceid, query, uid, user_name):
+        # 询问LLM
+        llm_json = {"traceid": traceid, "prompt": query, "uid": uid, "username": user_name}
+        self.llmData.QuestionList.put(llm_json)  # 将弹幕消息放入队列

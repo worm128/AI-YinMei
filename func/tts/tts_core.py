@@ -4,6 +4,8 @@ import traceback
 import re
 import subprocess
 from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
+
 from func.log.default_log import DefaultLog
 from func.vtuber.emote_oper import EmoteOper
 from func.vtuber.action_oper import ActionOper
@@ -18,6 +20,7 @@ from func.obs.obs_init import ObsInit
 from func.tools.singleton_mode import singleton
 from func.gobal.data import TTsData
 from func.gobal.data import LLmData
+from func.gobal.data import SingData
 
 @singleton
 class TTsCore:
@@ -32,6 +35,7 @@ class TTsCore:
 
     ttsData = TTsData()  # tts数据
     llmData = LLmData()  # llm数据
+    singData = SingData()  # 唱歌数据
     # 选择语音
     select_vists = ttsData.select_vists
     if select_vists == "GtpVists":
@@ -163,3 +167,32 @@ class TTsCore:
 
         # 删除语音文件
         subprocess.run(f"del /f .\output\{filename}.mp3 1>nul", shell=True)
+
+    # 语音合成线程池
+    tts_chat_say_pool = ThreadPoolExecutor(
+        max_workers=ttsData.speech_max_threads, thread_name_prefix="tts_chat_say"
+    )
+    # 如果语音已经放完且队列中还有回复 则创建一个生成并播放TTS的线程
+    def check_tts(self):
+        if not self.llmData.AnswerList.empty():
+            json = self.llmData.AnswerList.get()
+            traceid = json["traceid"]
+            text = json["text"]
+            self.log.info(
+                f"[{traceid}]text:{text},is_tts_ready:{self.ttsData.is_tts_ready},is_stream_out:{self.llmData.is_stream_out},SayCount:{self.ttsData.SayCount},is_singing:{self.singData.is_singing}")
+            # 合成语音
+            self.tts_chat_say_pool.submit(self.tts_chat_say, json)
+
+
+    # http接口：聊天回复弹框处理
+    def http_chatreply(self):
+        status = "失败"
+        if not self.ttsData.ReplyTextList.empty():
+            json_str = self.ttsData.ReplyTextList.get()
+            text = json_str["text"]
+            traceid = json_str["traceid"]
+            chatStatus = json_str["chatStatus"]
+            status = "成功"
+        jsonStr = "({\"traceid\": \"" + traceid + "\",\"chatStatus\": \"" + chatStatus + "\",\"status\": \"" + status + "\",\"content\": \"" + text.replace(
+            "\"", "'").replace("\r", " ").replace("\n", "<br/>") + "\"})"
+        return jsonStr

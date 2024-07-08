@@ -36,6 +36,8 @@ class TTsData:
     is_tts_ready = True  # 定义语音是否生成完成标志
     # 选择语音
     select_vists = config["speech"]["select"]
+    # 语音合成线程池
+    speech_max_threads = config["speech"]["speech_max_threads"]
 
 @singleton
 class VtuberData:
@@ -59,6 +61,9 @@ class VtuberData:
 
 @singleton
 class SingData:
+    create_song_lock = threading.Lock()
+    play_song_lock = threading.Lock()
+
     # ============= 唱歌参数 =====================
     singUrl = config["sing"]["singUrl"]
     SongQueueList = queue.Queue()  # 唱歌队列
@@ -70,3 +75,49 @@ class SingData:
     song_not_convert = config["sing"]["song_not_convert"]  # 不需要学习的歌曲【支持正则】
     create_song_timout = config["sing"]["create_song_timout"]  # 超时生成歌曲
     # ============================================
+
+@singleton
+class DrawData:
+    # ============= 绘画参数 =====================
+    drawUrl = config["draw"]["drawUrl"]
+    is_drawing = 3  # 1.绘画中 2.绘画完成 3.绘画任务结束
+    width = config["draw"]["width"]  # 图片宽度
+    height = config["draw"]["height"]  # 图片高度
+    DrawQueueList = queue.Queue()  # 画画队列
+    physical_save_folder = config["draw"]["physical_save_folder"]  # 绘画保存图片物理路径
+    # ============================================
+
+@singleton
+class NsfwData:
+    # ============= 鉴黄 =====================
+    nsfw_server = config["nsfw"]["nsfw_server"]
+    filterEn = config["nsfw"]["filterEn"]
+    filterCh = config["nsfw"]["filterCh"]
+    progress_limit = config["nsfw"]["progress_limit"]  # 绘图大于多少百分比进行鉴黄，这里设置了1%
+    nsfw_limit = config["nsfw"]["nsfw_limit"]  # nsfw黄图值大于多少进行绘画屏蔽【值越大越是黄图，值范围0~1】
+    nsfw_progress_limit = config["nsfw"]["nsfw_progress_limit"]  # nsfw黄图-绘画进度鉴黄【值越大越是黄图，值范围0~1】
+    nsfw_lock = threading.Lock()
+    # ============================================
+
+@singleton
+class ImageData:
+    SearchImgList = queue.Queue()
+    is_SearchImg = 2  # 1.搜图中 2.搜图完成
+    physical_save_folder = config["draw"]["physical_save_folder"]  # 绘画保存图片物理路径
+    width = config["draw"]["width"]  # 图片宽度
+    height = config["draw"]["height"]  # 图片高度
+
+@singleton
+class SearchData:
+    # ============= 搜文参数 =====================
+    SearchTextList = queue.Queue()
+    is_SearchText = 2  # 1.搜文中 2.搜文完成
+    # ============================================
+
+@singleton
+class CommonData:
+    # 1.b站直播间 2.api web
+    mode = config["mode"]
+    Ai_Name: str = config["AiName"]  # Ai名称
+    # 代理
+    proxies = config["proxies"]["HttpProxies"]

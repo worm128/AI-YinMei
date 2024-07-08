@@ -21,15 +21,15 @@ import logging
 from func.obs.obs_websocket import ObsWebSocket,VideoStatus,VideoControl
 from func.tools.file_util import FileUtil
 from func.tools.string_util import StringUtil
-from func.search import crawler,baidusearch
+from func.search import baidusearch
+from func.image import crawler
 from io import BytesIO
 from PIL import Image
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from bilibili_api import live, sync, Credential
 from duckduckgo_search import DDGS
 from threading import Thread
-from urllib.parse import quote
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request
 from flask_apscheduler import APScheduler
 from urllib import parse
 
@@ -820,14 +820,14 @@ def baidu_search_img(query):
     imageNum = 10
     # 第一次搜图
     img_search_json = {"query": query, "width": 800, "height": 600}
-    images = crawler.baidu_get_image_url_regx(img_search_json,imageNum)
+    images = crawler.baidu_get_image_url_regx(img_search_json, imageNum)
     count = len(images)
     print(f"1.搜图《{query}》数量：{count}")
 
     # 第二次搜图
     if count<imageNum:
        img_search_json = {"query": query, "width": 800, "height": 0}
-       sec = crawler.baidu_get_image_url_regx(img_search_json,imageNum)
+       sec = crawler.baidu_get_image_url_regx(img_search_json, imageNum)
        sec_count = len(sec)
        count = count + sec_count
        images += sec

@@ -5,7 +5,9 @@ import json
 from func.log.default_log import DefaultLog
 from func.vtuber.vtuber_init import VtuberInit
 from func.gobal.data import VtuberData
+from func.tools.singleton_mode import singleton
 
+@singleton
 class EmoteOper:
     # 设置控制台日志
     log = DefaultLog().getLogger()
@@ -158,7 +160,7 @@ class EmoteOper:
                 self.ws.send(data)
             except Exception as e:
                 error = f"【表情发送】发生了异常：{e}"
-                self.log.info(error)
+                self.log.exception(error)
                 if error in "Connection is already closed":
                     self.ws = VtuberInit().get_ws()
 

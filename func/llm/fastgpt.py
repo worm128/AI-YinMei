@@ -35,7 +35,7 @@ class FastGpt:
                 url, headers=headers, json=data, verify=False, timeout=(5, 60), stream=True
             )
         except Exception as e:
-            self.log.info(f"【{content}】信息回复异常")
+            self.log.exception(f"【{content}】信息回复异常")
             return "我听不懂你说什么"
 
         return response

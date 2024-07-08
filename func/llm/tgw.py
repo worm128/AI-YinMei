@@ -38,7 +38,7 @@ class Tgw:
                 url, headers=headers, json=data, verify=False, timeout=(5, 60)
             )
         except Exception as e:
-            self.log.info(f"【{content}】信息回复异常")
+            self.log.exception(f"【{content}】信息回复异常")
             return "我听不懂你说什么"
         assistant_message = response.json()["choices"][0]["message"]["content"]
         # history.append({"role": "assistant", "content": assistant_message})

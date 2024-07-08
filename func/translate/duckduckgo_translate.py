@@ -22,5 +22,5 @@ class DuckduckgoTranslate:
                 self.log.info(f"翻译：{r}")
                 return r
             except Exception as e:
-                self.log.info(f"translate信息回复异常{e}")
+                self.log.exception(f"translate信息回复异常{e}")
             return text
