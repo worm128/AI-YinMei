@@ -1,13 +1,6 @@
 # b站AI直播对接
 import datetime
-import queue
-import threading
-import os
 import time
-import random
-import re
-import traceback
-import logging
 import uuid
 import asyncio, aiohttp
 import http.cookies
@@ -17,13 +10,11 @@ import func.blivedm.models.web as web_models
 
 from typing import *
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from duckduckgo_search import DDGS
 from threading import Thread
 from flask import Flask, jsonify, request
 from flask_apscheduler import APScheduler
 
 from func.obs.obs_websocket import VideoStatus, VideoControl
-from func.tools.file_util import FileUtil
 from func.tools.string_util import StringUtil
 from func.log.default_log import DefaultLog
 from func.config.default_config import defaultConfig
@@ -39,6 +30,8 @@ from func.draw.draw_core import DrawCore
 from func.nsfw.nsfw_core import NsfwCore
 from func.image.image_core import ImageCore
 from func.search.search_core import SearchCore
+from func.dance.dance_core import DanceCore
+from func.cmd.cmd_core import CmdCore
 
 from func.gobal.data import VtuberData
 from func.gobal.data import TTsData
@@ -53,13 +46,12 @@ config = defaultConfig().get_config()
 log = DefaultLog().getLogger()
 
 commonData = CommonData()  #基础数据
+Ai_Name = commonData.Ai_Name  # Ai名称
 
 # 重定向print输出到日志文件
 def print(*args, **kwargs):
     log.info(*args, **kwargs)
 
-
-Ai_Name = commonData.Ai_Name  # Ai名称
 log.info("======================================")
 log.warning(
     """                                                                                                                                      
@@ -98,21 +90,12 @@ sched1 = AsyncIOScheduler(timezone="Asia/Shanghai")
 # 1.b站直播间 2.api web
 mode = config["mode"]
 
-# 代理
-proxies = config["proxies"]["HttpProxies"]
-duckduckgo_proxies = config["proxies"]["DuckduckgoProxies"]
-
-# 翻译
 duckduckgoTranslate = DuckduckgoTranslate()  # 翻译
+cmdCore = CmdCore()
 
 # ============= LLM参数 =====================
 llmData = LLmData()  # llm数据
 llmCore = LLmCore()  # llm核心
-# ============================================
-
-# ============= 进入房间的欢迎语 =====================
-is_llm_welcome = config["welcome"]["is_llm_welcome"]
-welcome_not_allow = config["welcome"]["welcome_not_allow"]
 # ============================================
 
 # ============= 绘画参数 =====================
@@ -154,30 +137,18 @@ sched1 = APScheduler()
 sched1.init_app(app)
 # ============================================
 
-# ============= OBS直播软件控制 =====================
+# ============= OBS直播软件控制 ================
 # obs直播软件连接
 obs = ObsInit().get_ws()
 # vtuber皮肤连接
 VtuberInit().get_ws()
-# 表情初始化
-emoteOper = EmoteOper()
+# ============================================
 
-dance_path = config["obs"]["dance_path"]
-dance_video = FileUtil.get_child_file_paths(dance_path)  # 跳舞视频
-emote_path = config["obs"]["emote_path"]
-emote_font = config["obs"]["emote_font"]
-emote_video = FileUtil.get_child_file_paths(emote_path)  # 表情视频
-emote_list = FileUtil.get_subfolder_names(emote_font)  # 表情清单显示
-DanceQueueList = queue.Queue()  # 跳舞队列
-is_dance = 2  # 1.正在跳舞 2.跳舞完成
-emote_video_lock = threading.Lock()
-emote_now_path = ""
-dance_now_path = ""
-singdance_now_path = ""
+# ============= 跳舞、表情视频 ================
+danceCore = DanceCore()
 # ============================================
 
 # ============= 鉴黄 =====================
-
 nsfwCore = NsfwCore()
 # ============================================
 
@@ -186,18 +157,10 @@ ttsData = TTsData()  # 语音数据
 ttsCore = TTsCore() # 语音核心
 # ============================================
 
-
-# ============= 服装 =====================
-now_clothes = ""  # 当前服装穿着
-# ========================================
-
-# ============= 场景 =====================
+# ============= vtuber操作 =====================
 vtuberData = VtuberData()  # vtuber数据
 actionOper = ActionOper()  # 动作核心
-# ========================================
-
-# ============= 欢迎列表 =====================
-WelcomeList = []  # welcome欢迎列表
+emoteOper = EmoteOper() # 表情初始化
 # ========================================
 
 log.info("--------------------")
@@ -209,8 +172,8 @@ log.info("======================================")
 @app.route("/cmd", methods=["GET"])
 def http_cmd():
     cmdstr = request.args["cmd"]
-    log.info(f'执行指令："{cmd}"')
-    cmd(cmdstr)
+    log.info(f'执行指令："{cmdstr}"')
+    cmdCore.cmd("all",cmdstr,"0", "http_cmd")
     return jsonify({"status": "成功"})
 
 # http说话复读
@@ -376,9 +339,9 @@ class MyHandler2(blivedm.BaseHandler):
         time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log.info(f"{time1}:粉丝[{user_name}]进入了直播间")
         # 46130941：老爸  333472479：吟美
-        if all([user_id != not_allow_userid for not_allow_userid in welcome_not_allow]):
+        if all([user_id != not_allow_userid for not_allow_userid in llmData.welcome_not_allow]):
             # 加入欢迎列表
-            WelcomeList.append(user_name)
+            llmData.WelcomeList.append(user_name)
 
     _CMD_CALLBACK_DICT['INTERACT_WORD'] = __interact_word_callback  # noqa
 
@@ -455,9 +418,7 @@ def msg_deal(traceid, query, uid, user_name):
     log.info(f"[{traceid}]弹幕捕获：[{user_name}]:{query}")  # 打印弹幕信息
 
     # 命令执行
-    status = cmd(query)
-    if status == 1:
-        log.info(f"[{traceid}]执行命令：{query}")
+    if cmdCore.cmd(traceid, query, uid, user_name):
         return
 
     # 说话不执行任务
@@ -467,34 +428,7 @@ def msg_deal(traceid, query, uid, user_name):
         return
 
     # 跳舞表情
-    text = ["#"]
-    is_contain = StringUtil.has_string_reg_list(f"^{text}", query)
-    if is_contain is not None:
-        num = StringUtil.is_index_contain_string(text, query)
-        queryExtract = query[num : len(query)]  # 提取提问语句
-        queryExtract = queryExtract.strip()
-        log.info(f"[{traceid}]跳舞表情：" + queryExtract)
-        video_path = ""
-        if queryExtract == "rnd":
-            rnd_video = random.randrange(0, len(emote_video))
-            video_path = emote_video[rnd_video]
-        else:
-            matches_list = StringUtil.fuzzy_match_list(queryExtract, emote_video)
-            if len(matches_list) > 0:
-                rnd_video = random.randrange(0, len(matches_list))
-                video_path = matches_list[rnd_video]
-        # 第一次播放
-        if video_path != "":
-            if is_dance == 1:
-                emote_play_thread = Thread(target=emote_play, args=(video_path,))
-                emote_play_thread.start()
-            else:
-                emote_play_thread = Thread(target=emote_play_nodance, args=(video_path,))
-                emote_play_thread.start()
-        return
-
-    # 跳舞中不执行其他任务
-    if is_dance == 1:
+    if danceCore.msg_deal_emotevideo(traceid, query, uid, user_name):
         return
 
     # 搜索引擎查询
@@ -514,302 +448,26 @@ def msg_deal(traceid, query, uid, user_name):
         return
 
     # 跳舞
-    text = ["跳舞", "跳一下", "舞蹈"]
-    is_contain = StringUtil.has_string_reg_list(f"^{text}", query)
-    if is_contain is not None:
-        num = StringUtil.is_index_contain_string(text, query)
-        queryExtract = query[num : len(query)]  # 提取提问语句
-        queryExtract = queryExtract.strip()
-        log.info(f"[{traceid}]跳舞提示：" + queryExtract)
-        video_path = ""
-        # 提示语为空，随机视频
-        if queryExtract == "":
-            rnd_video = random.randrange(0, len(dance_video))
-            video_path = dance_video[rnd_video]
-        else:
-            matches_list = StringUtil.fuzzy_match_list(queryExtract, dance_video)
-            if len(matches_list) > 0:
-                rnd_video = random.randrange(0, len(matches_list))
-                video_path = matches_list[rnd_video]
-        # 加入跳舞队列
-        if video_path != "":
-            dance_json = {"traceid":traceid,"prompt": queryExtract, "username": user_name, "video_path": video_path}
-            DanceQueueList.put(dance_json)
-            return
-        else:
-            log.info("跳舞视频不存在：" + queryExtract)
-            return
+    if danceCore.msg_deal_dance(traceid, query, uid, user_name):
+        return
 
     # 换装
-    global now_clothes
-    text = ["换装", "换衣服", "穿衣服"]
-    num = StringUtil.is_index_contain_string(text, query)
-    if num > 0:
-        queryExtract = query[num : len(query)]  # 提取提问语句
-        queryExtract = queryExtract.strip()
-        queryExtract = re.sub("(。|,|，)", "", queryExtract)
-        log.info(f"[{traceid}]换装提示：" + queryExtract)
-        # 开始唱歌服装穿戴
-        emoteOper.emote_ws(1, 0, now_clothes)  # 解除当前衣服
-        emoteOper.emote_ws(1, 0, queryExtract)  # 穿上新衣服
-        now_clothes = queryExtract
+    if actionOper.msg_deal_clothes(traceid, query, uid, user_name):
         return
 
     # 切换场景
-    text = ["切换", "进入"]
-    num = StringUtil.is_index_contain_string(text, query)
-    if num > 0:
-        queryExtract = query[num : len(query)]  # 提取提问语句
-        queryExtract = queryExtract.strip()
-        queryExtract = re.sub("(。|,|，)", "", queryExtract)
-        log.info(f"[{traceid}]切换场景：" + queryExtract)
-        actionOper.changeScene(queryExtract)
+    if actionOper.msg_deal_scene(traceid, query, uid, user_name):
         return
 
     # 聊天入口处理
     llmCore.msg_deal(traceid, query, uid, user_name)
 
-# 表情播放[不用停止跳舞]
-def emote_play_nodance(eomte_path):
-    emote_video_lock.acquire()
-    global emote_now_path
-    log.info(f"播放表情:{eomte_path}")
-    # 第一次播放
-    if eomte_path != emote_now_path:
-        obs.play_video("表情", eomte_path)
-    else:
-        obs.control_video("表情", VideoControl.RESTART.value)
-    # 赋值当前表情视频
-    emote_now_path = eomte_path
-    time.sleep(1)
-    # 20秒超时停止播放
-    sec = 20
-    while obs.get_video_status("表情") != VideoStatus.END.value and sec > 0:
-        time.sleep(1)
-        sec = sec - 1
-    time.sleep(1)
-    obs.control_video("表情", VideoControl.STOP.value)
-    emote_video_lock.release()
-
-
-# 表情播放
-def emote_play(eomte_path):
-    emote_video_lock.acquire()
-    global emote_now_path
-    obs.control_video("video", VideoControl.PAUSE.value)
-    log.info(f"播放表情:{eomte_path}")
-    # 第一次播放
-    if eomte_path != emote_now_path:
-        obs.play_video("表情", eomte_path)
-    else:
-        obs.control_video("表情", VideoControl.RESTART.value)
-    # 赋值当前表情视频
-    emote_now_path = eomte_path
-    time.sleep(1)
-    # 20秒超时停止播放
-    sec = 20
-    while obs.get_video_status("表情") != VideoStatus.END.value and sec > 0:
-        time.sleep(1)
-        sec = sec - 1
-    time.sleep(1)
-    obs.control_video("表情", VideoControl.STOP.value)
-    obs.control_video("video", VideoControl.PLAY.value)
-    emote_video_lock.release()
-
-
-# 命令控制：优先
-def cmd(query):
-    global is_creating_song
-    global is_SearchText
-    global is_SearchImg
-    global is_drawing
-    global is_dance
-
-    # 停止所有任务
-    if query == "\\stop":
-        singData.is_singing = 2  # 1.唱歌中 2.唱歌完成
-        # is_creating_song = 2  # 1.生成中 2.生成完毕
-        is_SearchText = 2  # 1.搜索中 2.搜索完毕
-        is_SearchImg = 2  # 1.搜图中 2.搜图完成
-        is_drawing = 3  # 1.绘画中 2.绘画完成 3.绘图任务结束
-        llmData.is_ai_ready = True  # 定义ai回复是否转换完成标志
-        ttsData.is_tts_ready = True  # 定义语音是否生成完成标志
-        os.system("taskkill /T /F /IM song.exe")
-        os.system("taskkill /T /F /IM mpv.exe")
-        return 1
-    if query == "\\dance":
-        os.system("taskkill /T /F /IM song.exe")
-        os.system("taskkill /T /F /IM mpv.exe")
-        return 1
-    # 下一首歌
-    text = ["\\next", "下一首", "下首", "切歌", "next"]
-    is_contain = StringUtil.has_string_reg_list(f"^{text}", query)
-    if is_contain is not None:
-        os.system("taskkill /T /F /IM song.exe")
-        singData.is_singing = 2  # 1.唱歌中 2.唱歌完成
-        return 1
-    # 停止跳舞
-    text = ["\\停止跳舞", "停止跳舞", "不要跳舞", "stop dance"]
-    is_contain = StringUtil.has_string_reg_list(f"^{text}", query)
-    if is_contain is not None:
-        is_dance = 2  # 1.正在跳舞 2.跳舞完成
-        return 1
-    return 0
-
-
-# duckduckgo搜索引擎搜图片
-def web_search_img(query):
-    imageNum = 10
-    imgUrl = ""
-    with DDGS(proxies=duckduckgo_proxies, timeout=20) as ddgs:
-        try:
-            ddgs_images_gen = ddgs.images(
-                query,
-                region="cn-zh",
-                safesearch="off",
-                size="Medium",
-                color="color",
-                type_image=None,
-                layout=None,
-                license_image=None,
-                max_results=imageNum,
-            )
-            i = 0
-            random_number = random.randrange(0, imageNum)
-            for r in ddgs_images_gen:
-                if i == random_number:
-                    imgUrl = r["image"]
-                    log.info(f"图片地址：{imgUrl},搜索关键字:{query}")
-                    break
-                i = i + 1
-        except Exception as e:
-            log.info(f"web_search_img信息回复异常{e}")
-            logging.error(traceback.format_exc())
-    return imgUrl
-
-# 跳舞任务
-def check_dance():
-    global is_dance
-    if not DanceQueueList.empty() and is_dance == 2:
-        is_dance = 1
-        # 停止所有定时任务
-        sched1.pause()
-        # 停止所有在执行的任务
-        cmd("\\dance")
-        ttsCore.tts_say("开始跳舞了，大家嗨起来")
-        dance_json = DanceQueueList.get()
-        # 开始跳舞任务
-        dance(dance_json)
-        # 重启定时任务
-        sched1.resume()
-        is_dance = 2  # 跳舞完成
-
-
-# 跳舞操作
-def dance(dance_json):
-    global dance_now_path
-    video_path = dance_json["video_path"]
-    log.info(dance_json)
-    obs.control_video("背景音乐", VideoControl.PAUSE.value)
-    # ============== 跳舞视频 ==============
-    # 第一次播放
-    if video_path != dance_now_path:
-        obs.play_video("video", video_path)
-    else:
-        obs.control_video("video", VideoControl.RESTART.value)
-    # 赋值当前跳舞视频
-    dance_now_path = video_path
-    time.sleep(1)
-    while obs.get_video_status("video") != VideoStatus.END.value and is_dance == 1:
-        time.sleep(1)
-    obs.control_video("video", VideoControl.STOP.value)
-    # ============== end ==============
-    obs.control_video("背景音乐", VideoControl.PLAY.value)
-
-
-
-
-
-# 唱歌跳舞
-def sing_dance(songname):
-    global singdance_now_path
-    # 提示语为空，随机视频
-    video_path = ""
-    if songname != "":
-        matches_list = StringUtil.fuzzy_match_list(songname, dance_video)
-        if len(matches_list) > 0:
-            rnd_video = random.randrange(0, len(matches_list))
-            video_path = matches_list[rnd_video]
-    if video_path == "":
-        return
-    # 第一次播放
-    if video_path != singdance_now_path:
-        obs.play_video("唱歌视频", video_path)
-    else:
-        obs.control_video("唱歌视频", VideoControl.RESTART.value)
-    # 赋值当前表情视频
-    singdance_now_path = video_path
-    time.sleep(1)
-    while singData.is_singing == 1:
-        # 结束循环重新播放
-        if obs.get_video_status("唱歌视频") == VideoStatus.END.value:
-            obs.control_video("唱歌视频", VideoControl.RESTART.value)
-        time.sleep(1)
-
-# 进入直播间欢迎语
-def check_welcome_room():
-    count = len(WelcomeList)
-    numstr = ""
-    if count > 1:
-        numstr = f"{count}位"
-    userlist = str(WelcomeList).replace("['", "").replace("']", "")
-    if len(WelcomeList) > 0:
-        traceid = str(uuid.uuid4())
-        text = f'欢迎"{userlist}"{numstr}同学来到{Ai_Name}的直播间,跪求关注一下{Ai_Name}的直播间'
-        log.info(f"[{traceid}]{text}")
-        WelcomeList.clear()
-        if is_llm_welcome == True:
-            # 询问LLM
-            llm_json = {"traceid":traceid, "prompt": text, "uid": 0, "username": Ai_Name}
-            llmData.QuestionList.put(llm_json)  # 将弹幕消息放入队列
-        else:
-            ttsCore.tts_say(text)
-
-
-# 时间判断场景
-def check_scene_time():
-    now_time = time.strftime("%H:%M:%S", time.localtime())
-    # 判断时间
-    # 白天
-    if "06:00:00" <= now_time <= "16:59:59":
-        log.info("现在是白天")
-        obs.show_image("海岸花坊背景", "J:\\ai\\vup背景\\海岸花坊\\白昼.jpg")
-        obs.show_image("粉色房间背景", "J:\\ai\\vup背景\\粉色房间\\白天.jpg")
-        obs.show_image("粉色房间桌面", "J:\\ai\\vup背景\\粉色房间\\白天桌子.png")
-        obs.play_video("神社背景", "J:\\ai\\vup背景\\神社白天\\日动态.mp4")
-
-    # 黄昏
-    if "17:00:00" <= now_time <= "17:59:59":
-        log.info("现在是黄昏")
-        obs.show_image("粉色房间背景", "J:\\ai\\vup背景\\粉色房间\\黄昏.jpg")
-        obs.show_image("粉色房间桌面", "J:\\ai\\vup背景\\粉色房间\\黄昏桌子.png")
-
-    # 晚上
-    if "18:00:00" <= now_time <= "24:00:00" or "00:00:00" < now_time < "06:00:00":
-        log.info("现在是晚上")
-        obs.show_image("海岸花坊背景", "J:\\ai\\vup背景\\海岸花坊\\夜晚.jpg")
-        obs.show_image("粉色房间背景", "J:\\ai\\vup背景\\粉色房间\\晚上开灯.jpg")
-        obs.show_image("粉色房间桌面", "J:\\ai\\vup背景\\粉色房间\\晚上开灯桌子.png")
-        obs.play_video("神社背景", "J:\\ai\\vup背景\\神社夜晚\\夜动态.mp4")
-
 
 def main():
-
     # 初始化衣服
-    global now_clothes
     emoteOper.emote_ws(1, 0.2, "初始化")  # 解除当前衣服
     emoteOper.emote_ws(1, 0.2, "便衣")  # 穿上新衣服
-    now_clothes = "便衣"
+    vtuberData.now_clothes = "便衣"
 
     # 跳舞表情
     # content = ""
@@ -827,41 +485,35 @@ def main():
     obs.control_video("伴奏", VideoControl.STOP.value)
 
     # 切换场景:初始化
-    scene_name = "海岸花坊"
-    obs.change_scene(scene_name)
-    # 背景乐切换
-    if scene_name in vtuberData.song_background:
-        song = vtuberData.song_background[scene_name]
-        obs.play_video("背景音乐", song)
-        time.sleep(1)
-        obs.control_video("背景音乐", VideoControl.RESTART.value)
+    actionOper.init_scene()
+
     # 场景[白天黑夜]判断
-    check_scene_time()
+    actionOper.check_scene_time()
 
     # 吟美状态提示:初始化清空
     obs.show_text("状态提示", "")
 
     if mode == 1 or mode == 2:
         # LLM回复
-        sched1.add_job(func=llmCore.check_answer, trigger="interval", seconds=1, id=f"answer", max_instances=100)
+        sched1.add_job(func=llmCore.check_answer, trigger="interval", seconds=1, id="answer", max_instances=100)
         # tts语音合成
-        sched1.add_job(func=ttsCore.check_tts, trigger="interval", seconds=1, id=f"tts", max_instances=1000)
+        sched1.add_job(func=ttsCore.check_tts, trigger="interval", seconds=1, id="tts", max_instances=1000)
         # 绘画
-        sched1.add_job(func=drawCore.check_draw, trigger="interval", seconds=1, id=f"draw", max_instances=50)
+        sched1.add_job(func=drawCore.check_draw, trigger="interval", seconds=1, id="draw", max_instances=50)
         # 搜索资料
-        sched1.add_job(func=searchCore.check_text_search, trigger="interval", seconds=1, id=f"text_search", max_instances=50)
+        sched1.add_job(func=searchCore.check_text_search, trigger="interval", seconds=1, id="text_search", max_instances=50)
         # 搜图
-        sched1.add_job(func=imageCore.check_img_search, trigger="interval", seconds=1, id=f"img_search", max_instances=50)
+        sched1.add_job(func=imageCore.check_img_search, trigger="interval", seconds=1, id="img_search", max_instances=50)
         # 唱歌转换
-        sched1.add_job(func=singCore.check_sing, trigger="interval", seconds=1, id=f"sing", max_instances=50)
+        sched1.add_job(func=singCore.check_sing, trigger="interval", seconds=1, id="sing", max_instances=50)
         # 歌曲清单播放
-        sched1.add_job(func=singCore.check_playSongMenuList, trigger="interval", seconds=1, id=f"playSongMenuList", max_instances=50)
+        sched1.add_job(func=singCore.check_playSongMenuList, trigger="interval", seconds=1, id="playSongMenuList", max_instances=50)
         # 跳舞
-        sched1.add_job(func=check_dance, trigger="interval", seconds=1, id=f"dance", max_instances=10)
+        sched1.add_job(func=danceCore.check_dance, args=[sched1], trigger="interval", seconds=1, id="dance", max_instances=10)
         # 时间判断场景[白天黑夜切换]
-        sched1.add_job(func=check_scene_time, trigger="cron", hour="6,17,18", id=f"scene_time")
+        sched1.add_job(func=actionOper.check_scene_time, trigger="cron", hour="6,17,18", id="scene_time")
         # 欢迎语
-        sched1.add_job(func=check_welcome_room, trigger="interval", seconds=20, id=f"welcome_room", max_instances=50)
+        sched1.add_job(func=llmCore.check_welcome_room, trigger="interval", seconds=20, id="welcome_room", max_instances=50)
         sched1.start()
 
     if mode == 1 or mode == 2:

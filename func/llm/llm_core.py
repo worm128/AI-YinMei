@@ -8,17 +8,21 @@ from func.tools.singleton_mode import singleton
 from func.obs.obs_init import ObsInit
 from func.tools.string_util import StringUtil
 from func.vtuber.action_oper import ActionOper
+from func.tts.tts_core import TTsCore
 from func.llm.fastgpt import FastGpt
 from func.llm.tgw import Tgw
 from func.gobal.data import LLmData
-
+from func.gobal.data import CommonData
 
 @singleton
 class LLmCore:
     # 设置控制台日志
     log = DefaultLog().getLogger()
+    commonData = CommonData()
     llmData = LLmData()  # llm数据
+
     actionOper = ActionOper()  # 动作
+    ttsCore = TTsCore()  #语音
 
     # 选择大语言模型
     local_llm_type: str = llmData.local_llm_type
@@ -204,6 +208,25 @@ class LLmCore:
 
         jsonStr = "({\"traceid\": \"" + traceid + "\",\"status\": \"" + status + "\",\"content\": \"" + text + "\"})"
         return jsonStr
+
+    # 进入直播间欢迎语
+    def check_welcome_room(self):
+        count = len(self.llmData.WelcomeList)
+        numstr = ""
+        if count > 1:
+            numstr = f"{count}位"
+        userlist = str(self.llmData.WelcomeList).replace("['", "").replace("']", "")
+        if len(self.llmData.WelcomeList) > 0:
+            traceid = str(uuid.uuid4())
+            text = f'欢迎"{userlist}"{numstr}同学来到{self.commonData.Ai_Name}的直播间,跪求关注一下{self.commonData.Ai_Name}的直播间'
+            self.log.info(f"[{traceid}]{text}")
+            self.llmData.WelcomeList.clear()
+            if self.llmData.is_llm_welcome == True:
+                # 询问LLM
+                llm_json = {"traceid": traceid, "prompt": text, "uid": 0, "username": self.commonData.Ai_Name}
+                self.llmData.QuestionList.put(llm_json)  # 将弹幕消息放入队列
+            else:
+                self.ttsCore.tts_say(text)
 
     # 聊天入口处理
     def msg_deal(self, traceid, query, uid, user_name):

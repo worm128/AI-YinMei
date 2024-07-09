@@ -2,6 +2,7 @@ from func.config.default_config import defaultConfig
 import queue
 import threading
 from func.tools.singleton_mode import singleton
+from func.tools.file_util import FileUtil
 
 # 加载配置
 config = defaultConfig().get_config()
@@ -28,6 +29,15 @@ class LLmData:
     public_sentiment_key: str = config["llm"]["public_sentiment_key"]
     # ============================================
 
+    # ============= 欢迎列表 =====================
+    WelcomeList = []  # welcome欢迎列表
+    # ========================================
+
+    # ============= 进入房间的欢迎语 =====================
+    is_llm_welcome = config["welcome"]["is_llm_welcome"]
+    welcome_not_allow = config["welcome"]["welcome_not_allow"]
+    # ============================================
+
 @singleton
 class TTsData:
     SayCount = 0
@@ -50,6 +60,7 @@ class VtuberData:
 
     # ============= 场景 =====================
     song_background = config["obs"]["song_background"]
+    now_clothes = "便衣"
     # ========================================
 
     # ============= 摇摆 =====================
@@ -113,6 +124,21 @@ class SearchData:
     SearchTextList = queue.Queue()
     is_SearchText = 2  # 1.搜文中 2.搜文完成
     # ============================================
+
+@singleton
+class DanceData:
+    dance_path = config["obs"]["dance_path"]
+    dance_video = FileUtil.get_child_file_paths(dance_path)  # 跳舞视频
+    emote_path = config["obs"]["emote_path"]
+    emote_font = config["obs"]["emote_font"]
+    emote_video = FileUtil.get_child_file_paths(emote_path)  # 表情视频
+    emote_list = FileUtil.get_subfolder_names(emote_font)  # 表情清单显示
+    DanceQueueList = queue.Queue()  # 跳舞队列
+    is_dance = 2  # 1.正在跳舞 2.跳舞完成
+    emote_video_lock = threading.Lock()
+    emote_now_path = ""
+    dance_now_path = ""
+    singdance_now_path = ""
 
 @singleton
 class CommonData:

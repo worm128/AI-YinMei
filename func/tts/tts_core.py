@@ -11,7 +11,6 @@ from func.vtuber.emote_oper import EmoteOper
 from func.vtuber.action_oper import ActionOper
 from func.tools.string_util import StringUtil
 from func.translate.duckduckgo_translate import DuckduckgoTranslate
-from func.llm.llm_core import LLmCore
 from func.tts.gtp_vists import GtpVists
 from func.tts.bert_vits2 import BertVis2
 from func.tts.edge_tts_vits import EdgeTTs
@@ -27,7 +26,6 @@ class TTsCore:
     # 设置控制台日志
     log = DefaultLog().getLogger()
 
-    llm = LLmCore()  # 大语言模型
     mpvPlay = MpvPlay()  # 播放器
     emoteOper = EmoteOper()  # 表情
     actionOper = ActionOper()  # 动作
