@@ -9,6 +9,7 @@ from func.gobal.data import CommonData
 from func.gobal.data import LLmData
 from func.gobal.data import BiliDanmakuData
 
+from func.tts.tts_core import TTsCore
 import func.danmaku.blivedm as blivedm
 import func.danmaku.blivedm.models.open_live as open_models
 import func.danmaku.blivedm.models.web as web_models
@@ -27,6 +28,7 @@ class BlivedmCore:
     commonData = CommonData() #公共数据
     biliDanmakuData = BiliDanmakuData()  #b站弹幕数据
     llmData = LLmData()  # llm数据
+    ttsCore = TTsCore()  # 语音核心
 
     entranceCore = EntranceCore()
 
