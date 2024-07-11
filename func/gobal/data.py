@@ -141,9 +141,26 @@ class DanceData:
     singdance_now_path = ""
 
 @singleton
+class BiliDanmakuData:
+    # ============= B站直播间 =====================
+    room_id = config["danmaku"]["blivedm"]["room_id"]  # 输入直播间编号
+    # ******** blivedm ********
+    # b站直播身份验证：
+    SESSDATA = config["danmaku"]["blivedm"]["sessdata"]
+
+    # 在B站开放平台申请的开发者密钥
+    ACCESS_KEY_ID = config["danmaku"]["blivedm"]["ACCESS_KEY_ID"]
+    ACCESS_KEY_SECRET = config["danmaku"]["blivedm"]["ACCESS_KEY_SECRET"]
+    # 在B站开放平台创建的项目ID
+    APP_ID = config["danmaku"]["blivedm"]["APP_ID"]
+    # 在B站主播身份码
+    ROOM_OWNER_AUTH_CODE = config["danmaku"]["blivedm"]["ROOM_OWNER_AUTH_CODE"]
+    # ============================================
+
+@singleton
 class CommonData:
     # 1.b站直播间 2.api web
-    mode = config["mode"]
+    mode = config["danmaku"]["mode"]
     Ai_Name: str = config["AiName"]  # Ai名称
     # 代理
     proxies = config["proxies"]["HttpProxies"]

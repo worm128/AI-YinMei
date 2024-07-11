@@ -27,6 +27,14 @@ class class1:
      def __del__(self):
          print("MyClass 实例销毁")
 
+     @singleton
+     class class3:
+         def __init__(self, outer_instance):
+             self.outer_instance = outer_instance
+
+         def print(self):
+             print(self.outer_instance.is_singing)
+
 
 @singleton
 class class2:

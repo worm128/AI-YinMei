@@ -1,2 +1,2 @@
-.\runtime\python.exe bilibili-live-api.py
+.\runtime\python.exe api.py
 pause

@@ -3,7 +3,11 @@ from classtest import class2
 import gc
 import time
 if __name__ == "__main__":
+
     c1 = class1(5)
+    c3 = class1.class3(c1)
+    c3.print()
+
     c1.is_singing = 1
     c1.print_val()
 
@@ -21,6 +25,6 @@ if __name__ == "__main__":
     # del c1
     # gc.collect()
     # time.sleep(10)
-    class1.delInstance()
+    # c1.delInstance()
     c1 = class1(3)
     c1.print_val()

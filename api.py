@@ -1,25 +1,17 @@
-# b站AI直播对接
-import datetime
+# 吟美Api web
 import time
 import uuid
 import asyncio, aiohttp
-import http.cookies
-import func.blivedm as blivedm
-import func.blivedm.models.open_live as open_models
-import func.blivedm.models.web as web_models
-
-from typing import *
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from threading import Thread
 from flask import Flask, jsonify, request
 from flask_apscheduler import APScheduler
 
-from func.obs.obs_websocket import VideoStatus, VideoControl
-from func.tools.string_util import StringUtil
+from func.obs.obs_websocket import VideoControl
 from func.log.default_log import DefaultLog
 from func.config.default_config import defaultConfig
 
-from func.vtuber.vtuber_init import VtuberInit
+
 from func.obs.obs_init import ObsInit
 from func.vtuber.emote_oper import EmoteOper
 from func.tts.tts_core import TTsCore
@@ -27,30 +19,29 @@ from func.llm.llm_core import LLmCore
 from func.sing.sing_core import SingCore
 from func.vtuber.action_oper import ActionOper
 from func.draw.draw_core import DrawCore
-from func.nsfw.nsfw_core import NsfwCore
 from func.image.image_core import ImageCore
 from func.search.search_core import SearchCore
 from func.dance.dance_core import DanceCore
 from func.cmd.cmd_core import CmdCore
+from func.entrance.entrance_core import EntranceCore
 
+from func.danmaku.blivedm.blivedm_core import BlivedmCore
 from func.gobal.data import VtuberData
-from func.gobal.data import TTsData
-from func.gobal.data import LLmData
-from func.gobal.data import SingData
 from func.gobal.data import CommonData
-from func.translate.duckduckgo_translate import DuckduckgoTranslate
+
 
 # 加载配置
 config = defaultConfig().get_config()
 # 设置控制台日志
 log = DefaultLog().getLogger()
+# 重定向print输出到日志文件
+def print(*args, **kwargs):
+    log.info(*args, **kwargs)
+
 
 commonData = CommonData()  #基础数据
 Ai_Name = commonData.Ai_Name  # Ai名称
 
-# 重定向print输出到日志文件
-def print(*args, **kwargs):
-    log.info(*args, **kwargs)
 
 log.info("======================================")
 log.warning(
@@ -88,13 +79,27 @@ log.info("QQ群：27831318")
 sched1 = AsyncIOScheduler(timezone="Asia/Shanghai")
 
 # 1.b站直播间 2.api web
-mode = config["mode"]
+mode = commonData.mode
 
-duckduckgoTranslate = DuckduckgoTranslate()  # 翻译
-cmdCore = CmdCore()
+cmdCore = CmdCore()  #命令操作
+entranceCore = EntranceCore()  #入口操作
+
+# ============= B站直播间 =====================
+blivedmCore = BlivedmCore()
+# ============================================
+
+# ============= api web =====================
+app = Flask(__name__, template_folder="./html")
+sched1 = APScheduler()
+sched1.init_app(app)
+# ============================================
+
+# ============= OBS直播软件控制 ================
+# obs直播软件连接
+obs = ObsInit().get_ws()
+# ============================================
 
 # ============= LLM参数 =====================
-llmData = LLmData()  # llm数据
 llmCore = LLmCore()  # llm核心
 # ============================================
 
@@ -111,49 +116,14 @@ searchCore = SearchCore()
 # ============================================
 
 # ============= 唱歌参数 =====================
-singData = SingData()  # 唱歌数据
 singCore = SingCore()  # 唱歌核心
-# ============================================
-
-# ============= B站直播间 =====================
-room_id = config["blivedm"]["room_id"]  # 输入直播间编号
-# ******** blivedm ********
-# b站直播身份验证：
-SESSDATA = config["blivedm"]["sessdata"]
-session: Optional[aiohttp.ClientSession] = None
-
-# 在B站开放平台申请的开发者密钥
-ACCESS_KEY_ID = config["blivedm"]["ACCESS_KEY_ID"]
-ACCESS_KEY_SECRET = config["blivedm"]["ACCESS_KEY_SECRET"]
-# 在B站开放平台创建的项目ID
-APP_ID = config["blivedm"]["APP_ID"]
-# 在B站主播身份码
-ROOM_OWNER_AUTH_CODE = config["blivedm"]["ROOM_OWNER_AUTH_CODE"]
-# ============================================
-
-# ============= api web =====================
-app = Flask(__name__, template_folder="./html")
-sched1 = APScheduler()
-sched1.init_app(app)
-# ============================================
-
-# ============= OBS直播软件控制 ================
-# obs直播软件连接
-obs = ObsInit().get_ws()
-# vtuber皮肤连接
-VtuberInit().get_ws()
 # ============================================
 
 # ============= 跳舞、表情视频 ================
 danceCore = DanceCore()
 # ============================================
 
-# ============= 鉴黄 =====================
-nsfwCore = NsfwCore()
-# ============================================
-
 # ============= 语音合成 =====================
-ttsData = TTsData()  # 语音数据
 ttsCore = TTsCore() # 语音核心
 # ============================================
 
@@ -226,7 +196,7 @@ def input_msg():
     uid = data["uid"]  # 获取用户昵称
     user_name = data["username"]  # 获取用户昵称
     traceid = str(uuid.uuid4())
-    msg_deal(traceid, query, uid, user_name)
+    entranceCore.msg_deal(traceid, query, uid, user_name)
     return jsonify({"status": "成功"})
 
 
@@ -262,207 +232,6 @@ def songlist():
     return jsonstr
 
 
-# blivedm弹幕监听
-async def blivedm_start():
-    await run_single_client()
-
-
-# SessData会话监听
-async def blivedm_start2():
-    global session
-    init_session()
-    try:
-        await run_single_client2()
-    finally:
-        await session.close()
-
-
-def init_session():
-    cookies = http.cookies.SimpleCookie()
-    cookies["SESSDATA"] = SESSDATA
-    cookies["SESSDATA"]["domain"] = "bilibili.com"
-
-    global session
-    session = aiohttp.ClientSession()
-    session.cookie_jar.update_cookies(cookies)
-
-
-# sessData方式监听
-async def run_single_client2():
-    """
-    演示监听一个直播间
-    """
-    global session
-
-    client = blivedm.BLiveClient(room_id, session=session)
-    handler = MyHandler2()
-    client.set_handler(handler)
-
-    client.start()
-    try:
-        await client.join()
-    finally:
-        await client.stop_and_close()
-
-
-# 开放平台方式监听
-async def run_single_client():
-    """
-    演示监听一个直播间
-    """
-    client = blivedm.OpenLiveClient(
-        access_key_id=ACCESS_KEY_ID,
-        access_key_secret=ACCESS_KEY_SECRET,
-        app_id=APP_ID,
-        room_owner_auth_code=ROOM_OWNER_AUTH_CODE,
-    )
-    handler = MyHandler()
-    client.set_handler(handler)
-
-    client.start()
-    try:
-        await client.join()
-    finally:
-        await client.stop_and_close()
-
-
-class MyHandler2(blivedm.BaseHandler):
-    # 演示如何添加自定义回调
-    _CMD_CALLBACK_DICT = blivedm.BaseHandler._CMD_CALLBACK_DICT.copy()
-
-    # 入场消息回调
-    def __interact_word_callback(self, client: blivedm.BLiveClient, command: dict):
-        log.info(f"[{client.room_id}] INTERACT_WORD: self_type={type(self).__name__}, room_id={client.room_id},"
-                 f" uname={command['data']['uname']}")
-        user_name = command["data"]["uname"]  # 获取用户昵称
-        user_id = command["data"]["uid"]  # 获取用户uid
-        time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        log.info(f"{time1}:粉丝[{user_name}]进入了直播间")
-        # 46130941：老爸  333472479：吟美
-        if all([user_id != not_allow_userid for not_allow_userid in llmData.welcome_not_allow]):
-            # 加入欢迎列表
-            llmData.WelcomeList.append(user_name)
-
-    _CMD_CALLBACK_DICT['INTERACT_WORD'] = __interact_word_callback  # noqa
-
-    def _on_heartbeat(self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage):
-        log.info(f'[{client.room_id}] 心跳2')
-
-
-class MyHandler(blivedm.BaseHandler):
-    # 心跳
-    def _on_heartbeat(self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage):
-        log.info(f'[{client.room_id}] 心跳1')
-
-    # 弹幕获取
-    def _on_open_live_danmaku(self, client: blivedm.OpenLiveClient, message: open_models.DanmakuMessage):
-        log.info(f'{message.uname}：{message.msg}')
-        traceid = str(uuid.uuid4())
-        msg_deal(traceid, message.msg, message.msg_id, message.uname)
-
-    # 赠送礼物
-    def _on_open_live_gift(self, client: blivedm.OpenLiveClient, message: open_models.GiftMessage):
-        coin_type = '金瓜子' if message.paid else '银瓜子'
-        total_coin = message.price * message.gift_num
-        log.info(f'[{message.room_id}] {message.uname} 赠送{message.gift_name}x{message.gift_num}'
-                 f' （{coin_type}x{total_coin}）')
-        username = message.uname
-        giftname = message.gift_name
-        num = message.gift_num
-        text = f"谢谢‘{username}’赠送的{num}个{giftname}"
-        log.info(text)
-        tts_say_thread = Thread(target=ttsCore.tts_say, args=(text,))
-        tts_say_thread.start()
-
-    def _on_open_live_buy_guard(self, client: blivedm.OpenLiveClient, message: open_models.GuardBuyMessage):
-        log.info(f'[{message.room_id}] {message.user_info.uname} 购买 大航海等级={message.guard_level}')
-        username = message.user_info.uname
-        level = message.guard_level
-        text = f"非常谢谢‘{username}’购买 大航海等级{level},{Ai_Name}大小姐在这里给你跪下了"
-        log.info(text)
-        tts_say_thread = Thread(target=ttsCore.tts_say, args=(text,))
-        tts_say_thread.start()
-
-    def _on_open_live_super_chat(
-            self, client: blivedm.OpenLiveClient, message: open_models.SuperChatMessage
-    ):
-        log.info(f'[{message.room_id}] 醒目留言 ¥{message.rmb} {message.uname}：{message.message}')
-        username = message.uname
-        rmb = message.rmb
-        text = f"谢谢‘{username}’赠送的¥{rmb}元,她留言说\"{message.message}\""
-        log.info(text)
-        tts_say_thread = Thread(target=ttsCore.tts_say, args=(text,))
-        tts_say_thread.start()
-
-    def _on_open_live_super_chat_delete(
-            self, client: blivedm.OpenLiveClient, message: open_models.SuperChatDeleteMessage
-    ):
-        log.info(f'[{message.room_id}] 删除醒目留言 message_ids={message.message_ids}')
-
-    def _on_open_live_like(self, client: blivedm.OpenLiveClient, message: open_models.LikeMessage):
-        log.info(f'{message.uname} 点赞')
-        username = message.uname
-        text = f"谢谢‘{username}’点赞,{Ai_Name}大小姐最爱你了"
-        log.info(text)
-        tts_say_thread = Thread(target=ttsCore.tts_say, args=(text,))
-        tts_say_thread.start()
-
-
-def msg_deal(traceid, query, uid, user_name):
-    """
-    处理弹幕消息
-    """
-    # traceid = str(uuid.uuid4())
-    # 过滤特殊字符
-    query = nsfwCore.str_filter(query)
-    log.info(f"[{traceid}]弹幕捕获：[{user_name}]:{query}")  # 打印弹幕信息
-
-    # 命令执行
-    if cmdCore.cmd(traceid, query, uid, user_name):
-        return
-
-    # 说话不执行任务
-    text = ["\\"]
-    num = StringUtil.is_index_contain_string(text, query)  # 判断是不是需要搜索
-    if num > 0:
-        return
-
-    # 跳舞表情
-    if danceCore.msg_deal_emotevideo(traceid, query, uid, user_name):
-        return
-
-    # 搜索引擎查询
-    if searchCore.msg_deal(traceid, query, uid, user_name):
-        return
-
-    # 搜索图片
-    if imageCore.msg_deal(traceid, query, uid, user_name):
-        return
-
-    # 绘画
-    if drawCore.msg_deal(traceid, query, uid, user_name):
-        return
-
-    # 唱歌
-    if singCore.msg_deal(traceid, query, uid, user_name):
-        return
-
-    # 跳舞
-    if danceCore.msg_deal_dance(traceid, query, uid, user_name):
-        return
-
-    # 换装
-    if actionOper.msg_deal_clothes(traceid, query, uid, user_name):
-        return
-
-    # 切换场景
-    if actionOper.msg_deal_scene(traceid, query, uid, user_name):
-        return
-
-    # 聊天入口处理
-    llmCore.msg_deal(traceid, query, uid, user_name)
-
-
 def main():
     # 初始化衣服
     emoteOper.emote_ws(1, 0.2, "初始化")  # 解除当前衣服
@@ -493,7 +262,7 @@ def main():
     # 吟美状态提示:初始化清空
     obs.show_text("状态提示", "")
 
-    if mode == 1 or mode == 2:
+    if "blivedm" in mode or "api" in mode:
         # LLM回复
         sched1.add_job(func=llmCore.check_answer, trigger="interval", seconds=1, id="answer", max_instances=100)
         # tts语音合成
@@ -516,28 +285,16 @@ def main():
         sched1.add_job(func=llmCore.check_welcome_room, trigger="interval", seconds=20, id="welcome_room", max_instances=50)
         sched1.start()
 
-    if mode == 1 or mode == 2:
         # 开启web
         app_thread = Thread(target=apprun)
         app_thread.start()
 
-    if mode == 1:
-        # bilibili-api弹幕监听
-        # sync(room.connect())
-        # blivedm弹幕监听
-        # asyncio.run(blivedm_start())
-        asyncio.run(listen_blivedm_task())
+    if "blivedm" in mode:
+        asyncio.run(blivedmCore.listen_blivedm_task())
     else:
         while True:
             time.sleep(10)
     log.info("结束")
-
-
-# 监听B站直播间两个监听组合【开放平台+SessData会话】
-async def listen_blivedm_task():
-    task1 = asyncio.create_task(blivedm_start())
-    task2 = asyncio.create_task(blivedm_start2())
-    results = await asyncio.gather(task1, task2)
 
 
 # http服务
