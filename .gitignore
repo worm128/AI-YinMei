@@ -4,13 +4,6 @@ runtime/
 *.bin
 .github/
 .git/
-*lora2/
-*lora/
-LLaMA-Factory/pylf/
-ChatGLM2/ptuning/ptuning/
-ChatGLM2/zero_nlp/chatglm_v2_6b_lora/output/
-LLaMA-Factory/saves/ChatGLM2-6B-Chat/lora
-LLaMA-Factory/data
 *logs/
 *data/
 output/*.wav
@@ -19,7 +12,6 @@ output/*.mp3
 porn/*.png
 porn/*.jpg
 porn/
-aivenv/
 *.exe
 吟美配置/
 Python*/
