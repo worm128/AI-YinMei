@@ -1,22 +1,26 @@
 AiName: "吟美" #ai名称
-mode: 1 # 1.b站直播间 2.api web
+mode: 2 # 1.b站直播间 2.api web
 proxies: #代理
   HttpProxies:
     { "http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806" }
   DuckduckgoProxies: "socks5://127.0.0.1:10806"
-blivedm: #b站弹幕
-  room_id: 0 #b站直播间号
-  sessdata: ""
-  ACCESS_KEY_ID: ""
-  ACCESS_KEY_SECRET: ""
-  APP_ID: 0 # 在B站开放平台创建的项目ID
-  ROOM_OWNER_AUTH_CODE: "" # 在B站主播身份码
+danmaku: #弹幕
+  mode: ["blivedm"]  # b站直播间:"blivedm"|api web:"api"
+  blivedm: #b站弹幕
+    room_id: 0 #b站直播间号
+    sessdata: ""
+    ACCESS_KEY_ID: ""
+    ACCESS_KEY_SECRET: ""
+    APP_ID: 0 # 在B站开放平台创建的项目ID
+    ROOM_OWNER_AUTH_CODE: "" # 在B站主播身份码
 welcome:
   is_llm_welcome: False #是否llm回复欢迎
   welcome_not_allow: [46130941, 333472479] #是否允许欢迎词
 llm: #大模型聊天
-  local_llm_type: 1 #1.fastgpt   1.text-generation-webui
+  local_llm_type: "fastgpt"  # 1.fastgpt 2.text-generation-webui
+  #text-generation-webui
   tgw_url: "192.168.2.58:5000" #text-generation-webui服务地址
+  #fastgpt
   fastgpt_url: "192.168.2.198:3000" #fastgpt服务地址
   fastgpt_authorization: #fastgpt秘钥
     {
@@ -48,6 +52,7 @@ nsfw: #鉴黄
   nsfw_limit: 0.2 #nsfw黄图值大于多少进行绘画屏蔽【值越大越是黄图，值范围0~1】
   nsfw_progress_limit: 0.2 #nsfw黄图-绘画进度鉴黄【值越大越是黄图，值范围0~1】
 speech: #语音
+  select: "GtpVists"  #EdgeTTs、GtpVists、BertVis2
   #bert-vists
   bert_vists_url: "192.168.2.58:5000"
   speaker_name: "珊瑚宫心海[中]"
