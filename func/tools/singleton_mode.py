@@ -1,3 +1,4 @@
+# 单实例
 def singleton(cls):
     instances = {}
     def getInstance(*args, **kwargs):

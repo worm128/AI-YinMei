@@ -1,3 +1,4 @@
+# 搜索功能
 from func.config.default_config import defaultConfig
 from func.log.default_log import DefaultLog
 from func.tools.singleton_mode import singleton

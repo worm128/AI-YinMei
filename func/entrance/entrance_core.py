@@ -1,3 +1,4 @@
+# 入口操作类：所有功能从这里发起
 from func.log.default_log import DefaultLog
 from func.llm.llm_core import LLmCore
 from func.sing.sing_core import SingCore
@@ -12,8 +13,6 @@ from func.vtuber.action_oper import ActionOper
 from func.obs.obs_init import ObsInit
 from func.tools.string_util import StringUtil
 from func.tools.singleton_mode import singleton
-from func.gobal.data import LLmData
-from func.gobal.data import SingData
 
 @singleton
 class EntranceCore:
@@ -23,7 +22,6 @@ class EntranceCore:
     cmdCore = CmdCore()  # 命令操作
 
     # ============= LLM参数 =====================
-    llmData = LLmData()  # llm数据
     llmCore = LLmCore()  # llm核心
     # ============================================
 
@@ -40,7 +38,6 @@ class EntranceCore:
     # ============================================
 
     # ============= 唱歌参数 =====================
-    singData = SingData()  # 唱歌数据
     singCore = SingCore()  # 唱歌核心
     # ============================================
 

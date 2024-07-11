@@ -1,9 +1,8 @@
+# 跳舞功能
 from threading import Thread
 import time
 import random
-import re
 from func.log.default_log import DefaultLog
-from func.vtuber.emote_oper import EmoteOper
 from func.cmd.cmd_core import CmdCore
 from func.tts.tts_core import TTsCore
 
@@ -12,10 +11,7 @@ from func.obs.obs_websocket import ObsWebSocket,VideoStatus,VideoControl
 from func.tools.string_util import StringUtil
 from func.tools.singleton_mode import singleton
 
-from func.gobal.data import VtuberData
-from func.gobal.data import LLmData
 from func.gobal.data import SingData
-from func.gobal.data import TTsData
 from func.gobal.data import DanceData
 
 @singleton
@@ -23,13 +19,9 @@ class DanceCore:
     # 设置控制台日志
     log = DefaultLog().getLogger()
 
-    vtuberData = VtuberData()  # vtuber数据
-    llmData = LLmData()  # llm数据
     singData = SingData()  # 唱歌数据
-    ttsData = TTsData()  # 语音数据
     danceData = DanceData()  # 跳舞数据
 
-    emoteOper = EmoteOper() # 表情
     ttsCore = TTsCore()  # tts语音
     cmdCore = CmdCore()  # cmd操作
 

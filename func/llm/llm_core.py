@@ -1,3 +1,4 @@
+# 聊天功能
 from func.log.default_log import DefaultLog
 import re
 import random

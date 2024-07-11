@@ -289,6 +289,7 @@ def main():
         app_thread = Thread(target=apprun)
         app_thread.start()
 
+    # 可以监听多个弹幕平台
     if "blivedm" in mode:
         asyncio.run(blivedmCore.listen_blivedm_task())
     else:

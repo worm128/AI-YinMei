@@ -1,3 +1,4 @@
+# 数据实体
 from func.config.default_config import defaultConfig
 import queue
 import threading

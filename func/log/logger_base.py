@@ -1,6 +1,5 @@
 import logging
 import colorlog
-import datetime
 
 class LoggerBase:
 

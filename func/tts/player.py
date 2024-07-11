@@ -1,3 +1,4 @@
+# 播放器
 import subprocess
 from func.tools.singleton_mode import singleton
 

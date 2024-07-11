@@ -1,3 +1,4 @@
+# B站弹幕
 from threading import Thread
 import datetime
 import uuid
@@ -30,7 +31,7 @@ class BlivedmCore:
     llmData = LLmData()  # llm数据
     ttsCore = TTsCore()  # 语音核心
 
-    entranceCore = EntranceCore()
+    entranceCore = EntranceCore()  #入口操作
 
     def __init__(self):
         self.obs = ObsInit().get_ws()

@@ -1,3 +1,4 @@
+# 唱歌功能
 from func.tools.singleton_mode import singleton
 from func.log.default_log import DefaultLog
 from func.gobal.data import SingData

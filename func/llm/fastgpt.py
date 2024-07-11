@@ -1,3 +1,4 @@
+# 知识库功能
 from func.log.default_log import DefaultLog
 from func.config.default_config import defaultConfig
 import time

@@ -1,13 +1,11 @@
+# 鉴黄功能
 from func.tools.singleton_mode import singleton
-from threading import Thread
 from func.log.default_log import DefaultLog
-from func.gobal.data import DrawData
 from func.gobal.data import NsfwData
 from func.obs.obs_init import ObsInit
 from func.tools.string_util import StringUtil
 
 import requests
-import json
 import time
 import io
 import base64
@@ -18,7 +16,6 @@ class NsfwCore:
     # 设置控制台日志
     log = DefaultLog().getLogger()
 
-    drawData = DrawData()  #绘画数据
     nsfwData = NsfwData()  #nsfw数据
 
     def __init__(self):

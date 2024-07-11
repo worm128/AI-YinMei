@@ -1,3 +1,4 @@
+# 搜图功能
 from func.tools.singleton_mode import singleton
 from func.tools.string_util import StringUtil
 
