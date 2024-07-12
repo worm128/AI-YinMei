@@ -263,7 +263,7 @@ class DrawCore:
                     "filter": ["nsfwLevel=1"],
                     "highlightPostTag": "__/ais-highlight__",
                     "highlightPreTag": "__ais-highlight__",
-                    "indexUid": "images_v5",
+                    "indexUid": "images_v6",
                     "limit": limit,
                     "offset": offset,
                     "q": query,
@@ -271,7 +271,6 @@ class DrawCore:
             ]
         }
         try:
-            offset = 0
             response = requests.post(url, headers=headers, json=payload, verify=False, timeout=60,
                                      proxies=self.commonData.proxies)
             r = response.json()
