@@ -1,5 +1,4 @@
 AiName: "吟美" #ai名称
-mode: 2 # 1.b站直播间 2.api web
 proxies: #代理
   HttpProxies:
     { "http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806" }
