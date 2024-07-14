@@ -64,7 +64,7 @@ class ImageCore:
                     return 1
             return 0
         except Exception as e:
-            self.log.exception(f"【searchimg_output】发生了异常：{e}")
+            self.log.exception(f"【searchimg_output】发生了异常：")
             return 0
 
     # 搜索引擎-搜图任务
@@ -83,7 +83,7 @@ class ImageCore:
             else:
                 self.ttsCore.tts_say(f"回复{username}：搜索图片《{prompt}》失败")
         except Exception as e:
-            self.log.exception(f"【output_img_thead】发生了异常：{e}")
+            self.log.exception(f"【output_img_thead】发生了异常：")
         finally:
             self.log.info(f"‘{username}’搜图《{prompt}》结束")
 

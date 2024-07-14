@@ -174,7 +174,7 @@ class DrawCore:
             self.log.info(outputTxt)
             self.ttsCore.tts_say(outputTxt)
         except Exception as e:
-            self.log.exception(f"【draw】发生了异常：{e}")
+            self.log.exception(f"【draw】发生了异常：")
         finally:
             self.drawData.is_drawing = 3
 
@@ -207,7 +207,7 @@ class DrawCore:
                         else:
                             self.log.info(f"《{prompt}》输出进度：{p}%")
                     except Exception as e:
-                        self.log.exception(f"【鉴黄】发生了异常：{e}")
+                        self.log.exception(f"【鉴黄】发生了异常：")
                         continue
                     # ========================================================
                     # 读取二进制字节流
@@ -315,7 +315,7 @@ class DrawCore:
                 self.log.info(f"C站提示词:{logstr}")
                 return jsonStr
         except Exception as e:
-            self.log.exception(f"draw_prompt信息回复异常{e}")
+            self.log.exception(f"draw_prompt信息回复异常：")
             return ""
         return ""
 

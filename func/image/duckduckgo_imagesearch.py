@@ -43,5 +43,5 @@ class DuckduckgoImagesearch:
                         break
                     i = i + 1
             except Exception as e:
-                self.log.exception(f"web_search_img信息回复异常{e}")
+                self.log.exception(f"web_search_img信息回复异常：")
         return imgUrl

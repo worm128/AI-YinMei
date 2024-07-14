@@ -30,6 +30,6 @@ class DuckduckgoWebsearch:
                 for r in ddgs_text_gen:
                     content = r["body"] + ";" + content
             except Exception as e:
-                self.log.exception(f"web_search信息回复异常{e}")
+                self.log.exception(f"web_search信息回复异常：")
                 #logging.error(traceback.format_exc())
         return content

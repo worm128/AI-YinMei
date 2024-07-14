@@ -44,7 +44,7 @@ class SingCore:
             if songname != "":
                 self.sing(songname, username)
         except Exception as e:
-            self.log.exception(f"【singTry】发生了异常：{e}")
+            self.log.exception(f"【singTry】发生了异常：")
             self.singData.is_singing = 2
             self.singData.is_creating_song = 2
 
@@ -210,7 +210,7 @@ class SingCore:
                     time.sleep(1)
             # =============== 结束生成歌曲 =================
         except Exception as e:
-            self.log.exception(f"《{songname}》create_song异常{e}")
+            self.log.exception(f"《{songname}》create_song异常：")
             is_created = 2
         finally:
             self.singData.is_creating_song = 2
@@ -285,7 +285,7 @@ class SingCore:
                 self.ttsCore.tts_say(f"回复{username}：{tip}")
                 return 2
         except Exception as e:
-            self.log.exception(f"《{songname}》play_song异常{e}")
+            self.log.exception(f"《{songname}》play_song异常：")
             return 3
 
     # 播放唱歌

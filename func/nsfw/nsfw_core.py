@@ -46,7 +46,7 @@ class NsfwCore:
             self.nsfwData.nsfw_lock.acquire()
             nsfwJson = self.nsfw_deal(imgb64)
         except Exception as e:
-            self.log.exception(f"《{prompt}》【nsfw】鉴黄{tip}发生了异常：{e}")
+            self.log.exception(f"《{prompt}》【nsfw】鉴黄{tip}发生了异常：")
             return -1, -1
         finally:
             self.nsfwData.nsfw_lock.release()
@@ -76,7 +76,7 @@ class NsfwCore:
                 return 1, nsfw
             return -1, nsfw
         except Exception as e:
-            self.log.exception(f"《{prompt}》【nsfw】鉴黄{tip}发生了异常：{e}")
+            self.log.exception(f"《{prompt}》【nsfw】鉴黄{tip}发生了异常：")
             return -1, nsfw
         # ========================================================
 

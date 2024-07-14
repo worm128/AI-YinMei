@@ -57,8 +57,7 @@ class TTsCore:
             json =  {"voiceType":"other","traceid":traceid,"chatStatus":"end","question":"","text":text,"lanuage":""}
             self.tts_say_do(json)
         except Exception as e:
-            self.log.info(f"【tts_say】发生了异常：{e}")
-            logging.error(traceback.format_exc())
+            self.log.exception("【tts_say】发生了异常：")
 
     # 直接合成语音播放-聊天用
     def tts_chat_say(self,json):
@@ -67,8 +66,7 @@ class TTsCore:
         except Exception as e:
             self.is_tts_ready = True
             self.llmData.is_stream_out = False
-            self.log.info(f"【tts_chat_say】发生了异常：{e}")
-            logging.error(traceback.format_exc())
+            self.log.exception(f"【tts_chat_say】发生了异常：")
 
     # 直接合成语音播放 {"question":question,"text":text,"lanuage":"ja"}
     def tts_say_do(self,json):

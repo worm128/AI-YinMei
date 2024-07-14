@@ -45,7 +45,7 @@ class LLmCore:
         try:
             self.ai_response()
         except Exception as e:
-            self.log.exception(f"【ai_response】发生了异常：{e}")
+            self.log.exception(f"【ai_response】发生了异常：")
             self.llmData.is_ai_ready = True
 
     # LLM回复
