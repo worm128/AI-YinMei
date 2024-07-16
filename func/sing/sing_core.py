@@ -262,7 +262,7 @@ class SingCore:
                 # 调用音乐播放器[人声播放]
                 mpv_play_thread = Thread(
                     target=self.sing_play,
-                    args=("song.exe", song_path + "vocal.wav", 100, "+0.08"),
+                    args=("song.exe", song_path + "vocal.wav", 70, "+0.08"),
                 )
                 accompany_thread.start()
                 mpv_play_thread.start()
