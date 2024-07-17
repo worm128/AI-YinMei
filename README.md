@@ -1,12 +1,12 @@
 # **AI-YinMei**
-
+<img src="https://github.com/user-attachments/assets/f25ca1df-2589-40cc-b80e-37c2b8daeaeb" width="700" height="400" ><br>
 - AI 虚拟主播 Vtuber 研发(N 卡版本)
 - AI 名称：吟美
 - 开发者：Winlone
 - B 站频道：程序猿的退休生活
 - B 站基础教程：https://www.bilibili.com/video/BV18b4y1V7Qm/
 - Q 群：27831318
-- 版本：1.7.7
+- 版本：1.8.0
 - 详细笔记：<br>
   现在发现有道云笔记网页版本不能查看笔记图片，需要完整教案请进入 Q 群 27831318 获取 pdf 文档<br>
   https://note.youdao.com/s/1k0x7BLt<br>
