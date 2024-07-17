@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <link rel="icon" href="/favicon.ico">
+    <title>黑色透明回复框</title>
+    <style>
+        /* Transparent background */
+        body {
+            background-color: transparent !important;
+        }
+        .area {
+            width: 600px;
+            height: auto;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            -webkit-border-radius: 15px;
+            border: solid 1px #ffffff;
+
+            color: white;
+            line-height: 52px;
+            font-size: 40px;
+            word-wrap: break-word;
+            overflow: hidden;
+            letter-spacing: 5px;
+            font-family: "微软雅黑";
+        }
+        .area .title {
+            font-weight: bold; color: #ff8000; font-size: 48px; line-height: 60px;
+        }
+        .area .important {
+            font-weight: bold; color: red;
+        }
+    </style>
+    <script type="text/javascript" src="jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<div class="area chat">
+    <div class="title">1、聊天功能：</div>
+    <div>1.1 输入弹幕就能聊天，设定了<span class="important">名字、性格、语气和嘲讽</span>能力的 AI，能够与粉丝互怼，当然录入了<span
+            class="important">老粉丝</span>的信息记录，能够更好识别老粉丝的行为进行互怼。
+    </div>
+    <div>1.2 <span class="important">多重性格：</span>吟美有善解人意的<span class="important">女仆</span>和凶残<span
+            class="important">怼人</span>的大小姐性格，根据不同场景自行判断切换</div>
+</div>
+<div class="area sing">
+    <div class="title">2、唱歌功能：</div>
+    <div>2.1 输入<span class="important">唱歌+歌曲名称</span>，吟美会根据你输入的歌曲名称进行学习唱歌。当然，你可以输入类似<span
+            class="important">吟美给我推荐一首最好听的动漫歌曲</span>这些开放性的话题，让吟美给你智能选择歌曲进行演唱。
+    </div>
+    <div>2.2 切歌请输入<span class="important">切歌</span>指令，会跳过当前歌曲，直接唱<span
+            class="important">下一首</span>歌曲
+    </div>
+</div>
+<div class="area draw">
+    <div class="title">3、绘画功能：</div>
+    <div>3.1 输入<span class="important">画画+图画标题</span>，吟美会根据你输入的绘画提示词进行实时绘画。</div>
+    <div>3.2 当然，你可以输入类似<span class="important">吟美给我画一幅最丑的小龟蛋</span>这些开放性的话题，让吟美给你<span class="important">智能输出</span>绘画提示词进行画画。</div>
+</div>
+<div class="area dance">
+    <div class="title">4、跳舞功能：</div>
+    <div>4.1 输入<span class="important">跳舞+舞蹈名称</span>，舞蹈如下：
+            <div>书记舞、科目三、女团舞、社会摇</div>
+            <div>呱呱舞、马保国、二次元、涩涩</div>
+            <div>蔡徐坤、江南 style、Chipi、吟美</div>
+            <div>直接输入“跳舞”两个字是随机跳舞</div>
+    </div>
+    <div>4.2 停止跳舞请输入<span class="important">停止跳舞</span></div>
+</div>
+<div class="area emote">
+    <div class="title">5、表情功能：</div>
+    <div>输入<span class="important">#号+表情名称</span>, <span class="important">#rnd</span>是随机表情，表情自己猜，例如，<span class="important">哭、笑、吐舌头</span>之类</div>
+</div>
+<div class="area sence">
+    <div class="title">6、场景切换功能：</div>
+    <div>6.1 输入<span class="important">切换+场景名称</span>： 粉色房间、神社、海岸花坊、花房、清晨房间</div>
+    <div>6.2 系统<span class="important">智能判定时间</span>进行早晚场景切换</div>
+</div>
+<div class="area cloth">
+    <div class="title">7、换装功能：</div>
+    <div>输入<span class="important">换装+衣服名称</span>：便衣、爱的翅膀、青春猫娘、眼镜猫娘</div>
+</div>
+<div class="area image">
+    <div class="title">8、搜图功能：</div>
+    <div>输入<span class="important">搜图+关键字</span></div>
+</div>
+<div class="area news">
+    <div class="title">9、搜索资讯功能：</div>
+    <div>输入<span class="important">搜索+关键字</span></div>
+</div>
+<script type="text/javascript">
+    let area = $('.area');
+    let activeIndex = 1;
+    let count = area.length-1;
+    area.css("display", "none");
+    area.eq(0).css("display", "block");
+    function activateTab(index) {
+        area.css("display", "none");
+        area.eq(index).css("display", "block");
+    }
+
+    function nextTab() {
+        activateTab(activeIndex);
+        activeIndex = activeIndex + 1;
+        if (activeIndex > count) {
+            activeIndex = 0
+        }
+    }
+
+    // 设置自动切换间隔为2000毫秒
+    setInterval(nextTab, 8000);
+</script>
+
+</body>
+</html>

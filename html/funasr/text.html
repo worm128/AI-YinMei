@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>语音识别</title>
+        <script type="text/javascript" src="jquery-3.7.1.min.js"></script>
+	</head>
+    <body>
+        <script>
+            // JavaScript部分
+            function chat(text){
+                $.ajax({
+                    url: "http://127.0.0.1:1800/chat",
+                    type: "GET",
+                    dataType: "jsonp",
+                    data: {
+                        "text":text,
+                        "uid":0,
+                        "username":"程序猿的退休生活"
+                    },
+                    //需要和服务端回掉方法中的参数名相对应
+                    //注释掉这句话默认传的名称叫callback
+                    jsonp: "CallBack",
+                    cache: false,
+                    success: function (data) {
+                        if(data["status"]=="成功")
+                        {
+                            alert(data)
+                        }
+                    }
+                });
+            }
+
+            chat("测试");
+        </script>
+    </body>
+</html>

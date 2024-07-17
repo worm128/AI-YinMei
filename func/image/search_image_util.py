@@ -1,20 +1,23 @@
-# -*- coding:utf-8 -*- 
-"""
-Author：SPIDERMAN
-Time: 2021/7/19 
-Software: PyCharm
-"""
+
 import json
 import re
 from bs4 import BeautifulSoup as bs
 import requests
 from urllib.parse import unquote, quote
 from concurrent import futures
+from func.log.default_log import DefaultLog
+
 """
 百度图片https://image.baidu.com/
 360搜图：https://image.so.com/
 微软：https://cn.bing.com/images/trending?FORM=ILPTRD
 """
+
+# 设置控制台日志
+log = DefaultLog().getLogger()
+# 重定向print输出到日志文件
+def print(*args, **kwargs):
+    log.info(*args, **kwargs)
 
 def baidu_get_image_url_regx(data, max_number=10000, use_proxy=None):
     """
