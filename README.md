@@ -4,23 +4,18 @@
 - AI 名称：吟美
 - 开发者：Winlone
 - B 站频道：程序猿的退休生活
-- B 站基础教程：https://www.bilibili.com/video/BV18b4y1V7Qm/
+- Ai吟美视频教程：https://www.bilibili.com/read/cv33640951/
 - Q 群：27831318
 - 版本：1.8.0
-- 详细笔记：<br>
-  现在发现有道云笔记网页版本不能查看笔记图片，需要完整教案请进入 Q 群 27831318 获取 pdf 文档<br>
-  https://note.youdao.com/s/1k0x7BLt<br>
-- 吟美 pdf 完整说明文档：<br>
-  百度网盘：https://pan.baidu.com/s/13tKUI2sFLyJAWrqzYkRaCw?pwd=1kz2<br>
-  在百度网盘->人工智能->吟美说明文档->AI 虚拟主播 Vtuber 研发(N 卡版本)-v1.7.x.pdf<br>
 - 吟美整合包下载地址：<br>
   整合包教程：https://www.bilibili.com/video/BV1zD421H76q<br>
-  百度网盘：https://pan.baidu.com/s/13tKUI2sFLyJAWrqzYkRaCw?pwd=1kz2<br>
-  提取码：1kz2<br>
+  百度网盘群号：930109408<br>
+  提示：因为百度网盘分享总是屏蔽，现在切换到百度网盘的群分享，请在“百度网盘->消息” 添加群号，加入群后可以在文件列表进行下载<br>
   夸克：https://pan.quark.cn/s/ade5c2d30ae7<br>
   提取码：ci9B<br>
-  整合包下载(4 个)：自媒体 -> 人工智能 -> yinmei-all<br>
-  整合包说明文档：自媒体 -> 人工智能 -> yinmei-all -> Ai 吟美整合包.pdf<br>
+  功能整合包下载(4 个)：人工智能 -> yinmei-all<br>
+  吟美核心【版本迭代】：人工智能 -> 吟美核心<br>
+  吟美开发文档：人工智能 -> 吟美开发文档<br>
 - 旧版吟美项目【因集成过多内置第三方项目，已废弃】：<br>
   https://github.com/worm128/AI-YinMei-backup<br>
 
@@ -370,3 +365,8 @@ docker run -p 10095:10095 --name funasr -it --privileged=true -v /j/ai/ai-code/f
 ### 更多关注
 
 - 讨论 Q 群：27831318<br>
+
+### 捐献基金
+捐助列表：https://docs.qq.com/sheet/DWUZPUlRrT1BXTXBk <br>
+扫码赞助<br>
+<img src="https://images.cnblogs.com/cnblogs_com/ikaros-521/2328032/o_240614173255_wx2.jpg" style="width: 250px;"> <br>
