@@ -34,7 +34,7 @@ class SearchCore:
             # 搜索引擎搜索
             searchStr = self.baidu_web_search(prompt)
             # llm模型处理
-            llm_prompt = f'[{traceid}]帮我在答案"{searchStr}"中提取"{prompt}"的信息'
+            llm_prompt = f'帮我在答案"{searchStr}"中提取"{prompt}"的信息'
             self.log.info(f"[{traceid}]重置提问:{llm_prompt}")
             # 询问LLM
             llm_json = {

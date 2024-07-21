@@ -1105,7 +1105,7 @@ def check_text_search():
         #搜索引擎搜索
         searchStr = baidu_web_search(prompt)
         #llm模型处理
-        llm_prompt = f'[{traceid}]帮我在答案"{searchStr}"中提取"{prompt}"的信息'
+        llm_prompt = f'帮我在答案"{searchStr}"中提取"{prompt}"的信息'
         log.info(f"[{traceid}]重置提问:{llm_prompt}")
         #询问LLM
         llm_json = {"traceid":traceid, "query": prompt, "prompt": llm_prompt, "uid": uid, "username": username}
