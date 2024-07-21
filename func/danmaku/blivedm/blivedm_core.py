@@ -139,7 +139,7 @@ class BlivedmCore:
         def _on_open_live_danmaku(self, client: blivedm.OpenLiveClient, message: open_models.DanmakuMessage):
             self.BlivedmCore.log.info(f'{message.uname}：{message.msg}')
             traceid = str(uuid.uuid4())
-            self.BlivedmCore.entranceCore.msg_deal(traceid, message.msg, message.msg_id, message.uname)
+            self.BlivedmCore.entranceCore.msg_deal(traceid, message.msg, message.open_id, message.uname)
 
         # 赠送礼物
         def _on_open_live_gift(self, client: blivedm.OpenLiveClient, message: open_models.GiftMessage):

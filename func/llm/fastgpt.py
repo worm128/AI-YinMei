@@ -4,6 +4,7 @@ from func.config.default_config import defaultConfig
 import time
 import requests
 from func.tools.singleton_mode import singleton
+import random
 
 @singleton
 class FastGpt:
@@ -23,13 +24,23 @@ class FastGpt:
         url = f"http://{self.fastgpt_url}/api/v1/chat/completions"
         headers = {"Content-Type": "application/json", "Authorization": authorization}
         timestamp = int(time.time())
+        # 判断人物性格
+        random_number = random.randrange(1, 11)
+        character = "怒怼版"
+        if random_number > 4:
+            character = "怒怼版"
+        else:
+            character = "女仆版"
+
         data = {
-            "chatId": timestamp,
+            "chatId": uid,
             "stream": True,
             "detail": False,
-            "variables": {"uid": uid, "name": username},
+            "variables": {"uid": uid, "name": username, "character":character},
             "messages": [{"content": content, "role": "user"}]
         }
+        self.log.info(headers)
+        self.log.info(data)
         response = None
         try:
             response = requests.post(

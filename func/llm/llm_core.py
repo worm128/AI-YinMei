@@ -90,12 +90,7 @@ class LLmCore:
             if re.search(self.llmData.public_sentiment_key, prompt):
                 authorization = self.llm.fastgpt_authorization.get("女仆版")
             else:
-                # 摇骰子选择性格
-                random_number = random.randrange(1, 11)
-                if random_number > 4:
-                    authorization = self.llm.fastgpt_authorization.get("怒怼版")
-                else:
-                    authorization = self.llm.fastgpt_authorization.get("女仆版")
+                authorization = self.llm.fastgpt_authorization.get("怒怼版")
             # fastgpt聊天
             response = self.llm.chat(username_prompt, uid, username, authorization)
         # text-generation-webui
