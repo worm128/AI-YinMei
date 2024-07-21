@@ -85,19 +85,24 @@ class LLmCore:
         if self.local_llm_type == "fastgpt":
             username_prompt = f"{shenfen}{prompt}"
             self.log.info(f"[{traceid}]{username_prompt}")
-            authorization = ""
             # 后续改成舆情判断，当前是简易字符串判断
+            character = "怒怼版"
             if re.search(self.llmData.public_sentiment_key, prompt):
-                authorization = self.llm.fastgpt_authorization.get("女仆版")
+                character = "女仆版"
             else:
-                authorization = self.llm.fastgpt_authorization.get("怒怼版")
+                random_number = random.randrange(1, 11)
+                if random_number > 4:
+                    character = "怒怼版"
+                else:
+                    character = "女仆版"
+
             # fastgpt聊天
-            response = self.llm.chat(username_prompt, uid, username, authorization)
+            response = self.llm.chat(username_prompt, uid, username, character)
         # text-generation-webui
         elif self.local_llm_type == "text-generation-webui":
             username_prompt = f"{shenfen}{prompt}"
             self.log.info(f"[{traceid}]{username_prompt}")
-            response = self.llm.chat(username_prompt, "Aileen Voracious", "chat", "Winlone", username)
+            response = self.llm.chat(username_prompt, "Winlone", "Winlone", "Aileen Voracious")
             response = response.replace("You", username)
         # 过滤表情<>或者()标签
         self.obs.show_text("状态提示", f'{self.llmData.Ai_Name}思考问题"{title}"完成')

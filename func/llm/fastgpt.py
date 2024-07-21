@@ -20,18 +20,10 @@ class FastGpt:
     fastgpt_authorization: str = config["llm"]["fastgpt_authorization"]
 
     # fastgpt知识库接口调用-LLM回复
-    def chat(self,content, uid, username, authorization):
+    def chat(self,content, uid, username, character):
         url = f"http://{self.fastgpt_url}/api/v1/chat/completions"
-        headers = {"Content-Type": "application/json", "Authorization": authorization}
+        headers = {"Content-Type": "application/json", "Authorization": self.fastgpt_authorization}
         timestamp = int(time.time())
-        # 判断人物性格
-        random_number = random.randrange(1, 11)
-        character = "怒怼版"
-        if random_number > 4:
-            character = "怒怼版"
-        else:
-            character = "女仆版"
-
         data = {
             "chatId": uid,
             "stream": True,
