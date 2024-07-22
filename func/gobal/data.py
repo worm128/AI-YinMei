@@ -90,6 +90,8 @@ class SingData:
 
 @singleton
 class DrawData:
+    # http代理
+    httpProxies = config["draw"]["HttpProxies"]
     # ============= 绘画参数 =====================
     drawUrl = config["draw"]["drawUrl"]
     is_drawing = 3  # 1.绘画中 2.绘画完成 3.绘画任务结束
@@ -113,14 +115,20 @@ class NsfwData:
 
 @singleton
 class ImageData:
+    # ============= 搜图参数 =====================
     SearchImgList = queue.Queue()
     is_SearchImg = 2  # 1.搜图中 2.搜图完成
-    physical_save_folder = config["draw"]["physical_save_folder"]  # 绘画保存图片物理路径
-    width = config["draw"]["width"]  # 图片宽度
-    height = config["draw"]["height"]  # 图片高度
+    # ============================================
+    httpProxies = config["searchImg"]["HttpProxies"]
+    imageNum = config["searchImg"]["imageNum"]
+    physical_save_folder = config["searchImg"]["physical_save_folder"]  # 绘画保存图片物理路径
+    width = config["searchImg"]["width"]  # 图片宽度
+    height = config["searchImg"]["height"]  # 图片高度
 
 @singleton
 class SearchData:
+    httpProxies = config["searchWeb"]["HttpProxies"]
+    searchNum = config["searchWeb"]["searchNum"]
     # ============= 搜文参数 =====================
     SearchTextList = queue.Queue()
     is_SearchText = 2  # 1.搜文中 2.搜文完成
@@ -161,7 +169,6 @@ class BiliDanmakuData:
 @singleton
 class CommonData:
     # 1.b站直播间 2.api web
-    mode = config["danmaku"]["mode"]
+    mode = config["app"]["mode"]
+    port = config["app"]["port"]
     Ai_Name: str = config["AiName"]  # Ai名称
-    # 代理
-    proxies = config["proxies"]["HttpProxies"]

@@ -51,7 +51,7 @@ class SearchCore:
     # baidu搜索引擎搜索
     def baidu_web_search(self, query):
         content = ""
-        results = self.baiduWebsearch.search(query, num_results=3, debug=0)
+        results = self.baiduWebsearch.search(query, num_results=self.searchData.searchNum, debug=0)
         if isinstance(results, list):
             self.log.info("search results：(total[{}]items.)".format(len(results)))
             for res in results:

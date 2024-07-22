@@ -124,16 +124,16 @@ class ImageCore:
 
     # 百度搜图
     def baidu_search_img(self,query):
-        imageNum = 10
+        imageNum = self.imageData.imageNum
         # 第一次搜图
-        img_search_json = {"query": query, "width": 800, "height": 600}
+        img_search_json = {"query": query, "width": self.imageData.width, "height": self.imageData.height}
         images = search_image_util.baidu_get_image_url_regx(img_search_json, imageNum)
         count = len(images)
         self.log.info(f"1.搜图《{query}》数量：{count}")
 
         # 第二次搜图
         if count < imageNum:
-            img_search_json = {"query": query, "width": 800, "height": 0}
+            img_search_json = {"query": query, "width": self.imageData.width, "height": 0}
             sec = search_image_util.baidu_get_image_url_regx(img_search_json, imageNum)
             sec_count = len(sec)
             count = count + sec_count

@@ -1,9 +1,19 @@
 AiName: "吟美" #ai名称
-proxies: #代理
-  HttpProxies: { "http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806" }
-  DuckduckgoProxies: "socks5://127.0.0.1:10806"
-danmaku: #弹幕
+app: #吟美核心的api配置
+  port: 1800  #吟美核心的端口
   mode: ["api"]  # b站直播间:"blivedm"|api web:"api"
+searchImg: #搜图服务
+  imageNum: 10  # 抽图数量，从中随机一张
+  width: 980 # 图片宽度
+  height: 500 # 图片高度
+  physical_save_folder: "J:\\ai\\ai-yinmei\\porn\\" #绘画保存图片物理路径
+  HttpProxies:
+searchWeb: #搜索服务
+  searchNum: 5  # 抽文数量，从中随机一篇文章
+  HttpProxies: "socks5://127.0.0.1:10806"
+translate: #翻译服务
+  HttpProxies: "socks5://127.0.0.1:10806"
+danmaku: #弹幕
   blivedm: #b站弹幕
     room_id: 0 #b站直播间号
     sessdata: ""
@@ -25,6 +35,7 @@ llm: #大模型聊天
   split_limit: 4 #流式回复分割的最小字符数量
   public_sentiment_key: "(爱|喵|女仆|老婆|男朋友|比心|媳妇|喜欢|乖|不理你|美|老公)" #舆情关键字判断
 draw: #绘画
+  HttpProxies: { "http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806" }
   drawUrl: "192.168.2.57:7860" #Stable Diffusion服务ip
   width: 980 # 图片宽度
   height: 500 # 图片高度

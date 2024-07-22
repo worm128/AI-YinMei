@@ -272,7 +272,7 @@ class DrawCore:
         }
         try:
             response = requests.post(url, headers=headers, json=payload, verify=False, timeout=60,
-                                     proxies=self.commonData.proxies)
+                                     proxies=self.drawData.httpProxies)
             r = response.json()
             hits_temp = r["results"][0]["hits"]
             hits = []

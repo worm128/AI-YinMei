@@ -19,7 +19,7 @@ log = DefaultLog().getLogger()
 def print(*args, **kwargs):
     log.info(*args, **kwargs)
 
-def baidu_get_image_url_regx(data, max_number=10000, use_proxy=None):
+def baidu_get_image_url_regx(data, max_number=10000, proxies=None):
     """
     获取百度图片urls
     :param keywords: 关键词
@@ -39,8 +39,7 @@ def baidu_get_image_url_regx(data, max_number=10000, use_proxy=None):
     query_url = base_url + keywords_str
     init_url = query_url + f"&pn=0&rn={max_number}"
     print(f"百度地址:{init_url}")
-    
-    proxies = None
+
     # if use_proxy:
     #     proxies = {"http": "{}://{}".format(proxy_type, proxy),
     #                "https": "{}://{}".format(proxy_type, proxy)}
@@ -57,7 +56,7 @@ def baidu_get_image_url_regx(data, max_number=10000, use_proxy=None):
 
     return images
 
-def baidu_get_image_url(data, max_number=10000, use_proxy=None):
+def baidu_get_image_url(data, max_number=10000, proxies=None):
     """
     获取百度图片urls
     :param keywords: 关键词
@@ -85,11 +84,6 @@ def baidu_get_image_url(data, max_number=10000, use_proxy=None):
     query_url = base_url + keywords_str
     init_url = query_url + "&pn=0&rn=30"
     print(f"百度地址:{query_url}")
-    
-    proxies = None
-    # if use_proxy:
-    #     proxies = {"http": "{}://{}".format(proxy_type, proxy),
-    #                "https": "{}://{}".format(proxy_type, proxy)}
 
     headers = {
         'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
@@ -150,7 +144,7 @@ def baidu_get_image_url(data, max_number=10000, use_proxy=None):
     crawled_urls = list(set(crawled_urls))
     return crawled_urls[:min(len(crawled_urls), crawl_num)]
 
-def bing_get_image_url(keywords, max_number=10000, use_proxy=None):
+def bing_get_image_url(keywords, max_number=10000, proxies=None):
     """
     获取必应图片urls
     :param keywords: 关键词
@@ -171,10 +165,6 @@ def bing_get_image_url(keywords, max_number=10000, use_proxy=None):
     base_url = "https://cn.bing.com/images/async?count=35&cw=1689&ch=249&relp=35&tsc=ImageBasicHover&datsrc=I&layout=RowBased_Landscape&mmasync=1&dgState=x*0_y*0_h*0_c*7_i*36_r*5&IG=9921BE4B40B941CB8078BE6F1F74599B&iid=images.5544"
     keywords_str = "&q={}".format(quote(keywords))
     query_url = base_url + keywords_str
-    proxies = None
-    # if use_proxy:
-    #     proxies = {"http": "{}://{}".format(proxy_type, proxy),
-    #                "https": "{}://{}".format(proxy_type, proxy)}
 
     headers = {
         'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
@@ -213,7 +203,7 @@ def bing_get_image_url(keywords, max_number=10000, use_proxy=None):
     crawled_urls = list(set(crawled_urls))
     return crawled_urls[:min(len(crawled_urls), max_number)]
 
-def i360_get_image_url(keywords, max_number=10000, use_proxy=None):
+def i360_get_image_url(keywords, max_number=10000, proxies=None):
     """
     获取360图片urls
     :param keywords: 关键词
@@ -225,10 +215,6 @@ def i360_get_image_url(keywords, max_number=10000, use_proxy=None):
     keywords_str = "&q={}".format(quote(keywords))
     query_url = base_url + keywords_str
     init_url = query_url + "&sn=0"
-    proxies = None
-    # if use_proxy:
-    #     proxies = {"http": "{}://{}".format(proxy_type, proxy),
-    #                "https": "{}://{}".format(proxy_type, proxy)}
 
     headers = {
         'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
@@ -276,7 +262,7 @@ def i360_get_image_url(keywords, max_number=10000, use_proxy=None):
     crawled_urls = list(set(crawled_urls))
     return crawled_urls[:min(len(crawled_urls), crawl_num)]
 
-def crawl_image_urls(keywords, engine="baidu", max_number=10000,use_proxy=False):
+def crawl_image_urls(keywords, engine="baidu", max_number=10000, proxies=None):
     """
     :param keywords:
     :param engine:
@@ -293,11 +279,11 @@ def crawl_image_urls(keywords, engine="baidu", max_number=10000,use_proxy=False)
         print("抓取数量为:{}条".format(max_number))
     image_urls = 0
     if engine== "baidu":
-        image_urls = baidu_get_image_url(keywords, max_number=max_number,use_proxy=use_proxy)
+        image_urls = baidu_get_image_url(keywords, max_number=max_number,proxies=proxies)
     elif engine == "bing":
-        image_urls = bing_get_image_url(keywords, max_number=max_number, use_proxy=use_proxy)
+        image_urls = bing_get_image_url(keywords, max_number=max_number, proxies=proxies)
     elif engine == "360":
-        image_urls = i360_get_image_url(keywords, max_number=max_number, use_proxy=use_proxy)
+        image_urls = i360_get_image_url(keywords, max_number=max_number, proxies=proxies)
     else:   # Baidu
         print('目前只支持baidu、360、bing')
     if len(image_urls)>=0:

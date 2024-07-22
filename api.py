@@ -9,9 +9,6 @@ from flask_apscheduler import APScheduler
 
 from func.obs.obs_websocket import VideoControl
 from func.log.default_log import DefaultLog
-from func.config.default_config import defaultConfig
-
-
 from func.obs.obs_init import ObsInit
 from func.vtuber.emote_oper import EmoteOper
 from func.tts.tts_core import TTsCore
@@ -28,10 +25,9 @@ from func.entrance.entrance_core import EntranceCore
 from func.danmaku.blivedm.blivedm_core import BlivedmCore
 from func.gobal.data import VtuberData
 from func.gobal.data import CommonData
+from func.gobal.data import BiliDanmakuData
 
 
-# 加载配置
-config = defaultConfig().get_config()
 # 设置控制台日志
 log = DefaultLog().getLogger()
 # 重定向print输出到日志文件
@@ -303,7 +299,7 @@ def apprun():
     # 禁止输出日志
     app.logger.disabled = True
     # 启动web应用
-    app.run(host="0.0.0.0", port=1800)
+    app.run(host="0.0.0.0", port=commonData.port)
 
 if __name__ == "__main__":
     main()

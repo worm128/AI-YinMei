@@ -9,14 +9,14 @@ class DuckduckgoTranslate:
     log = DefaultLog().getLogger()
     # 加载配置
     config = defaultConfig().get_config()
-    duckduckgo_proxies = config["proxies"]["DuckduckgoProxies"]
+    httpProxies = config["translate"]["HttpProxies"]
 
     def __init__(self):
         pass
 
     # 翻译
     def translate(self, text, from_lanuage, to_lanuage):
-        with DDGS(proxies=self.duckduckgo_proxies, timeout=20) as ddgs:
+        with DDGS(proxies=self.httpProxies, timeout=20) as ddgs:
             try:
                 r = ddgs.translate(text, from_=from_lanuage, to=to_lanuage)
                 self.log.info(f"翻译：{r}")

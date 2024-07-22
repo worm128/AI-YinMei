@@ -135,7 +135,7 @@ class DanceCore:
 
     # 跳舞表情入口处理
     def msg_deal_emotevideo(self, traceid, query, uid, user_name):
-        text = ["#"]
+        text = ["#","表情"]
         is_contain = StringUtil.has_string_reg_list(f"^{text}", query)
         if is_contain is not None:
             num = StringUtil.is_index_contain_string(text, query)
@@ -143,7 +143,7 @@ class DanceCore:
             queryExtract = queryExtract.strip()
             self.log.info(f"[{traceid}]跳舞表情：" + queryExtract)
             video_path = ""
-            if queryExtract == "rnd":
+            if queryExtract == "rnd" or queryExtract == "随机":
                 rnd_video = random.randrange(0, len(self.danceData.emote_video))
                 video_path = self.danceData.emote_video[rnd_video]
             else:

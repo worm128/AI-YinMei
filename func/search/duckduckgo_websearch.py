@@ -1,5 +1,4 @@
 from duckduckgo_search import DDGS
-from func.config.default_config import defaultConfig
 from func.log.default_log import DefaultLog
 from func.tools.singleton_mode import singleton
 
@@ -7,16 +6,11 @@ from func.tools.singleton_mode import singleton
 class DuckduckgoWebsearch:
     # 设置控制台日志
     log = DefaultLog().getLogger()
-    # 加载配置
-    config = defaultConfig().get_config()
-    duckduckgo_proxies = config["proxies"]["DuckduckgoProxies"]
-    # duckduckgo搜索引擎搜索
-    textSearchNum = 5
 
     def __init__(self):
         pass
 
-    def duckduckgo_web_search(self,query):
+    def duckduckgo_web_search(self,query,textSearchNum):
         content = ""
         with DDGS(proxies=self.duckduckgo_proxies, timeout=20) as ddgs:
             try:
@@ -25,7 +19,7 @@ class DuckduckgoWebsearch:
                     region="cn-zh",
                     timelimit="d",
                     backend="api",
-                    max_results=self.textSearchNum,
+                    max_results=textSearchNum,
                 )
                 for r in ddgs_text_gen:
                     content = r["body"] + ";" + content

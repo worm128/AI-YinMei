@@ -1,5 +1,4 @@
 from duckduckgo_search import DDGS
-from func.config.default_config import defaultConfig
 from func.log.default_log import DefaultLog
 from func.tools.singleton_mode import singleton
 import random
@@ -8,20 +7,15 @@ import random
 class DuckduckgoImagesearch:
     # 设置控制台日志
     log = DefaultLog().getLogger()
-    # 加载配置
-    config = defaultConfig().get_config()
-    duckduckgo_proxies = config["proxies"]["DuckduckgoProxies"]
-    # duckduckgo搜索引擎搜索
-    textSearchNum = 5
 
     def __init__(self):
         pass
 
     # duckduckgo搜索引擎搜图片
-    def web_search_img(self,query):
+    def web_search_img(self,query,proxies):
         imageNum = 10
         imgUrl = ""
-        with DDGS(proxies=self.duckduckgo_proxies, timeout=20) as ddgs:
+        with DDGS(proxies=proxies, timeout=20) as ddgs:
             try:
                 ddgs_images_gen = ddgs.images(
                     query,
