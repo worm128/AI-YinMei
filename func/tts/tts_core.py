@@ -37,11 +37,11 @@ class TTsCore:
     singData = SingData()  # 唱歌数据
     # 选择语音
     select_vists = ttsData.select_vists
-    if select_vists == "GtpVists":
+    if select_vists == "gpt-sovits":
         vists = GtpVists()
-    elif select_vists == "BertVis2":
+    elif select_vists == "bert-vists":
         vists = BertVis2()
-    elif select_vists == "EdgeTTs":
+    elif select_vists == "edge-tts":
         vists = EdgeTTs()
     else:
         vists = GtpVists()

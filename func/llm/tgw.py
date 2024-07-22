@@ -10,7 +10,7 @@ class Tgw:
     # 加载配置
     config = defaultConfig().get_config()
 
-    tgw_url: str = config["llm"]["tgw_url"]
+    tgw_url: str = config["llm"]["text-generation-webui"]["tgw_url"]
     history = []
 
     # text-generation-webui接口调用-LLM回复

@@ -1,10 +1,9 @@
 AiName: "吟美" #ai名称
 proxies: #代理
-  HttpProxies:
-    { "http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806" }
+  HttpProxies: { "http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806" }
   DuckduckgoProxies: "socks5://127.0.0.1:10806"
 danmaku: #弹幕
-  mode: ["blivedm"]  # b站直播间:"blivedm"|api web:"api"
+  mode: ["api"]  # b站直播间:"blivedm"|api web:"api"
   blivedm: #b站弹幕
     room_id: 0 #b站直播间号
     sessdata: ""
@@ -17,20 +16,16 @@ welcome:
   welcome_not_allow: [46130941, 333472479] #是否允许欢迎词
 llm: #大模型聊天
   local_llm_type: "fastgpt"  # 1.fastgpt 2.text-generation-webui
-  #text-generation-webui
-  tgw_url: "192.168.2.58:5000" #text-generation-webui服务地址
-  #fastgpt
-  fastgpt_url: "192.168.2.198:3000" #fastgpt服务地址
-  fastgpt_authorization: #fastgpt秘钥
-    {
-      "怒怼版": "Bearer fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBWQhMLxDUck6W6Oeio4sx",
-      "女仆版": "Bearer fastgpt-yjuDaV7O4kyzK1DY7PuOGvOjqUJCSmdCENKowhDSAi6PwdoG4247bs2yL",
-    }
+  text-generation-webui: #text-generation-webui
+    tgw_url: "192.168.2.58:5000" #text-generation-webui服务地址
+  fastgpt:   #fastgpt
+    fastgpt_url: "192.168.2.198:3000" #fastgpt服务地址
+    fastgpt_authorization: "Bearer fastgpt-juALnJbjaI6PjOx9gLQHtkvVVmipseWNVXL83zPtCjnbDDuRacsdhzBB6PqPFKhGY" #fastgpt秘钥
   split_flag: ",|，|。|!|！|?|？|\n" #流式回复的分割符
   split_limit: 4 #流式回复分割的最小字符数量
   public_sentiment_key: "(爱|喵|女仆|老婆|男朋友|比心|媳妇|喜欢|乖|不理你|美|老公)" #舆情关键字判断
 draw: #绘画
-  drawUrl: "192.168.2.58:7860" #Stable Diffusion服务ip
+  drawUrl: "192.168.2.57:7860" #Stable Diffusion服务ip
   width: 980 # 图片宽度
   height: 500 # 图片高度
   physical_save_folder: "J:\\ai\\ai-yinmei\\porn\\" #绘画保存图片物理路径
@@ -44,23 +39,25 @@ emote: #vts表情
   vtuber_pluginDeveloper: "winlone"
   vtuber_authenticationToken: "6f80e2aa087daa949cada5f4adb6c15d67f109aa3cbc3076e6de5eda79ed145d"
 nsfw: #鉴黄
-  nsfw_server: "192.168.2.198:1801"
+  nsfw_server: "192.168.2.57:1801"
   filterEn: "huge breasts,open clothes,topless,voluptuous,breast,prostitution,erotic,armpit,milk,leaking,spraying,woman,cupless latex,latex,tits,boobs,lingerie,chest,seductive,poses,pose,leg,posture,alluring,milf,on bed,mature,slime,open leg,full body,bra,lace,bikini,full nude,nude,bare,one-piece,navel,cleavage,swimsuit,naked,adult,nudity,beautiful breasts,nipples,sex,Sexual,vaginal,penis,large penis,pantie,leotards,anal"
   filterCh: "奶子,乳房" #过滤弹幕
   progress_limit: 1 #绘图大于多少百分比进行鉴黄，这里设置了1%
   nsfw_limit: 0.2 #nsfw黄图值大于多少进行绘画屏蔽【值越大越是黄图，值范围0~1】
   nsfw_progress_limit: 0.2 #nsfw黄图-绘画进度鉴黄【值越大越是黄图，值范围0~1】
 speech: #语音
-  select: "GtpVists"  #EdgeTTs、GtpVists、BertVis2
-  #bert-vists
-  bert_vists_url: "192.168.2.58:5000"
-  speaker_name: "珊瑚宫心海[中]"
-  sdp_ratio: 0.2 #SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
-  noise: 0.2 #控制感情变化程度，默认0.2
-  noisew: 0.9 #控制音节发音变化程度，默认0.9
-  speed: 1 #语速
-  #gpt-SoVITS
-  gtp_vists_url: "192.168.2.58:9880" #gtp-vists服务ip
+  select: "gpt-sovits"  #edge-tts、gpt-sovits、bert-vists
+  bert-vists:
+    bert_vists_url: "192.168.2.57:5000"
+    speaker_name: "珊瑚宫心海[中]"
+    sdp_ratio: 0.2 #SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
+    noise: 0.2 #控制感情变化程度，默认0.2
+    noisew: 0.9 #控制音节发音变化程度，默认0.9
+    speed: 1 #语速
+  gpt-sovits:
+    gtp_vists_url: "192.168.2.57:9880" #gtp-vists服务ip
+  edge-tts:
+    speaker_name: "zh-CN-XiaoxiaoNeural"
   speech_max_threads: 5 #语音合成线程池
 obs: #obs直播软件
   url: "192.168.2.198" #OBS直播软件的websocket ip

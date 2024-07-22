@@ -73,20 +73,14 @@ class LLmCore:
             self.obs.show_text("状态提示", f'{self.llmData.Ai_Name}思考问题"{title}"')
 
         # 身份判定
-        shenfen = ""
         if username == "程序猿的退休生活":
-            shenfen = "老爸说:"
-        elif uid == 0:
-            shenfen = ""
-        else:
-            shenfen = f'"{username}"说:'
+            username = "老爸"
 
         # fastgpt
         if self.local_llm_type == "fastgpt":
-            username_prompt = f"{shenfen}{prompt}"
-            self.log.info(f"[{traceid}]{username_prompt}")
-            # 后续改成舆情判断，当前是简易字符串判断
-            character = "怒怼版"
+            self.log.info(f"[{traceid}]{prompt}")
+            # Ai角色判定：后续改成舆情判断，当前是简易字符串判断
+            character = "怒怼版"  #character：ai角色、性格
             if re.search(self.llmData.public_sentiment_key, prompt):
                 character = "女仆版"
             else:
@@ -95,16 +89,14 @@ class LLmCore:
                     character = "怒怼版"
                 else:
                     character = "女仆版"
-
             # fastgpt聊天
-            response = self.llm.chat(username_prompt, uid, username, character)
+            response = self.llm.chat(prompt, uid, username, character)
         # text-generation-webui
         elif self.local_llm_type == "text-generation-webui":
-            username_prompt = f"{shenfen}{prompt}"
-            self.log.info(f"[{traceid}]{username_prompt}")
-            response = self.llm.chat(username_prompt, "Winlone", "Winlone", "Aileen Voracious")
+            self.log.info(f"[{traceid}]{prompt}")
+            response = self.llm.chat(prompt, "Winlone", "Winlone", "Aileen Voracious")
             response = response.replace("You", username)
-        # 过滤表情<>或者()标签
+        # obs提示
         self.obs.show_text("状态提示", f'{self.llmData.Ai_Name}思考问题"{title}"完成')
 
         # 处理流式回复

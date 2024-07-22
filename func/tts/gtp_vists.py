@@ -8,7 +8,7 @@ class GtpVists:
     # 加载配置
     config = defaultConfig().get_config()
     # gpt-SoVITS
-    gtp_vists_url = config["speech"]["gtp_vists_url"]
+    gtp_vists_url = config["speech"]["gpt-sovits"]["gtp_vists_url"]
 
     def __init__(self):
         pass

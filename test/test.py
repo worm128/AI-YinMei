@@ -6,7 +6,8 @@ import time
 # import random
 # import queue
 from urllib import parse
-
+now = time.strftime("%Y%m%d", time.localtime())
+print(f"今天是{now}年月日")
 # song_name="Kiss Me Goodbye [Originally Performed by Angela Aki]"
 # my_dir_=""
 # for c in song_name:

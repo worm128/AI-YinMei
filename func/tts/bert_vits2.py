@@ -9,12 +9,12 @@ class BertVis2:
     config = defaultConfig().get_config()
 
     # bert-vists
-    bert_vists_url = config["speech"]["bert_vists_url"]
-    speaker_name = config["speech"]["speaker_name"]
-    sdp_ratio = config["speech"]["sdp_ratio"]  # SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
-    noise = config["speech"]["noise"]  # 控制感情变化程度，默认0.2
-    noisew = config["speech"]["noisew"]  # 控制音节发音变化程度，默认0.9
-    speed = config["speech"]["speed"]  # 语速
+    bert_vists_url = config["speech"]["bert-vists"]["bert_vists_url"]
+    speaker_name = config["speech"]["bert-vists"]["speaker_name"]
+    sdp_ratio = config["speech"]["bert-vists"]["sdp_ratio"]  # SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
+    noise = config["speech"]["bert-vists"]["noise"]  # 控制感情变化程度，默认0.2
+    noisew = config["speech"]["bert-vists"]["noisew"]  # 控制音节发音变化程度，默认0.9
+    speed = config["speech"]["bert-vists"]["speed"]  # 语速
 
     def __init__(self):
         pass
