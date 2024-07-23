@@ -373,4 +373,4 @@ docker run -p 10095:10095 --name funasr -it --privileged=true -v /j/ai/ai-code/f
 ### 捐献基金
 捐助列表：https://docs.qq.com/sheet/DWUZPUlRrT1BXTXBk <br>
 扫码赞助<br>
-<img src="https://images.cnblogs.com/cnblogs_com/ikaros-521/2328032/o_240614173255_wx2.jpg" style="width: 250px;"> <br>
+<img src="https://github.com/user-attachments/assets/ba090305-37f8-46b6-8057-a07af82bee60" style="width: 250px;"> <br>
