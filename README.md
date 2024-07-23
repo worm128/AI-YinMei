@@ -1,5 +1,5 @@
 # **AI-YinMei**
-<img src="https://github.com/user-attachments/assets/f25ca1df-2589-40cc-b80e-37c2b8daeaeb" width="700" height="400" ><br>
+<img src="https://github.com/user-attachments/assets/48ed4c9a-e1fe-4846-9887-0842b51e9526" width="700" height="400" ><br>
 - AI 虚拟主播 Vtuber 研发(N 卡版本)
 - AI 名称：吟美
 - 开发者：Winlone
@@ -18,6 +18,9 @@
   吟美开发文档：人工智能 -> 吟美开发文档<br>
 - 旧版吟美项目【因集成过多内置第三方项目，已废弃】：<br>
   https://github.com/worm128/AI-YinMei-backup<br>
+
+## **技术架构**
+<img width="700" alt="吟美流程图1.8.0" src="https://github.com/user-attachments/assets/0598fc20-59e4-4a18-86d1-e14428bee4e9"><br>
 
 ## **支持技术**
 
@@ -46,6 +49,7 @@
 - 支持流式聊天，提速 LLM 回复与语音合成
 - 对接 bilibili 开放平台弹幕【稳定性高】
 - 支持 funasr 阿里语音识别系统
+- 增加点赞、送礼物、欢迎词等触发事件
 
 ## **吟美直播间功能说明**
 
