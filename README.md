@@ -345,6 +345,8 @@ docker run -p 10095:10095 --name funasr -it --privileged=true -v /j/ai/ai-code/f
   伴奏唱歌播放器，输出设备设置：设置Voicemeeter第一个虚拟通道<br>
 <img src="https://github.com/user-attachments/assets/df1cc21b-d5b8-434f-ba50-115224869445" width="700"><br>
 
+- Voicemeeter虚拟声卡官网：<br>
+[下载banana版本即可](https://voicemeeter.com/)【注意你主板要安装声卡驱动，不然虚拟声卡通道可能失效】：<br>
 
 ### 特别鸣谢
 
