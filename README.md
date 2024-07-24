@@ -1,6 +1,6 @@
 # **AI-YinMei**
 <img src="https://github.com/user-attachments/assets/48ed4c9a-e1fe-4846-9887-0842b51e9526" width="700" height="400" ><br>
-[[:smile:开发文档](https://gf.bilibili.com/item/detail/1107273021)|[Ai吟美视频教程](https://www.bilibili.com/read/cv33640951/)]
+[[:smile:开发文档](https://gf.bilibili.com/item/detail/1107273021)|[:heartpulse:视频教程](https://www.bilibili.com/read/cv33640951/)|[:truck:整合包教程](https://www.bilibili.com/video/BV1zD421H76q)]
 - AI 虚拟主播 Vtuber 研发(N 卡版本)
 - AI 名称：吟美
 - 开发者：Winlone
@@ -106,8 +106,9 @@
 
 ### 软件下载
 
-百度网盘：https://pan.baidu.com/s/1YHh-39BCpDnhp-mwf9IfDg<br>
-提取码：tm59<br>
+整合包教程：https://www.bilibili.com/video/BV1zD421H76q<br>
+百度网盘群号：930109408<br>
+
 夸克：https://pan.quark.cn/s/ade5c2d30ae7<br>
 提取码：ci9B<br>
 
