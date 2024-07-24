@@ -10,7 +10,7 @@ searchImg: #搜图服务
   HttpProxies:
 searchWeb: #搜索服务
   searchNum: 5  # 抽文数量，从中随机一篇文章
-  HttpProxies: "socks5://127.0.0.1:10806"
+  HttpProxies:
 translate: #翻译服务
   HttpProxies: "socks5://127.0.0.1:10806"
 danmaku: #弹幕
@@ -57,7 +57,7 @@ nsfw: #鉴黄
   nsfw_limit: 0.2 #nsfw黄图值大于多少进行绘画屏蔽【值越大越是黄图，值范围0~1】
   nsfw_progress_limit: 0.2 #nsfw黄图-绘画进度鉴黄【值越大越是黄图，值范围0~1】
 speech: #语音
-  select: "gpt-sovits"  #edge-tts、gpt-sovits、bert-vists
+  select: "edge-tts"  #edge-tts、gpt-sovits、bert-vists
   bert-vists:
     bert_vists_url: "192.168.2.57:5000"
     speaker_name: "珊瑚宫心海[中]"
