@@ -316,23 +316,35 @@ docker run -p 10095:10095 --name funasr -it --privileged=true -v /j/ai/ai-code/f
 
 ### 目录说明
 
-- text-generation-webui【第三方工具】：<br>
-  LLM 聚合接口，可以放置 chatglm 等大语言模型，然后进行参数配置后，再输入角色卡进行角色扮演聊天<br>
-  https://github.com/oobabooga/text-generation-webui<br>
-- LLaMA-Factory【AI 训练】：<br>
-  AI 聚合训练工具，可以界面化配置训练参数，可视化 ai 训练，相当强大<br>
-  https://github.com/hiyouga/LLaMA-Factory<br>
-- ChatGLM、ChatGLM2、ChatGLM3【语言模型】：<br>
-  放置的是清华大学研发的自然语言模型，可以自行添加如：百川、千问、LLAMA 等其他大语言模型<br>
-- SillyTavern【第三方工具】：<br>
-  酒馆，强大的 AI 角色扮演，但是该项目没有公开接口调用，而且 TTS 语言合成很缓慢，暂未集成使用<br>
-  https://github.com/SillyTavern/SillyTavern<br>
-- output【输出路径】：<br>
-  输出的文本 txt、语音 mp3 文件都在这里<br>
-- ChatGLM2\ptuning【AI 训练】：<br>
-  ChatGLM 官方训练例子<br>
-- ChatGLM2\ptuning\zero_nlp【AI 训练】：<br>
-  ai 的 lora 训练模式<br>
+- func：<br>
+  吟美功能类库，全部功能源代码在这里<br>
+- runtime：<br>
+  整合包才有的python运行类库<br>
+- html：<br>
+  html插件，包含歌单列表、流式回复框、彩色回复框、功能说明框等<br>
+- background：<br>
+  背景图，可以在OBS软件自行添加背景图<br>
+- porn：<br>
+  存放鉴黄图片、绘画图片、搜图<br>
+- output：<br>
+  语音合成中转目录，还有歌曲、伴奏保存目录<br>
+- logs：<br>
+  日志输出目录<br>
+- config：<br>
+  OBS配置、fastgpt配置，可以参考<br>
+- api.py：<br>
+  接口启动主要文件<br>
+- config.yml：<br>
+  所有配置的文件<br>
+- mpv.exe：<br>
+  语音聊天播放器，输出设备设置：设置Voicemeeter第二个虚拟通道<br>
+- song.exe：<br>
+  人声唱歌播放器，输出设备设置：设置Voicemeeter第二个虚拟通道<br>
+<img src="https://github.com/user-attachments/assets/560f0563-5915-4f5d-b5c3-b34cb0c4c0c9" width="700"><br>
+- accompany.exe：<br>
+  伴奏唱歌播放器，输出设备设置：设置Voicemeeter第一个虚拟通道<br>
+<img src="https://github.com/user-attachments/assets/df1cc21b-d5b8-434f-ba50-115224869445" width="700"><br>
+
 
 ### 特别鸣谢
 

@@ -258,11 +258,16 @@ class SingCore:
                 # ============== 播放音乐 ================
                 # 伴奏播放
                 abspath = os.path.abspath(song_path + "accompany.wav")
-                accompany_thread = Thread(target=self.obs.play_video, args=("伴奏", abspath))
+                accompany_thread = Thread(
+                    target=self.sing_play,
+                    args=("accompany.exe", song_path + "accompany.wav", 70, "0"),
+                )
+                # accompany_thread = Thread(target=self.obs.play_video, args=("伴奏", abspath))
+
                 # 调用音乐播放器[人声播放]
                 mpv_play_thread = Thread(
                     target=self.sing_play,
-                    args=("song.exe", song_path + "vocal.wav", 70, "+0.08"),
+                    args=("song.exe", song_path + "vocal.wav", 70, "0"),
                 )
                 accompany_thread.start()
                 mpv_play_thread.start()

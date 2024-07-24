@@ -43,11 +43,13 @@ class CmdCore:
             self.llmData.is_ai_ready = True  # 定义ai回复是否转换完成标志
             self.ttsData.is_tts_ready = True  # 定义语音是否生成完成标志
             os.system("taskkill /T /F /IM song.exe")
+            os.system("taskkill /T /F /IM accompany.exe")
             os.system("taskkill /T /F /IM mpv.exe")
             self.log.info(f"[{traceid}][{user_name}]执行命令：{query}")
             return True
         if query == "\\dance":
             os.system("taskkill /T /F /IM song.exe")
+            os.system("taskkill /T /F /IM accompany.exe")
             os.system("taskkill /T /F /IM mpv.exe")
             self.log.info(f"[{traceid}][{user_name}]执行命令：{query}")
             return True
@@ -56,6 +58,7 @@ class CmdCore:
         is_contain = StringUtil.has_string_reg_list(f"^{text}", query)
         if is_contain is not None:
             os.system("taskkill /T /F /IM song.exe")
+            os.system("taskkill /T /F /IM accompany.exe")
             self.singData.is_singing = 2  # 1.唱歌中 2.唱歌完成
             self.log.info(f"[{traceid}][{user_name}]执行命令：{query}")
             return True
