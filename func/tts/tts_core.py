@@ -121,7 +121,7 @@ class TTsCore:
                     text = trans_json["translated"]
 
         # 合成语音
-        pattern = "(《|》)"  # 过滤特殊字符，这些字符会影响语音合成
+        pattern = "(《|》|（|）)"  # 过滤特殊字符，这些字符会影响语音合成
         text = re.sub(pattern, "", text)
         status = self.vists.get_vists(filename, text, emotion)
         if status == 0:

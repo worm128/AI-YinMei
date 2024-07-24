@@ -142,7 +142,7 @@ def http_cmd():
     cmdCore.cmd("all",cmdstr,"0", "http_cmd")
     return jsonify({"status": "成功"})
 
-# http说话复读
+# http说话复读【postman调用】
 @app.route("/say", methods=["POST"])
 def http_say():
     text = request.data.decode("utf-8")
@@ -157,9 +157,9 @@ def http_emote():
     text = data["text"]
     emote_thread1 = Thread(target=emoteOper.emote_ws, args=(1, 0.2, text))
     emote_thread1.start()
-    return "ok"
+    return jsonify({"status": "成功"})
 
-# http唱歌接口处理
+# http唱歌接口处理【fastgpt调用】
 @app.route("/http_sing", methods=["GET"])
 def http_sing():
     songname = request.args["songname"]
@@ -167,7 +167,7 @@ def http_sing():
     singCore.http_sing(songname,username)
     return jsonify({"status": "成功"})
 
-# http绘画接口处理
+# http绘画接口处理【fastgpt调用】
 @app.route("/http_draw", methods=["GET"])
 def http_draw():
     drawname = request.args["drawname"]
@@ -184,7 +184,7 @@ def http_scene():
     return jsonify({"status": "成功"})
 
 
-# http接口处理
+# http接口处理【postman接口调用】
 @app.route("/msg", methods=["POST"])
 def input_msg():
     data = request.json
@@ -196,7 +196,7 @@ def input_msg():
     return jsonify({"status": "成功"})
 
 
-# 聊天回复弹框处理
+# 聊天回复弹框处理【html回复框回调】
 @app.route("/chatreply", methods=["GET"])
 def chatreply():
     CallBackForTest = request.args.get("CallBack")
@@ -205,14 +205,23 @@ def chatreply():
         jsonStr = CallBackForTest + jsonStr
     return jsonStr
 
-# 聊天
+# 聊天【用户funasr语音对话】
 @app.route("/chat", methods=["POST", "GET"])
 def chat():
     CallBackForTest = request.args.get("CallBack")
     uid = request.args.get("uid")
     username = request.args.get("username")
     text = request.args.get("text")
-    jsonStr = llmCore.http_chat(text,uid,username)
+    # =========处理消息开始========
+    status = "成功"
+    traceid = str(uuid.uuid4())
+    if text is None:
+        jsonStr = "({\"traceid\": \"" + traceid + "\",\"status\": \"值为空\",\"content\": \"" + text + "\"})"
+        return jsonStr
+    # 消息处理
+    entranceCore.msg_deal(traceid, text, uid, username)
+    jsonStr = "({\"traceid\": \"" + traceid + "\",\"status\": \"" + status + "\",\"content\": \"" + text + "\"})"
+    # =========end========
     if CallBackForTest is not None:
         jsonStr = CallBackForTest + jsonStr
     return jsonStr

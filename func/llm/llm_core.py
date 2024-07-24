@@ -188,20 +188,6 @@ class LLmCore:
             answers_thread = Thread(target=self.aiResponseTry)
             answers_thread.start()
 
-    # http接口:聊天
-    def http_chat(self,text,uid,username):
-        status = "成功"
-        traceid = str(uuid.uuid4())
-        if text is None:
-            jsonStr = "({\"traceid\": \"" + traceid + "\",\"status\": \"值为空\",\"content\": \"" + text + "\"})"
-            return jsonStr
-
-        # 消息处理
-        self.msg_deal(traceid, text, uid, username)
-
-        jsonStr = "({\"traceid\": \"" + traceid + "\",\"status\": \"" + status + "\",\"content\": \"" + text + "\"})"
-        return jsonStr
-
     # 进入直播间欢迎语
     def check_welcome_room(self):
         count = len(self.llmData.WelcomeList)
