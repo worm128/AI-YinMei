@@ -62,6 +62,13 @@ class CmdCore:
             self.singData.is_singing = 2  # 1.唱歌中 2.唱歌完成
             self.log.info(f"[{traceid}][{user_name}]执行命令：{query}")
             return True
+        # 停止学歌
+        text = ["停止学歌"]
+        is_contain = StringUtil.has_string_reg_list(f"^{text}", query)
+        if is_contain is not None:
+            self.singData.is_creating_song = 2  # 1.生成中 2.生成完毕
+            self.log.info(f"[{traceid}][{user_name}]执行命令：{query}")
+            return True
         # 停止跳舞
         text = ["\\停止跳舞", "停止跳舞", "不要跳舞", "stop dance"]
         is_contain = StringUtil.has_string_reg_list(f"^{text}", query)

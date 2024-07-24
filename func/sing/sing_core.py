@@ -156,10 +156,7 @@ class SingCore:
             if match:
                 self.log.info(f"当前歌曲只下载不转换《{songname}》")
                 # 直接生成原始音乐
-                jsonStr = requests.get(
-                    url=f"http://{self.singData.singUrl}/download_origin_song/{songname}",
-                    timeout=(5, 120),
-                )
+                jsonStr = requests.get(url=f"http://{self.singData.singUrl}/download_origin_song/{songname}",timeout=(5, 120))
                 status_json = json.loads(jsonStr.text)
                 # 下载原始音乐
                 self.down_song_file(status_json["songName"], "get_audio", "vocal", song_path)
@@ -170,9 +167,7 @@ class SingCore:
             # =============== 开始-选择二、学习唱歌任务 =================
             if is_download == False:
                 # 生成歌曲接口
-                jsonStr = requests.get(
-                    url=f"http://{self.singData.singUrl}/append_song/{query}", timeout=(5, 10)
-                )
+                jsonStr = requests.get(url=f"http://{self.singData.singUrl}/append_song/{query}", timeout=(5, 10))
                 status_json = json.loads(jsonStr.text)
             # =============== 结束-学习唱歌任务 =================
 
@@ -184,9 +179,7 @@ class SingCore:
                 vocal_downfile = None
                 accompany_downfile = None
                 song_path = f"./output/{songname}/"
-                while (
-                        vocal_downfile is None or accompany_downfile is None
-                ) and self.singData.is_creating_song == 1:
+                while (vocal_downfile is None or accompany_downfile is None) and self.singData.is_creating_song == 1:
                     # 检查歌曲是否生成成功：这里网易歌库返回songname和用户的模糊搜索可能歌名不同
                     is_created = self.check_down_song(songname)
                     if is_created == 2:
@@ -194,13 +187,9 @@ class SingCore:
                     # 检测文件生成后，进行下载
                     if is_created == 1:
                         # 下载伴奏
-                        accompany_downfile = self.down_song_file(
-                            songname, "get_accompany", "accompany", song_path
-                        )
+                        accompany_downfile = self.down_song_file(songname, "get_accompany", "accompany", song_path)
                         # 下载人声
-                        vocal_downfile = self.down_song_file(
-                            songname, "get_vocal", "vocal", song_path
-                        )
+                        vocal_downfile = self.down_song_file(songname, "get_vocal", "vocal", song_path)
                     i = i + 1
                     if i >= self.singData.create_song_timout:
                         is_created = 2
@@ -220,9 +209,7 @@ class SingCore:
     # 下载伴奏accompany/人声vocal
     def down_song_file(self,songname, interface_name, file_name, save_folder):
         # 下载
-        downfile = requests.get(
-            url=f"http://{self.singData.singUrl}/{interface_name}/{songname}", timeout=(5, 120)
-        )
+        downfile = requests.get(url=f"http://{self.singData.singUrl}/{interface_name}/{songname}", timeout=(5, 120))
         if not os.path.exists(save_folder):
             os.mkdir(save_folder)
         save_path = save_folder + f"/{file_name}.wav"
@@ -240,9 +227,7 @@ class SingCore:
                 self.log.info(f"准备唱歌《{songname}》,播放路径:{song_path}")
                 # =============== 开始-触发搜图 =================
                 img_search_json = {"prompt": query, "username": username}
-                searchimg_output_thread = Thread(
-                    target=self.imageCore.searchimg_output, args=(img_search_json,)
-                )
+                searchimg_output_thread = Thread(target=self.imageCore.searchimg_output, args=(img_search_json,))
                 searchimg_output_thread.start()
                 # =============== 结束-触发搜图 =================
                 # 开始唱歌服装穿戴
@@ -257,11 +242,8 @@ class SingCore:
                 # sing_dance_thread.start()
                 # ============== 播放音乐 ================
                 # 伴奏播放
-                abspath = os.path.abspath(song_path + "accompany.wav")
-                accompany_thread = Thread(
-                    target=self.sing_play,
-                    args=("accompany.exe", song_path + "accompany.wav", 70, "0"),
-                )
+                # abspath = os.path.abspath(song_path + "accompany.wav")
+                accompany_thread = Thread(target=self.sing_play,args=("accompany.exe", song_path + "accompany.wav", 70, "0"))
                 # accompany_thread = Thread(target=self.obs.play_video, args=("伴奏", abspath))
 
                 # 调用音乐播放器[人声播放]
