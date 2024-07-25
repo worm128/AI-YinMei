@@ -1,7 +1,7 @@
 # **AI-YinMei【Ai吟美】**
 ![Github stars](https://img.shields.io/github/stars/worm128/AI-YinMei.svg) &nbsp; ![发布版本](https://img.shields.io/badge/release-1.8.0-blue) &nbsp; ![python](https://img.shields.io/badge/python-3.11+-green)<br>
 <img src="https://github.com/user-attachments/assets/48ed4c9a-e1fe-4846-9887-0842b51e9526" width="700" height="400" ><br>
-[:smile:[开发文档](https://gf.bilibili.com/item/detail/1107273021)|[:heartpulse:视频教程](https://www.bilibili.com/read/cv33640951/)|[:truck:1.8整合包教程](https://www.bilibili.com/video/BV1e4421Z76E/)|[:sparkles:1.7整合包教程](https://www.bilibili.com/video/BV1zD421H76q)]<br>
+【[:smile:开发文档](https://gf.bilibili.com/item/detail/1107273021)|[:heartpulse:视频教程](https://www.bilibili.com/read/cv33640951/)|[:truck:1.8整合包教程](https://www.bilibili.com/video/BV1e4421Z76E/)|[:sparkles:1.7整合包教程](https://www.bilibili.com/video/BV1zD421H76q)】<br>
 - AI 虚拟主播 Vtuber 研发(N 卡版本)
 - AI 名称：吟美
 - 开发者：Winlone
@@ -130,8 +130,12 @@
 - Python 3.11.6
 
 ### 启动方式
-<font color=red><strong>注意：更详细的启动方法，请参考[整合包说明文档](https://github.com/worm128/AI-YinMei/releases/download/v1.8.0/readme-v1.8.0.pdf)</strong> <br>
-</font>
+注意：更详细的启动方法，请参考
+[:fire:整合包说明文档](https://github.com/worm128/AI-YinMei/releases/download/v1.8.0/readme-v1.8.0.pdf)
+[:truck:1.8整合包教程](https://www.bilibili.com/video/BV1e4421Z76E/)
+<br>
+
+
 #### 1、吟美核心(必选)
 [下载整合包](https://github.com/worm128/AI-YinMei/releases/download/v1.8.0/AI-YinMei-v1.8.0.zip) 双击执行 start.bat <br>
 [整合包说明文档](https://github.com/worm128/AI-YinMei/releases/download/v1.8.0/readme-v1.8.0.pdf) <br>
