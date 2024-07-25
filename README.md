@@ -1,6 +1,7 @@
-# **AI-YinMei**
+# **AI-YinMei【Ai吟美】**
+![Github stars](https://img.shields.io/github/stars/worm128/AI-YinMei.svg) &nbsp; ![发布版本](https://img.shields.io/badge/release-1.8.0-blue) &nbsp; ![python](https://img.shields.io/badge/python-3.11+-green)<br>
 <img src="https://github.com/user-attachments/assets/48ed4c9a-e1fe-4846-9887-0842b51e9526" width="700" height="400" ><br>
-[[:smile:开发文档](https://gf.bilibili.com/item/detail/1107273021)|[:heartpulse:视频教程](https://www.bilibili.com/read/cv33640951/)|[:truck:整合包教程](https://www.bilibili.com/video/BV1zD421H76q)]
+[[:smile:开发文档](https://gf.bilibili.com/item/detail/1107273021)|[:heartpulse:视频教程](https://www.bilibili.com/read/cv33640951/)|[:truck:1.8整合包教程](https://www.bilibili.com/video/BV1e4421Z76E/)|[:sparkles:1.7整合包教程](https://www.bilibili.com/video/BV1zD421H76q)]<br>
 - AI 虚拟主播 Vtuber 研发(N 卡版本)
 - AI 名称：吟美
 - 开发者：Winlone
