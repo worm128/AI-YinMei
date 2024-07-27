@@ -18,6 +18,7 @@ import func.danmaku.blivedm.models.web as web_models
 import http.cookies
 import asyncio, aiohttp
 from typing import *
+from cachetools import cached, TTLCache
 
 @singleton
 class BlivedmCore:
@@ -185,5 +186,12 @@ class BlivedmCore:
             username = message.uname
             text = f"谢谢‘{username}’点赞,{self.BlivedmCore.commonData.Ai_Name}大小姐最爱你了"
             self.BlivedmCore.log.info(text)
+            # 发起语音【10秒说一次】
+            self.say(text)
+
+        @cached(TTLCache(maxsize=100, ttl=10))  # 例如30秒的失效时间
+        def say(self,text):
+            # 假设这是一个计算密集的函数
             tts_say_thread = Thread(target=self.BlivedmCore.ttsCore.tts_say, args=(text,))
             tts_say_thread.start()
+            return text

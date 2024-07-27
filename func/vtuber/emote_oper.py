@@ -143,7 +143,8 @@ class EmoteOper:
     # ws协议：发送表情到Vtuber
     # num：表情第几个执行   interval：间隔秒数  key：按键
     def emote_ws(self,num, interval, key):
-        global ws
+        if self.vtuberData.switch == False:
+            return
         if num > 0:
             start = round(num * interval, 2)
             time.sleep(start)
@@ -161,7 +162,8 @@ class EmoteOper:
             except Exception as e:
                 error = f"【表情发送】发生了异常：{e}"
                 self.log.exception(error)
-                if error in "Connection is already closed":
+                if "Connection is already closed" in error:
+                    VtuberInit.delInstance()
                     self.ws = VtuberInit().get_ws()
 
     # 感情值判断

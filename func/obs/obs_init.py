@@ -15,6 +15,7 @@ class ObsInit:
             host=self.config["obs"]["url"],
             port=self.config["obs"]["port"],
             password=self.config["obs"]["password"],
+            switch=self.config["obs"]["switch"],
         )
         self.obs.connect()
 

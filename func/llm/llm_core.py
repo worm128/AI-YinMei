@@ -197,7 +197,7 @@ class LLmCore:
         userlist = str(self.llmData.WelcomeList).replace("['", "").replace("']", "")
         if len(self.llmData.WelcomeList) > 0:
             traceid = str(uuid.uuid4())
-            text = f'欢迎"{userlist}"{numstr}同学来到{self.commonData.Ai_Name}的直播间,跪求关注一下{self.commonData.Ai_Name}的直播间'
+            text = f'欢迎"{userlist}"{numstr}同学来到{self.commonData.Ai_Name}的直播间,跪求关注一下'
             self.log.info(f"[{traceid}]{text}")
             self.llmData.WelcomeList.clear()
             if self.llmData.is_llm_welcome == True:

@@ -52,6 +52,7 @@ class TTsData:
 
 @singleton
 class VtuberData:
+    switch = config["emote"]["switch"]
     # ============= vtuber studio连接参数 =====================
     vtuber_websocket = config["emote"]["vtuber_websocket"]
     vtuber_pluginName = config["emote"]["vtuber_pluginName"]

@@ -1,7 +1,6 @@
 import os
 from func.log.default_log import DefaultLog
 from func.vtuber.emote_oper import EmoteOper
-from func.obs.obs_init import ObsInit
 from func.tools.string_util import StringUtil
 from func.tools.singleton_mode import singleton
 from func.gobal.data import LLmData
@@ -29,7 +28,7 @@ class CmdCore:
     emoteOper = EmoteOper()
 
     def __init__(self):
-        self.obs = ObsInit().get_ws()
+        pass
 
     # 命令控制：优先
     def cmd(self,traceid, query, uid, user_name):

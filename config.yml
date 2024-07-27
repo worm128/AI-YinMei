@@ -45,6 +45,7 @@ sing: #唱歌
   song_not_convert: "(三国演义\\d+|粤剧|京剧|易经)" #不需要学习的歌曲【支持正则】
   create_song_timout: 500 #超时生成歌曲
 emote: #vts表情
+  switch: True  #vtuber开关：True-开，False-关
   vtuber_websocket: "127.0.0.1:8001" #Vtuber Studio服务ip
   vtuber_pluginName: "winlonebot"
   vtuber_pluginDeveloper: "winlone"
@@ -71,6 +72,7 @@ speech: #语音
     speaker_name: "zh-CN-XiaoxiaoNeural"
   speech_max_threads: 5 #语音合成线程池
 obs: #obs直播软件
+  switch: False  #obs开关：True-开，False-关
   url: "192.168.2.198" #OBS直播软件的websocket ip
   port: 4455
   password: "123456"
