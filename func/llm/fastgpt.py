@@ -20,15 +20,15 @@ class FastGpt:
     fastgpt_authorization: str = config["llm"]["fastgpt"]["fastgpt_authorization"]
 
     # fastgpt知识库接口调用-LLM回复
-    def chat(self,content, uid, username, character):
+    def chat(self,content, uid, username, character, relation):
         url = f"http://{self.fastgpt_url}/api/v1/chat/completions"
         headers = {"Content-Type": "application/json", "Authorization": self.fastgpt_authorization}
         #now = time.strftime("%Y%m%d", time.localtime())
         data = {
-            "chatId": "v3"+uid,
+            "chatId": "v4"+uid,
             "stream": True,
             "detail": False,
-            "variables": {"uid": uid, "username": username, "character":character},
+            "variables": {"uid": uid, "username": username, "character":character, "relation":relation},
             "messages": [{"content": content, "role": "user"}]
         }
         self.log.info(headers)
