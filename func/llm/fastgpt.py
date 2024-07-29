@@ -4,7 +4,7 @@ from func.config.default_config import defaultConfig
 import time
 import requests
 from func.tools.singleton_mode import singleton
-import random
+from func.gobal.data import CommonData
 
 @singleton
 class FastGpt:
@@ -12,6 +12,7 @@ class FastGpt:
     log = DefaultLog().getLogger()
     # 加载配置
     config = defaultConfig().get_config()
+    commonData = CommonData()
 
     # ai吟美【怒怼版】：fastgpt-5StPybD20P3Ymg2EDZpXe4nCjiP070TINQDRJTgBBWQhMLxDUck6W6Oeio4sx
     # ai吟美【女仆版】：fastgpt-yjuDaV7O4kyzK1DY7PuOGvOjqUJCSmdCENKowhDSAi6PwdoG4247bs2yL
@@ -21,14 +22,14 @@ class FastGpt:
 
     # fastgpt知识库接口调用-LLM回复
     def chat(self,content, uid, username, character, relation):
-        url = f"http://{self.fastgpt_url}/api/v1/chat/completions"
+        #url = f"{self.fastgpt_url}/api/v1/chat/completions"
         headers = {"Content-Type": "application/json", "Authorization": self.fastgpt_authorization}
         #now = time.strftime("%Y%m%d", time.localtime())
         data = {
             "chatId": "v4"+uid,
             "stream": True,
             "detail": False,
-            "variables": {"uid": uid, "username": username, "character":character, "relation":relation},
+            "variables": {"uid": uid, "username": username, "character":character, "relation":relation, "Ai_Name":self.commonData.Ai_Name},
             "messages": [{"content": content, "role": "user"}]
         }
         self.log.info(headers)
@@ -36,7 +37,7 @@ class FastGpt:
         response = None
         try:
             response = requests.post(
-                url, headers=headers, json=data, verify=False, timeout=(5, 60), stream=True
+                self.fastgpt_url, headers=headers, json=data, verify=False, timeout=(5, 60), stream=True
             )
         except Exception as e:
             self.log.exception(f"【{content}】信息回复异常")

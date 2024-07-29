@@ -11,6 +11,9 @@ config = defaultConfig().get_config()
 @singleton
 class LLmData:
     Ai_Name: str = config["AiName"]  # Ai名称
+    relations = config["llm"]["relations"] # 用户关系
+    local_llm_type: str = config["llm"]["local_llm_type"] # 模型加载方式
+    public_sentiment_key: str = config["llm"]["public_sentiment_key"] # 舆情判断
 
     # ============= LLM参数 =====================
     QuestionList = queue.Queue()  # LLM回复问题
@@ -22,12 +25,6 @@ class LLmData:
     split_flag = config["llm"]["split_flag"]
     split_str = split_flag.split("|")
     split_limit = config["llm"]["split_limit"]  # 分割的最小字符数量
-    # ============================================
-
-    # ============= 本地模型加载 =====================
-    # 模型加载方式
-    local_llm_type: str = config["llm"]["local_llm_type"]
-    public_sentiment_key: str = config["llm"]["public_sentiment_key"]
     # ============================================
 
     # ============= 欢迎列表 =====================

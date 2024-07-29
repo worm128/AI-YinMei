@@ -72,12 +72,10 @@ class LLmCore:
         else:
             self.obs.show_text("状态提示", f'{self.llmData.Ai_Name}思考问题"{title}"')
 
-        relation = "粉丝"
         # 身份判定
-        if username == "程序猿的退休生活":
-            relation = "老爸"
-        elif username == "未转变者启动不了":
-            relation = "姐姐"
+        relation = self.llmData.relations.get(username)
+        if relation is None:
+            relation = "粉丝"
 
         # fastgpt
         if self.local_llm_type == "fastgpt":

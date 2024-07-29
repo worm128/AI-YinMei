@@ -55,7 +55,7 @@ class SingCore:
         query = songname  # 查询内容
 
         # =============== 开始-获取真实歌曲名称 =================
-        musicJson = requests.get(url=f"http://{self.singData.singUrl}/musicInfo/{query}", timeout=(5, 10))
+        musicJson = requests.get(url=f"{self.singData.singUrl}/musicInfo/{query}", timeout=(5, 10))
         music_json = json.loads(musicJson.text)
         id = music_json["id"]
         songname = music_json["songName"]
@@ -156,7 +156,7 @@ class SingCore:
             if match:
                 self.log.info(f"当前歌曲只下载不转换《{songname}》")
                 # 直接生成原始音乐
-                jsonStr = requests.get(url=f"http://{self.singData.singUrl}/download_origin_song/{songname}",timeout=(5, 120))
+                jsonStr = requests.get(url=f"{self.singData.singUrl}/download_origin_song/{songname}",timeout=(5, 120))
                 status_json = json.loads(jsonStr.text)
                 # 下载原始音乐
                 self.down_song_file(status_json["songName"], "get_audio", "vocal", song_path)
@@ -167,7 +167,7 @@ class SingCore:
             # =============== 开始-选择二、学习唱歌任务 =================
             if is_download == False:
                 # 生成歌曲接口
-                jsonStr = requests.get(url=f"http://{self.singData.singUrl}/append_song/{query}", timeout=(5, 10))
+                jsonStr = requests.get(url=f"{self.singData.singUrl}/append_song/{query}", timeout=(5, 10))
                 status_json = json.loads(jsonStr.text)
             # =============== 结束-学习唱歌任务 =================
 
@@ -209,7 +209,7 @@ class SingCore:
     # 下载伴奏accompany/人声vocal
     def down_song_file(self,songname, interface_name, file_name, save_folder):
         # 下载
-        downfile = requests.get(url=f"http://{self.singData.singUrl}/{interface_name}/{songname}", timeout=(5, 120))
+        downfile = requests.get(url=f"{self.singData.singUrl}/{interface_name}/{songname}", timeout=(5, 120))
         if not os.path.exists(save_folder):
             os.mkdir(save_folder)
         save_path = save_folder + f"/{file_name}.wav"
@@ -351,7 +351,7 @@ class SingCore:
     def check_down_song(self,songname):
         # 查看歌曲是否曾经生成
         status = requests.get(
-            url=f"http://{self.singData.singUrl}/accompany_vocal_status", timeout=(5, 10)
+            url=f"{self.singData.singUrl}/accompany_vocal_status", timeout=(5, 10)
         )
         converted_json = json.loads(status.text)
         converted_file = converted_json["converted_file"]  # 生成歌曲硬盘文件

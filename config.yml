@@ -1,4 +1,4 @@
-AiName: "吟美" #ai名称
+AiName: "小忽悠" #ai名称
 app: #吟美核心的api配置
   port: 1800  #吟美核心的端口
   mode: ["api"]  # b站直播间:"blivedm"|api web:"api"
@@ -26,22 +26,27 @@ welcome:
   welcome_not_allow: [46130941, 333472479] #是否允许欢迎词
 llm: #大模型聊天
   local_llm_type: "fastgpt"  # 1.fastgpt 2.text-generation-webui
+  relations: #用户关系
+    {
+      "程序猿的退休生活": "老爸",
+      "未转变者启动不了": "姐姐",
+    }
   text-generation-webui: #text-generation-webui
-    tgw_url: "192.168.2.58:5000" #text-generation-webui服务地址
+    tgw_url: "http://192.168.2.58:5000/v1/chat/completions" #text-generation-webui服务地址
   fastgpt:   #fastgpt
-    fastgpt_url: "192.168.2.198:3000" #fastgpt服务地址
-    fastgpt_authorization: "Bearer fastgpt-juALnJbjaI6PjOx9gLQHtkvVVmipseWNVXL83zPtCjnbDDuRacsdhzBB6PqPFKhGY" #fastgpt秘钥
+    fastgpt_url: "https://api.fastgpt.in/api/v1/chat/completions" #fastgpt服务地址，本地：http://192.168.2.198:3000,云端：https://api.fastgpt.in
+    fastgpt_authorization: "Bearer fastgpt-mqRBlF37RkqzHxdcvEN7muXzN85oNGuCd8nLSk1scN5CZIvjtehH6" #fastgpt秘钥,本地：fastgpt-kB47BIEdra06DHcCAOfd230Jym98SCBUunptTxdo0D2jxFYun1P5H  云版：fastgpt-mqRBlF37RkqzHxdcvEN7muXzN85oNGuCd8nLSk1scN5CZIvjtehH6
   split_flag: ",|，|。|!|！|?|？|\n" #流式回复的分割符
   split_limit: 4 #流式回复分割的最小字符数量
   public_sentiment_key: "(爱|喵|女仆|老婆|男朋友|比心|媳妇|喜欢|乖|不理你|美|老公)" #舆情关键字判断
 draw: #绘画
   HttpProxies: { "http": "socks5://127.0.0.1:10806", "https": "socks5://127.0.0.1:10806" }
-  drawUrl: "192.168.2.57:7860" #Stable Diffusion服务ip
+  drawUrl: "http://192.168.2.57:7860" #Stable Diffusion服务ip
   width: 980 # 图片宽度
   height: 500 # 图片高度
   physical_save_folder: "J:\\ai\\ai-yinmei\\porn\\" #绘画保存图片物理路径
 sing: #唱歌
-  singUrl: "192.168.2.58:1717" #Auto-Convert-Music服务ip
+  singUrl: "http://192.168.2.58:1717" #Auto-Convert-Music服务ip
   song_not_convert: "(三国演义\\d+|粤剧|京剧|易经)" #不需要学习的歌曲【支持正则】
   create_song_timout: 500 #超时生成歌曲
 emote: #vts表情
@@ -51,7 +56,7 @@ emote: #vts表情
   vtuber_pluginDeveloper: "winlone"
   vtuber_authenticationToken: "27605d6e478a0ff6bd39c3a7496efa7b1d1269ab2735901c21e201db158ab16c"
 nsfw: #鉴黄
-  nsfw_server: "192.168.2.57:1801"
+  nsfw_server: "http://192.168.2.57:1801"
   filterEn: "huge breasts,open clothes,topless,voluptuous,breast,prostitution,erotic,armpit,milk,leaking,spraying,woman,cupless latex,latex,tits,boobs,lingerie,chest,seductive,poses,pose,leg,posture,alluring,milf,on bed,mature,slime,open leg,full body,bra,lace,bikini,full nude,nude,bare,one-piece,navel,cleavage,swimsuit,naked,adult,nudity,beautiful breasts,nipples,sex,Sexual,vaginal,penis,large penis,pantie,leotards,anal"
   filterCh: "奶子,乳房" #过滤弹幕
   progress_limit: 1 #绘图大于多少百分比进行鉴黄，这里设置了1%
@@ -60,19 +65,19 @@ nsfw: #鉴黄
 speech: #语音
   select: "edge-tts"  #edge-tts、gpt-sovits、bert-vists
   bert-vists:
-    bert_vists_url: "192.168.2.57:5000"
+    bert_vists_url: "http://192.168.2.57:5000"
     speaker_name: "珊瑚宫心海[中]"
     sdp_ratio: 0.2 #SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大
     noise: 0.2 #控制感情变化程度，默认0.2
     noisew: 0.9 #控制音节发音变化程度，默认0.9
     speed: 1 #语速
   gpt-sovits:
-    gtp_vists_url: "192.168.2.57:9880" #gtp-vists服务ip
+    gtp_vists_url: "http://192.168.2.57:9880" #gtp-vists服务ip
   edge-tts:
     speaker_name: "zh-CN-XiaoxiaoNeural"
   speech_max_threads: 5 #语音合成线程池
 obs: #obs直播软件
-  switch: False  #obs开关：True-开，False-关
+  switch: True  #obs开关：True-开，False-关
   url: "192.168.2.198" #OBS直播软件的websocket ip
   port: 4455
   password: "123456"

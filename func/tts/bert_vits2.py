@@ -29,7 +29,7 @@ class BertVis2:
         save_path = f"./output/{filename}.mp3"
         text = parse.quote(text)
         response = requests.get(
-            url=f"http://{self.bert_vists_url}/voice?text={text}&model_id=0&speaker_name={self.speaker_name}&sdp_ratio={self.sdp_ratio}&noise={self.noise}&noisew={self.noisew}&length={self.speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}",
+            url=f"{self.bert_vists_url}/voice?text={text}&model_id=0&speaker_name={self.speaker_name}&sdp_ratio={self.sdp_ratio}&noise={self.noise}&noisew={self.noisew}&length={self.speed}&language=AUTO&auto_translate=false&auto_split=true&emotion={emotion}",
             timeout=(5, 60),
         )
         if response.status_code == 200:

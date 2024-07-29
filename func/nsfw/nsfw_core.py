@@ -31,7 +31,7 @@ class NsfwCore:
             "input_image": imgb64,
         }
         nsfw = requests.post(
-            url=f"http://{self.nsfwData.nsfw_server}/input",
+            url=f"{self.nsfwData.nsfw_server}/input",
             headers=headers,
             json=data,
             verify=False,

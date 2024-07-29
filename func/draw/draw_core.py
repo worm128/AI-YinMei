@@ -134,7 +134,7 @@ class DrawCore:
             progress_thread = Thread(target=self.progress, args=(drawName, username))
             progress_thread.start()
             # 生成绘画
-            response = requests.post(url=f"http://{self.drawData.drawUrl}/sdapi/v1/txt2img", json=payload, timeout=(5, 60))
+            response = requests.post(url=f"{self.drawData.drawUrl}/sdapi/v1/txt2img", json=payload, timeout=(5, 60))
             self.drawData.is_drawing = 2
             r = response.json()
             # 错误码跳出
@@ -185,7 +185,7 @@ class DrawCore:
             # 绘画中：输出进度图
             if self.drawData.is_drawing == 1:
                 # stable-diffusion绘图进度
-                response = requests.get(url=f"http://{self.drawData.drawUrl}/sdapi/v1/progress", timeout=(5, 60))
+                response = requests.get(url=f"{self.drawData.drawUrl}/sdapi/v1/progress", timeout=(5, 60))
                 r = response.json()
                 imgb64 = r["current_image"]
                 if imgb64 != "" and imgb64 is not None:
