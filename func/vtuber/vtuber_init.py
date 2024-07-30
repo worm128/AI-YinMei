@@ -20,6 +20,7 @@ class VtuberInit:
             run_forever_thread.start()
             self.log.info(f"VtuberStudio皮肤链接成功")
         else:
+            self.ws = None
             self.log.warning(f"VtuberStudio皮肤开关已关闭")
 
     def get_ws(self):
