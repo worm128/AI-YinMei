@@ -37,7 +37,7 @@ class FastGpt:
         response = None
         try:
             response = requests.post(
-                self.fastgpt_url, headers=headers, json=data, verify=False, timeout=(5, 60), stream=True
+                self.fastgpt_url, headers=headers, json=data, verify=False, timeout=(20, 120), stream=True
             )
         except Exception as e:
             self.log.exception(f"【{content}】信息回复异常")

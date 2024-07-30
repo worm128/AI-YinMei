@@ -413,7 +413,7 @@ function chat(text) {
 		dataType: "jsonp",
 		data: {
 			"text": text,
-			"uid": $('#username').val(),
+			"uid": $('#uid').val()+$('#username').val(),
 			"username": $('#username').val()
 		},
 		//需要和服务端回掉方法中的参数名相对应
