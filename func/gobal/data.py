@@ -166,7 +166,6 @@ class BiliDanmakuData:
 
 @singleton
 class CommonData:
-    # 1.b站直播间 2.api web
-    mode = config["app"]["mode"]
+    mode = config["app"]["mode"] # b站直播间:"blivedm"|api web:"api"
     port = config["app"]["port"]
     Ai_Name: str = config["AiName"]  # Ai名称

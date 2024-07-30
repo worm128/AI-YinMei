@@ -12,6 +12,7 @@ searchWeb: #搜索服务
   searchNum: 5  # 抽文数量，从中随机一篇文章
   HttpProxies:
 translate: #翻译服务
+  switch: False  #翻译开关：True-开，False-关
   HttpProxies: "socks5://127.0.0.1:10806"
 danmaku: #弹幕
   blivedm: #b站弹幕
@@ -76,8 +77,8 @@ speech: #语音
   edge-tts:
     speaker_name: "zh-CN-XiaoxiaoNeural"
   speech_max_threads: 5 #语音合成线程池
-obs: #obs直播软件
-  switch: True  #obs开关：True-开，False-关
+obs: #OBS直播软件
+  switch: False  #OBS开关：True-开，False-关
   url: "192.168.2.198" #OBS直播软件的websocket ip
   port: 4455
   password: "123456"

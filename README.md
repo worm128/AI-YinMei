@@ -5,17 +5,18 @@
 - AI 虚拟主播 Vtuber 研发(N 卡版本)
 - AI 名称：吟美
 - 开发者：Winlone
-- B 站频道：程序猿的退休生活
-- Ai吟美视频教程：https://www.bilibili.com/read/cv33640951/
+- B站频道：[程序猿的退休生活](https://space.bilibili.com/46130941)
+- 开源代码：https://github.com/worm128/AI-YinMei
+- Ai吟美教程集合：https://www.bilibili.com/read/cv33640951/
 - Q 群：27831318
-- 版本：1.8.0
+- 版本：1.8.1
 - 吟美整合包下载地址：<br>
   整合包教程：https://www.bilibili.com/video/BV1zD421H76q<br>
-  百度网盘群号：930109408<br>
+  <b>百度网盘群号：</b>930109408<br>
   提示：因为百度网盘分享总是屏蔽，现在切换到百度网盘的群分享，请在“百度网盘->消息” 添加群号，加入群后可以在文件列表进行下载<br>
-  夸克：https://pan.quark.cn/s/ade5c2d30ae7<br>
+  <b>夸克：</b>https://pan.quark.cn/s/ade5c2d30ae7<br>
   提取码：ci9B<br>
-  功能整合包下载(4 个)：人工智能 -> yinmei-all<br>
+  功能整合包下载(4个)：人工智能 -> yinmei-all<br>
   吟美核心【版本迭代】：人工智能 -> 吟美核心<br>
   吟美开发文档：人工智能 -> 吟美开发文档<br>
 - 旧版吟美项目【因集成过多内置第三方项目，已废弃】：<br>
@@ -52,6 +53,7 @@
 - 对接 bilibili 开放平台弹幕【稳定性高】
 - 支持 funasr 阿里语音识别系统
 - 增加点赞、送礼物、欢迎词等触发事件
+- Ai吟美桌宠【关注B站“[程序猿的退休生活](https://space.bilibili.com/46130941)”，回复181获取下载链接】
 
 ## **吟美直播间功能说明**
 
@@ -344,7 +346,8 @@ docker run -p 10095:10095 --name funasr -it --privileged=true -v /j/ai/ai-code/f
 
 ### 更多关注
 
-- 讨论 Q 群：27831318<br>
+- 讨论Q群：27831318<br>
+- 我的Q号【定制化开发】：314769095<br>
 
 ### 捐献基金
 捐助列表：https://docs.qq.com/sheet/DWUZPUlRrT1BXTXBk <br>
