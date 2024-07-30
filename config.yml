@@ -9,7 +9,7 @@ searchImg: #搜图服务
   physical_save_folder: "J:\\ai\\ai-yinmei\\porn\\" #绘画保存图片物理路径
   HttpProxies:
 searchWeb: #搜索服务
-  searchNum: 5  # 抽文数量，从中随机一篇文章
+  searchNum: 5  # 抽文总数做一个综合理解
   HttpProxies:
 translate: #翻译服务
   switch: False  #翻译开关：True-开，False-关

@@ -413,8 +413,8 @@ function chat(text) {
 		dataType: "jsonp",
 		data: {
 			"text": text,
-			"uid": 0,
-			"username": "程序猿的退休生活"
+			"uid": $('#username').val(),
+			"username": $('#username').val()
 		},
 		//需要和服务端回掉方法中的参数名相对应
 		//注释掉这句话默认传的名称叫callback
