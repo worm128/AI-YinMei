@@ -19,6 +19,7 @@ class FastGpt:
     # openku-chatgpt3.5：fastgpt-ySHfeoltpvRV4lyqvGBqiUvJpzMiC0d3nOFaheT1dTHlk9KA4EHR6EujKzX
     fastgpt_url: str = config["llm"]["fastgpt"]["fastgpt_url"]
     fastgpt_authorization: str = config["llm"]["fastgpt"]["fastgpt_authorization"]
+    chat_version: str = config["llm"]["chat_version"]
 
     # fastgpt知识库接口调用-LLM回复
     def chat(self,content, uid, username, character, relation):
@@ -26,7 +27,7 @@ class FastGpt:
         headers = {"Content-Type": "application/json", "Authorization": self.fastgpt_authorization}
         #now = time.strftime("%Y%m%d", time.localtime())
         data = {
-            "chatId": "v4"+uid,
+            "chatId": self.chat_version + uid,
             "stream": True,
             "detail": False,
             "variables": {"uid": uid, "username": username, "character":character, "relation":relation, "Ai_Name":self.commonData.Ai_Name},
