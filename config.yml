@@ -27,6 +27,7 @@ welcome:
   welcome_not_allow: [46130941, 333472479] #是否允许欢迎词
 llm: #大模型聊天
   local_llm_type: "fastgpt"  # 1.fastgpt 2.text-generation-webui
+  cmd: ["小白"]  #聊天触发指令：设置["小白"]，则以"小白xxxx"发起聊天,如果不需要触发语请配置[""]；可以支持多个触发语，如,["小白","ai助理"]
   relations: #用户关系
     {
       "程序猿的退休生活": "老爸",

@@ -13,6 +13,7 @@ class LLmData:
     Ai_Name: str = config["AiName"]  # Ai名称
     relations = config["llm"]["relations"] # 用户关系
     local_llm_type: str = config["llm"]["local_llm_type"] # 模型加载方式
+    cmd = config["llm"]["cmd"]  # 触发指令
     public_sentiment_key: str = config["llm"]["public_sentiment_key"] # 舆情判断
 
     # ============= LLM参数 =====================

@@ -210,6 +210,17 @@ class LLmCore:
 
     # 聊天入口处理
     def msg_deal(self, traceid, query, uid, user_name):
-        # 询问LLM
-        llm_json = {"traceid": traceid, "prompt": query, "uid": uid, "username": user_name}
-        self.llmData.QuestionList.put(llm_json)  # 将弹幕消息放入队列
+        text = self.llmData.cmd
+        is_contain = StringUtil.has_string_reg_list(f"^{text}", query)
+        if is_contain is not None:
+            num = StringUtil.is_index_contain_string(text, query)
+            queryExtract = query[num: len(query)]  # 提取提问语句
+            queryExtract = queryExtract.strip()
+            self.log.info(f"[{traceid}]用户对话：" + queryExtract)
+            if queryExtract == "":
+                return True
+            # 询问LLM
+            llm_json = {"traceid": traceid, "prompt": query, "uid": uid, "username": user_name}
+            self.llmData.QuestionList.put(llm_json)  # 将弹幕消息放入队列
+            return True
+        return False
