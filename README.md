@@ -14,8 +14,6 @@
   整合包教程：https://www.bilibili.com/video/BV1zD421H76q<br>
   <b>百度网盘群号：</b>930109408<br>
   提示：因为百度网盘分享总是屏蔽，现在切换到百度网盘的群分享，请在“百度网盘->消息” 添加群号，加入群后可以在文件列表进行下载<br>
-  <b>夸克：</b>https://pan.quark.cn/s/ade5c2d30ae7<br>
-  提取码：ci9B<br>
   功能整合包下载(4个)：人工智能 -> yinmei-all<br>
   吟美核心【版本迭代】：人工智能 -> 吟美核心<br>
   吟美开发文档：人工智能 -> 吟美开发文档<br>
@@ -111,9 +109,9 @@
 
 整合包教程：https://www.bilibili.com/video/BV1zD421H76q<br>
 百度网盘群号：930109408<br>
-
-夸克：https://pan.quark.cn/s/ade5c2d30ae7<br>
-提取码：ci9B<br>
+功能整合包下载(4个)：人工智能 -> yinmei-all<br>
+吟美核心【版本迭代】：人工智能 -> 吟美核心<br>
+吟美开发文档：人工智能 -> 吟美开发文档<br>
 
 - 语音播放器 mpv：语音播放、音乐播放使用<br>
   在百度网盘->人工智能->软件->mpv.exe<br>
