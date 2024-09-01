@@ -21,7 +21,7 @@
   https://github.com/worm128/AI-YinMei-backup<br>
 
 ## **技术架构**
-<img width="700" alt="吟美流程图1.8.0" src="https://github.com/user-attachments/assets/0598fc20-59e4-4a18-86d1-e14428bee4e9"><br>
+<img width="700" alt="吟美流程图1.8.0" src="https://github.com/user-attachments/assets/1472b81e-9255-48bc-b4a4-f2b200a81513"><br>
 
 ## **支持技术**
 
