@@ -1,6 +1,8 @@
 # **AI-YinMei【Ai吟美】**
 ![Github stars](https://img.shields.io/github/stars/worm128/AI-YinMei.svg) &nbsp; ![发布版本](https://img.shields.io/badge/release-1.8.1-blue) &nbsp; ![python](https://img.shields.io/badge/python-3.11+-green)<br>
+[直播效果](http://live.bilibili.com/31814714)：<br>
 <img src="https://github.com/user-attachments/assets/4b9151c9-4703-4649-b64a-81c3092341ba" alt="1.8.0重构版本" width="700" height="400" ><br>
+[桌宠云](https://www.bilibili.com/video/BV1xmvDeiE6G/)：<br>
 <img src="https://github.com/user-attachments/assets/4de70042-a3a2-4865-8ee9-8fe722262194" alt="1.8.1桌宠云" width="700" height="400" ><br>
 【[:smile:开发文档](https://gf.bilibili.com/item/detail/1107273021)|[:heartpulse:视频教程](https://www.bilibili.com/read/cv33640951/)|[:truck:1.8整合包教程](https://www.bilibili.com/video/BV1e4421Z76E/)|[:sparkles:1.7整合包教程](https://www.bilibili.com/video/BV1zD421H76q)】<br>
 - AI 虚拟主播 Vtuber 研发(N 卡版本)
@@ -54,7 +56,7 @@
 - 增加点赞、送礼物、欢迎词等触发事件
 - Ai吟美桌宠【关注B站“[程序猿的退休生活](https://space.bilibili.com/46130941)”，回复181获取下载链接】
 
-## **吟美直播间功能说明**
+## **[吟美直播间](http://live.bilibili.com/31814714)功能说明**
 
 - 1、聊天功能：<br>
   1.1 设定了名字、性格、语气和嘲讽能力的 AI，能够与粉丝互怼，当然录入了老粉丝的信息记录，能够更好识别老粉丝的行为进行互怼。 <br>
