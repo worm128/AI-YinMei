@@ -1,6 +1,7 @@
 # **AI-YinMei【Ai吟美】**
-![Github stars](https://img.shields.io/github/stars/worm128/AI-YinMei.svg) &nbsp; ![发布版本](https://img.shields.io/badge/release-1.8.0-blue) &nbsp; ![python](https://img.shields.io/badge/python-3.11+-green)<br>
-<img src="https://github.com/user-attachments/assets/48ed4c9a-e1fe-4846-9887-0842b51e9526" width="700" height="400" ><br>
+![Github stars](https://img.shields.io/github/stars/worm128/AI-YinMei.svg) &nbsp; ![发布版本](https://img.shields.io/badge/release-1.8.1-blue) &nbsp; ![python](https://img.shields.io/badge/python-3.11+-green)<br>
+<img src="https://github.com/user-attachments/assets/48ed4c9a-e1fe-4846-9887-0842b51e9526" alt="1.8.0重构版本" width="700" height="400" ><br>
+<img src="https://github.com/user-attachments/assets/4de70042-a3a2-4865-8ee9-8fe722262194" alt="1.8.1桌宠云" width="700" height="400" ><br>
 【[:smile:开发文档](https://gf.bilibili.com/item/detail/1107273021)|[:heartpulse:视频教程](https://www.bilibili.com/read/cv33640951/)|[:truck:1.8整合包教程](https://www.bilibili.com/video/BV1e4421Z76E/)|[:sparkles:1.7整合包教程](https://www.bilibili.com/video/BV1zD421H76q)】<br>
 - AI 虚拟主播 Vtuber 研发(N 卡版本)
 - AI 名称：吟美
@@ -21,7 +22,7 @@
   https://github.com/worm128/AI-YinMei-backup<br>
 
 ## **技术架构**
-<img width="700" alt="吟美流程图1.8.0" src="https://github.com/user-attachments/assets/1472b81e-9255-48bc-b4a4-f2b200a81513"><br>
+<img width="700" alt="吟美流程图1.8.1" src="https://github.com/user-attachments/assets/1472b81e-9255-48bc-b4a4-f2b200a81513"><br>
 
 ## **支持技术**
 
