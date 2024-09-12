@@ -1,6 +1,6 @@
 # **AI-YinMei【Ai吟美】**
 ![Github stars](https://img.shields.io/github/stars/worm128/AI-YinMei.svg) &nbsp; ![发布版本](https://img.shields.io/badge/release-1.8.1-blue) &nbsp; ![python](https://img.shields.io/badge/python-3.11+-green)<br>
-<img src="https://github.com/user-attachments/assets/48ed4c9a-e1fe-4846-9887-0842b51e9526" alt="1.8.0重构版本" width="700" height="400" ><br>
+<img src="https://github.com/user-attachments/assets/4b9151c9-4703-4649-b64a-81c3092341ba" alt="1.8.0重构版本" width="700" height="400" ><br>
 <img src="https://github.com/user-attachments/assets/4de70042-a3a2-4865-8ee9-8fe722262194" alt="1.8.1桌宠云" width="700" height="400" ><br>
 【[:smile:开发文档](https://gf.bilibili.com/item/detail/1107273021)|[:heartpulse:视频教程](https://www.bilibili.com/read/cv33640951/)|[:truck:1.8整合包教程](https://www.bilibili.com/video/BV1e4421Z76E/)|[:sparkles:1.7整合包教程](https://www.bilibili.com/video/BV1zD421H76q)】<br>
 - AI 虚拟主播 Vtuber 研发(N 卡版本)
