@@ -27,7 +27,9 @@
 吟美开发文档：人工智能 -> 吟美开发文档  
 
 ## 快速配置
-> 配置好以下两个配置，就可以马上进行聊天了  
+> 配置好以下两个配置，就可以马上进行聊天了
+
+配置教程：https://www.yinmei.vip/  
 
 1、[配置聊天](https://www.yinmei.vip/#/yinmei-core?id=_2、通用ai聊天)  
 2、[配置语音](https://www.yinmei.vip/#/yinmei-core?id=二、语音合成)  
