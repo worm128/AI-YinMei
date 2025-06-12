@@ -9,6 +9,9 @@
 <br/><br/><br/>
 <p align="center"><img src="https://www.yinmei.vip/images/%E7%9B%B4%E6%92%AD%E9%97%B4%E5%B0%81%E9%9D%A2.png" width="80%"/></p>
 
+## 官网
+https://www.yinmei.vip/  
+
 ## 项目下载
 **吟美整合包下载地址：**  
 百度网盘群：请在“百度网盘->消息” 添加群号   
@@ -28,8 +31,6 @@
 
 ## 快速配置
 > 配置好以下两个配置，就可以马上进行聊天了
-
-配置教程：https://www.yinmei.vip/  
 
 1、[配置聊天](https://www.yinmei.vip/#/yinmei-core?id=_2、通用ai聊天)  
 2、[配置语音](https://www.yinmei.vip/#/yinmei-core?id=二、语音合成)  
