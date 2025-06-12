@@ -1,5 +1,5 @@
 <br>
-<p align="center" style="font-weight: bold; font-size: 2.5em">Ai吟美整合包</p>
+<p align="center" style="font-weight: bold; font-size: 2.5em">Ai吟美|一站式人工智能直播平台</p>
 
 <p align="right" style="font-weight: bold; font-size: 1.5em">开发者：Winlone</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">B站：程序猿的退休生活</p>
@@ -10,6 +10,22 @@
 <br/><br/><br/>
 <p align="center"><img src="https://www.yinmei.vip/images/%E7%9B%B4%E6%92%AD%E9%97%B4%E5%B0%81%E9%9D%A2.png" width="80%"/></p>
 
+## 项目下载
+**吟美整合包下载地址：**  
+百度网盘群：请在“百度网盘->消息” 添加群号   
+百度网盘群号1：930109408（满）  
+百度网盘群号2：939447713（满）   
+百度网盘群号3：945900295   
+百度网盘群号4：969208563  
+**夸克：**   
+夸克群1：1231405830   
+夸克群2：428937868   
+**功能整合包下载(6个)：**  
+下载路径：人工智能 -> yinmei-all  
+桌宠2.0 yinmei-desktop-plus、TTS语音合成GPT-SoVITS-1.0版本和2.0版本、鉴黄public-NSFW-y-distinguish、绘画stable-diffusion-webui、Live2D皮肤  
+**吟美核心【版本迭代】：**  
+下载路径：人工智能 -> 吟美核心  
+吟美开发文档：人工智能 -> 吟美开发文档  
 
 ## 快速配置
 > 配置好以下两个配置，就可以马上进行聊天了  
