@@ -34,22 +34,22 @@
 3、[进行对话](https://www.yinmei.vip/#/yinmei-core?id=_23-聊天对话)  
 
 ## 功能概览
-- **长期记忆：**吟美核心、yinmei-analysis
-- **短期记忆：**吟美核心、mongodb
-- **意图分析：**吟美核心、yinmei-analysis
-- **积分：**吟美核心、mongodb
-- **扩散思维：**吟美核心、yinmei-analysis、neo4j
-- **聊天：**吟美核心、选择：阿里百炼  智谱清言  腾讯混元  百度云服务  DeepSeek  OneApi  Xinference Fastgpt
-- **知识库：**吟美核心、fastgpt【可外挂，不走fastgpt的语言模型】、Xinference、m3e
-- **语音：**吟美核心、GPT-SoVITS1.zip、GPT-SoVITS-v2.zip
-- **唱歌：**吟美核心、yinmei-music.zip、NeteaseCloudMusicApi.zip
-- **绘画：**吟美核心、stable-diffusion-webui.zip、public-NSFW-y-distinguish.zip【可选】
-- **搜图：**吟美核心、public-NSFW-y-distinguish.zip【可选】
-- **搜索：**吟美核心、vpn【可选】
-- **皮肤：**吟美核心、吟美桌宠【可选】、vtube studio【可选】
-- **跳舞：**吟美核心、OBS、本地视频
-- **表情：**吟美核心、吟美桌宠【可选】、vtube studio【可选】
-- **弹幕：**吟美核心、B站、qq机器人：napcat
+- **长期记忆：** 吟美核心、yinmei-analysis
+- **短期记忆：** 吟美核心、mongodb
+- **意图分析：** 吟美核心、yinmei-analysis
+- **积分：** 吟美核心、mongodb
+- **扩散思维：** 吟美核心、yinmei-analysis、neo4j
+- **聊天：** 吟美核心、选择：阿里百炼  智谱清言  腾讯混元  百度云服务  DeepSeek  OneApi  Xinference Fastgpt
+- **知识库：** 吟美核心、fastgpt【可外挂，不走fastgpt的语言模型】、Xinference、m3e
+- **语音：** 吟美核心、GPT-SoVITS1.zip、GPT-SoVITS-v2.zip
+- **唱歌：** 吟美核心、yinmei-music.zip、NeteaseCloudMusicApi.zip
+- **绘画：** 吟美核心、stable-diffusion-webui.zip、public-NSFW-y-distinguish.zip【可选】
+- **搜图：** 吟美核心、public-NSFW-y-distinguish.zip【可选】
+- **搜索：** 吟美核心、vpn【可选】
+- **皮肤：** 吟美核心、吟美桌宠【可选】、vtube studio【可选】
+- **跳舞：** 吟美核心、OBS、本地视频
+- **表情：** 吟美核心、吟美桌宠【可选】、vtube studio【可选】
+- **弹幕：** 吟美核心、B站、qq机器人：napcat
 
 ## 指令说明
 **1. 基础指令：**  
