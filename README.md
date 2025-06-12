@@ -1,5 +1,4 @@
-<br>
-<p align="center" style="font-weight: bold; font-size: 2.5em">Ai吟美|一站式人工智能直播平台</p>
+<h1 align="center" style="font-weight: bold; font-size: 90px;">Ai吟美|一站式人工智能直播平台</h1>
 
 <p align="right" style="font-weight: bold; font-size: 1.5em">开发者：Winlone</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">B站：程序猿的退休生活</p>
