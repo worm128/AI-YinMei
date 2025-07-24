@@ -4,7 +4,7 @@
 <p align="right" style="font-weight: bold; font-size: 1.5em">B站：程序猿的退休生活</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">技术Q群：27831318</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">粉丝福利群：264534845</p>
-<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.2.0</p>
+<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.3.0</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://www.yinmei.vip/images/logo.png" width="200px"/></p>
 <br/><br/><br/>
 <p align="center"><img src="https://www.yinmei.vip/images/%E7%9B%B4%E6%92%AD%E9%97%B4%E5%B0%81%E9%9D%A2.png" width="80%"/></p>
@@ -76,12 +76,12 @@ https://www.yinmei.vip/
 3.2 当然，你可以输入类似“吟美给我画一幅最丑的小龟蛋”这些开放性的话题，让吟美给你智能输出绘画提示词进行画画。
 
 **4. 跳舞功能：**  
-4.1 输入“跳舞+舞蹈名称”，舞蹈如下：
+4.1 输入“视频+舞蹈名称”，舞蹈如下：
 书记舞、科目三、女团舞、社会摇
 呱呱舞、马保国、二次元、涩涩
 蔡徐坤、江南 style、Chipi、吟美
-直接输入“跳舞”两个字是随机跳舞
-4.2 停止跳舞请输入“停止跳舞”
+直接输入“视频”两个字是随机跳舞
+4.2 停止跳舞请输入“停止视频”
 
 **5. 表情功能：**  
 输入“表情+名称”, “表情+随机” 是随机表情，表情自己猜，例如，“哭、笑、吐舌头”之类
