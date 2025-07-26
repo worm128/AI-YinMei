@@ -100,7 +100,7 @@ https://www.yinmei.vip/
 输入“搜索+关键字”
 
 ## 技术架构
-![技术架构.png](https://github.com/user-attachments/assets/502e0295-b659-471c-a753-136b62a17f93)
+![技术架构.png](https://github.com/user-attachments/assets/f8a9a042-618e-454d-9e2e-aeb753a1fd57)
 
 ## 快速启动
 **下载包：**  
