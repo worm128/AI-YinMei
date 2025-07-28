@@ -59,8 +59,8 @@ https://www.yinmei.vip/
 - **跳舞：** 吟美核心、OBS、本地视频
 - **表情：** 吟美核心、吟美桌宠【可选】、vtube studio【可选】
 - **弹幕：** 吟美核心、B站、qq机器人：napcat
-- **自动化抽奖：**吟美核心、mongodb
-- **MCP+自定义代码：**吟美核心、mongodb
+- **自动化抽奖：** 吟美核心、mongodb
+- **MCP+自定义代码：** 吟美核心、mongodb
 
 ## 指令说明
 **1. 基础指令：**  
