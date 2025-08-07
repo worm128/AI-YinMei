@@ -11,7 +11,7 @@
 <p align="center"><img src="https://www.yinmei.vip/images/%E7%9B%B4%E6%92%AD%E9%97%B4%E5%B0%81%E9%9D%A2.png" width="80%"/></p>
 
 ## Lanuage
-[[中文](https://github.com/worm128/AI-YinMei) | [EN](https://github.com/worm128/AI-YinMei/EN-README.md)]
+[[中文](https://github.com/worm128/AI-YinMei) | [EN](https://github.com/worm128/AI-YinMei/blob/master/EN-README.md)]
 
 ## Official Website
 [https://www.yinmei.vip/](https://www.yinmei.vip/#/en/)
