@@ -13,6 +13,11 @@
 ## Lanuage
 [[中文](https://github.com/worm128/AI-YinMei) | [EN](https://github.com/worm128/AI-YinMei/blob/master/EN-README.md)]
 
+## Video Introduction
+[Desktop Pet + Voiceprint + ASR + QQ Bot](https://www.bilibili.com/video/BV1kh5TzLEv6/) <br>
+[Powerful Management Backend + RAG Knowledge Base + KAG Divergent Thinking + Long-Term Memory + Intent Analysis](https://www.bilibili.com/video/BV1vFqjYBEK7) <br>
+[MCP Plugin](https://www.bilibili.com/video/BV1FLuEztEGR) | [Compatible with All LLM Interfaces](https://www.bilibili.com/video/BV1NkktYTEkZ) | [Divergent Thinking](https://www.bilibili.com/video/BV15iBuY9EZ7)
+
 ## Official Website
 [https://www.yinmei.vip/](https://www.yinmei.vip/#/en/)
 
