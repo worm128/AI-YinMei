@@ -12,6 +12,10 @@
 ## 语言[Lanuage]
 [[中文](https://github.com/worm128/AI-YinMei) | [EN](https://github.com/worm128/AI-YinMei/blob/master/EN-README.md)]
 
+## 视频介绍 
+[桌宠、声纹、语音、QQ机器人](https://www.bilibili.com/video/BV1kh5TzLEv6/) | [2.0强大管理后台+RAG知识库+KAG扩散思维+长期记忆+意图分析](https://www.bilibili.com/video/BV1vFqjYBEK7) <br>
+[MCP插件](https://www.bilibili.com/video/BV1FLuEztEGR) | [兼容所有LLM接口](https://www.bilibili.com/video/BV1NkktYTEkZ) | [扩散思维](https://www.bilibili.com/video/BV15iBuY9EZ7)
+
 ## 官网
 https://www.yinmei.vip/  
 
