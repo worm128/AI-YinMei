@@ -16,40 +16,40 @@
 ## Video Introduction
 [Desktop Pet + Voiceprint + ASR + QQ Bot](https://www.bilibili.com/video/BV1kh5TzLEv6/) <br>
 [Powerful Management Backend + RAG Knowledge Base + KAG Divergent Thinking + Long-Term Memory + Intent Analysis](https://www.bilibili.com/video/BV1vFqjYBEK7) <br>
-[MCP Plugin](https://www.bilibili.com/video/BV1FLuEztEGR) | [Compatible with All LLM Interfaces](https://www.bilibili.com/video/BV1NkktYTEkZ) | [Divergent Thinking](https://www.bilibili.com/video/BV15iBuY9EZ7)
+[MCP Plugin](https://www.bilibili.com/video/BV1FLuEztEGR) | [Compatible with All LLM Interfaces](https://www.bilibili.com/video/BV1NkktYTEkZ) | [Divergent Thinking](https://www.bilibili.com/video/BV15iBuY9EZ7)  
 
 ## Official Website
-[https://www.yinmei.vip/](https://www.yinmei.vip/#/en/)
+[https://www.yinmei.vip/](https://www.yinmei.vip/#/en/)  
 
 ## Project Statement
 **Open Source Version: 1.8.1**
-Note: This version is open source on GitHub, but it does not have a backend management interface.
+Note: This version is open source on GitHub, but it does not have a backend management interface.  
 **Full Version: 2.3.0**
-Note: This version includes a complete backend management interface, intent analysis, sentiment analysis, voiceprint recognition, diffuse thinking, a points system, a user system, and other features. A download link is available on the official website. The full version is not open source.
+Note: This version includes a complete backend management interface, intent analysis, sentiment analysis, voiceprint recognition, diffuse thinking, a points system, a user system, and other features. A download link is available on the official website. The full version is not open source.  
 
 ## Project Download
-**Yinmei Integration Package Download Address:**
-Baidu Netdisk Group: Please add the group ID in "Baidu Netdisk -> Messages"
-Baidu Netdisk Group 1: 930109408 (Full)
-Baidu Netdisk Group 2: 939447713 (Full)
-Baidu Netdisk Group 3: 945900295
-Baidu Netdisk Group 4: 969208563
-**Quark:**
-Quark Group 1: 1231405830
-Quark Group 2: 428937868
-**Function Integration Package Download (6):**
-Download Path: Artificial Intelligence -> yinmei-all
-Desktop Pet 2.0 yinmei-desktop-plus, TTS speech synthesis GPT-SoVITS-versions 1.0 and 2.0, porn detection public-NSFW-y-distinguish, painting stable-diffusion-webui, Live2D skin
-**Yinmei Core [Version Iteration]:**
-Download Path: Artificial Intelligence -> Yinmei Core
-Yinmei Development Documentation: Artificial Intelligence -> Yinmei Development Documentation
+**Yinmei Integration Package Download Address:**  
+Baidu Netdisk Group: Please add the group ID in "Baidu Netdisk -> Messages"  
+Baidu Netdisk Group 1: 930109408 (Full)  
+Baidu Netdisk Group 2: 939447713 (Full)  
+Baidu Netdisk Group 3: 945900295  
+Baidu Netdisk Group 4: 969208563  
+**Quark:**  
+Quark Group 1: 1231405830  
+Quark Group 2: 428937868  
+**Function Integration Package Download (6):**  
+Download Path: Artificial Intelligence -> yinmei-all  
+Desktop Pet 2.0 yinmei-desktop-plus, TTS speech synthesis GPT-SoVITS-versions 1.0 and 2.0, porn detection public-NSFW-y-distinguish, painting stable-diffusion-webui, Live2D skin  
+**Yinmei Core [Version Iteration]:**  
+Download Path: Artificial Intelligence -> Yinmei Core  
+Yinmei Development Documentation: Artificial Intelligence -> Yinmei Development Documentation  
 
 ## Quick Configuration
-> Configure the following two settings to start chatting immediately.
+> Configure the following two settings to start chatting immediately.  
 
-1. [Configure Chat](https://www.yinmei.vip/#/yinmei-core?id=_2, General AI Chat)
-2. [Configure Voice](https://www.yinmei.vip/#/yinmei-core?id=_2, Voice Synthesis)
-3. [Start a Conversation](https://www.yinmei.vip/#/yinmei-core?id=_23, Chat Conversation)
+1. [Configure Chat](https://www.yinmei.vip/#/yinmei-core?id=_2, General AI Chat)  
+2. [Configure Voice](https://www.yinmei.vip/#/yinmei-core?id=_2, Voice Synthesis)  
+3. [Start a Conversation](https://www.yinmei.vip/#/yinmei-core?id=_23, Chat Conversation)  
 
 ## Feature Overview
 - **Long-Term Memory:** Yinmei Core, yinmei-analysis
@@ -126,16 +126,14 @@ Enter "search + keyword"
 ![Technical Architecture.png](https://github.com/user-attachments/assets/2c3a672b-cc24-4601-b63e-f9e5a849fba2)
 
 ## Quick Start
-**Download Package:**
-Download Path: In the "YinMei Core" folder
-Application Package: AI-YinMei-v2.2.0.zip
-**Startup Method:**
-Double-click to launch "start.bat" or "yinmei-core-api.exe"
+**Download Package:**  
+Download Path: In the "YinMei Core" folder  
+Application Package: AI-YinMei-v2.2.0.zip  
+**Startup Method:**  
+Double-click to launch "start.bat" or "yinmei-core-api.exe"  
 
-![0.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%A0%B8%E5%BF%83/0.png)
-
-> Successfully started: Admin backend address
+![0.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%A0%B8%E5%BF%83/0.png)  
+> Successfully started: Admin backend address  
 
 ![00.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%A0%B8%E5%BF%83/00.png)  
-
-**Access URL:** http://127.0.0.1:9000
+**Access URL:** http://127.0.0.1:9000  
