@@ -132,8 +132,9 @@ Application Package: AI-YinMei-v2.2.0.zip
 **Startup Method:**  
 Double-click to launch "start.bat" or "yinmei-core-api.exe"  
 
-![0.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%A0%B8%E5%BF%83/0.png)  
+![0.png](https://www.yinmei.vip/images/yinmei-core/0.png)  
+![0.png](https://www.yinmei.vip/images/comm/4.png)  
 > Successfully started: Admin backend address  
 
-![00.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%A0%B8%E5%BF%83/00.png)  
+![00.png](https://www.yinmei.vip/images/comm/5.png)  
 **Access URL:** http://127.0.0.1:9000  
