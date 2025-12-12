@@ -124,3 +124,6 @@ https://www.yinmei.vip/
 
 ![00.png](https://www.yinmei.vip/images/comm/5.png)  
 **访问地址：** http://127.0.0.1:9000  
+
+## Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=worm128/AI-YinMei&type=date&legend=top-left)](https://www.star-history.com/#worm128/AI-YinMei&type=date&legend=top-left)
