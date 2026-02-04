@@ -109,7 +109,7 @@ https://www.yinmei.vip/
 输入“搜索+关键字”
 
 ## 技术架构
-![技术架构.png](https://github.com/user-attachments/assets/2c3a672b-cc24-4601-b63e-f9e5a849fba2)
+![技术架构.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%B5%81%E7%A8%8B%E5%9B%BE2.4.0.png)
 
 ## 快速启动
 **下载包：**  
@@ -117,7 +117,7 @@ https://www.yinmei.vip/
 应用包：AI-YinMei-v2.2.0.zip  
 **启动方式：**
 双击启动“start.bat"或者"yinmei-core-api.exe"  
-![0.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%B5%81%E7%A8%8B%E5%9B%BE2.4.0.png)  
+![0.png](https://www.yinmei.vip/images/yinmei-core/0.png)  
 ![0.png](https://www.yinmei.vip/images/comm/4.png)  
 
 > 启动成功：管理后台地址
