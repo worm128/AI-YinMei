@@ -4,7 +4,7 @@
 <p align="right" style="font-weight: bold; font-size: 1.5em">Bilibili: A Programmer's Retirement Life</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">Technical QQ Group: 27831318</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">Fan Welfare Group: 264534845</p>
-<p align="right" style="font-weight: bold; font-size: 1.5em">Version: 2.3.0</p>
+<p align="right" style="font-weight: bold; font-size: 1.5em">Version: 2.4.0</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://www.yinmei.vip/images/logo.png" width="200px"/></p>
 <br/><br/><br/>
 
@@ -24,7 +24,7 @@
 ## Project Statement
 **Open Source Version: 1.8.1**
 Note: This version is open source on GitHub, but it does not have a backend management interface.  
-**Full Version: 2.3.0**
+**Full Version: 2.4.0**
 Note: This version includes a complete backend management interface, intent analysis, sentiment analysis, voiceprint recognition, diffuse thinking, a points system, a user system, and other features. A download link is available on the official website. The full version is not open source.  
 
 ## Project Download
@@ -123,12 +123,12 @@ Enter "Outfit + Outfit Name": Plain Clothes, Wings of Love, Youthful Cat Girl, G
 Enter "search + keyword"
 
 ## Technical Architecture
-![Technical Architecture.png](https://github.com/user-attachments/assets/2c3a672b-cc24-4601-b63e-f9e5a849fba2)
+![Technical Architecture.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%B5%81%E7%A8%8B%E5%9B%BE2.4.0.png)
 
 ## Quick Start
 **Download Package:**  
 Download Path: In the "YinMei Core" folder  
-Application Package: AI-YinMei-v2.2.0.zip  
+Application Package: AI-YinMei-v2.4.0.zip  
 **Startup Method:**  
 Double-click to launch "start.bat" or "yinmei-core-api.exe"  
 
