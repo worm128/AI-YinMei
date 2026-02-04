@@ -22,7 +22,7 @@ https://www.yinmei.vip/
 ## 项目声明
 **开源版本：1.8.1**   
 说明：这个版本是在github开源，但是她没有后台管理界面  
-**完整版：2.3.0**  
+**完整版：2.4.0**  
 说明：这个版本有完整后台管理界面，意图分析+情感分析+语音声纹识别+扩散思维+积分系统+用户系统等多种功能，可以在官网获取网盘下载链接，完整版不开源  
 
 ## 项目下载
@@ -114,7 +114,7 @@ https://www.yinmei.vip/
 ## 快速启动
 **下载包：**  
 下载路径：在"吟美核心"文件夹  
-应用包：AI-YinMei-v2.2.0.zip  
+应用包：AI-YinMei-v2.4.0.zip  
 **启动方式：**
 双击启动“start.bat"或者"yinmei-core-api.exe"  
 ![0.png](https://www.yinmei.vip/images/yinmei-core/0.png)  
