@@ -4,7 +4,7 @@
 <p align="right" style="font-weight: bold; font-size: 1.5em">B站：程序猿的退休生活</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">技术Q群：27831318</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">粉丝福利群：264534845</p>
-<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.3.0</p>
+<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.4.0</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://www.yinmei.vip/images/logo.png" width="200px"/></p>
 <br/><br/><br/>
 <p align="center"><img src="https://www.yinmei.vip/images/%E7%9B%B4%E6%92%AD%E9%97%B4%E5%B0%81%E9%9D%A2.png" width="80%"/></p>
@@ -117,13 +117,10 @@ https://www.yinmei.vip/
 应用包：AI-YinMei-v2.2.0.zip  
 **启动方式：**
 双击启动“start.bat"或者"yinmei-core-api.exe"  
-![0.png](https://www.yinmei.vip/images/yinmei-core/0.png)  
+![0.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%B5%81%E7%A8%8B%E5%9B%BE2.4.0.png)  
 ![0.png](https://www.yinmei.vip/images/comm/4.png)  
 
 > 启动成功：管理后台地址
 
 ![00.png](https://www.yinmei.vip/images/comm/5.png)  
 **访问地址：** http://127.0.0.1:9000  
-
-## Star History
-[![Star History Chart](https://api.star-history.com/svg?repos=worm128/AI-YinMei&type=date&legend=top-left)](https://www.star-history.com/#worm128/AI-YinMei&type=date&legend=top-left)
