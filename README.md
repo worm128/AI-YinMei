@@ -109,7 +109,11 @@ https://www.yinmei.vip/
 输入“搜索+关键字”
 
 ## 技术架构
-![技术架构.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%B5%81%E7%A8%8B%E5%9B%BE2.4.0.png)
+![技术架构.png](https://www.yinmei.vip/images/吟美流程图2.4.1.png)
+![聊天异步流程.png](https://www.yinmei.vip/images/聊天异步流程.png)
+![吟美工具调用.png](https://www.yinmei.vip/images/吟美工具调用.png)
+![意图分析.png](https://www.yinmei.vip/images/意图分析.png)
+![流式语音.png](https://www.yinmei.vip/images/流式语音.png)
 
 ## 快速启动
 **下载包：**  
