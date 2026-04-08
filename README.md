@@ -108,6 +108,10 @@ https://www.yinmei.vip/
 **9. 搜索资讯功能：**  
 输入“搜索+关键字”
 
+**10. 聚合弹幕：**  
+![聚合弹幕.png](https://www.yinmei.vip/images/聚合弹幕.png)  
+
+
 ## 技术架构
 ![技术架构.png](https://www.yinmei.vip/images/吟美流程图2.4.1.png)
 ![聊天异步流程.png](https://www.yinmei.vip/images/聊天异步流程.png)
