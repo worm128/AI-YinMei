@@ -37,9 +37,9 @@ https://www.yinmei.vip/
 **夸克：**   
 夸克群1：1231405830   
 夸克群2：428937868   
-**功能整合包下载(6个)：**  
+**功能整合包下载：**  
 下载路径：人工智能 -> yinmei-all  
-桌宠2.0 yinmei-desktop-plus、TTS语音合成GPT-SoVITS-1.0版本和2.0版本、鉴黄public-NSFW-y-distinguish、绘画stable-diffusion-webui、Live2D皮肤  
+分析模块：yinmei-analysis.zip、桌宠2.0:yinmei-desktop-plus.zip、GPT-SoVITS全系列：GPT-SoVITS-v2pro-yinmei.zip、bert语音：yinmei-Bert-VITS2-ui.zip、cosyvoice2:yinmei-cosyvoice、鉴黄：public-NSFW-y-distinguish.zip、绘画：stable-diffusion-webui.zip、Live2D：VTube Studio人物Live2D软件.zip、mcp插件11个：mcp.zip、AI模型：上千个gptsovits语音模型、bertvits2语音模型、Live2D人物模型：Live2d-model、OBS配置.json    
 **吟美核心【版本迭代】：**  
 下载路径：人工智能 -> 吟美核心  
 吟美开发文档：人工智能 -> 吟美开发文档  
