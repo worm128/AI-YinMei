@@ -4,7 +4,7 @@
 <p align="right" style="font-weight: bold; font-size: 1.5em">B站：程序猿的退休生活</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">技术Q群：27831318</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">粉丝福利群：264534845</p>
-<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.4.0</p>
+<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.4.1</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://www.yinmei.vip/images/logo.png" width="200px"/></p>
 <br/><br/><br/>
 <p align="center"><img src="https://www.yinmei.vip/images/%E7%9B%B4%E6%92%AD%E9%97%B4%E5%B0%81%E9%9D%A2.png" width="80%"/></p>
@@ -108,16 +108,13 @@ https://www.yinmei.vip/
 **9. 搜索资讯功能：**  
 输入“搜索+关键字”
 
-**10. 聚合弹幕：**  
-![聚合弹幕.png](https://www.yinmei.vip/images/聚合弹幕.png)  
-
-
 ## 技术架构
 ![技术架构.png](https://www.yinmei.vip/images/吟美流程图2.4.1.png)
 ![聊天异步流程.png](https://www.yinmei.vip/images/聊天异步流程.png)
 ![吟美工具调用.png](https://www.yinmei.vip/images/吟美工具调用.png)
 ![意图分析.png](https://www.yinmei.vip/images/意图分析.png)
 ![流式语音.png](https://www.yinmei.vip/images/流式语音.png)
+![聚合弹幕.png](https://www.yinmei.vip/images/聚合弹幕.png)  
 
 ## 快速启动
 **下载包：**  
