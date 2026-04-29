@@ -51,28 +51,32 @@ Yinmei Development Documentation: Artificial Intelligence -> Yinmei Development 
 2. [Configure Voice](https://www.yinmei.vip/#/yinmei-core?id=_2, Voice Synthesis)  
 3. [Start a Conversation](https://www.yinmei.vip/#/yinmei-core?id=_23, Chat Conversation)  
 
-## Feature Overview
-- **Long-Term Memory:** Yinmei Core, yinmei-analysis
-- **Short-term Memory:** Yinmei Core, MongoDB
-- **Intent Analysis:** Yinmei Core, yinmei-analysis
-- **Points:** Yinmei Core, MongoDB
-- **Diffusive Thinking:** Yinmei Core, yinmei-analysis, neo4j
-- **Chatting:** Yinmei Core, Selection: Alibaba Bailian, Zhipu Qingyan, Tencent Hunyuan, Baidu Cloud Service, DeepSeek, OneApi, Xinference, FastGPT
-- **Knowledge Base:** Yinmei Core, FastGPT [plug-in compatible, does not use FastGPT language model], Xinference, m3e
-- **Speech:** Yinmei Core, GPT-SoVITS1.zip, GPT-SoVITS-v2.zip
-- **Singing:** Yinmei Core, yinmei-music.zip, NeteaseCloudMusicApi.zip
-- **Painting:** Yinmei Core, stable-diffusion-webui.zip, public-NSFW-y-distinguish.zip [optional]
-- **Image Search:** Yinmei Core, public-NSFW-y-distinguish.zip [optional]
-- **Search:** Yinmei Core, VPN [optional]
-- **Skins:** Yinmei Core, Yinmei Table Pet [optional], vtube studio [optional]
-- **Dancing:** Yinmei Core, OBS, local video
-- **Emojis:** Yinmei Core, Yinmei Table Pet [optional], vtube studio [optional]
-- **Banmu:** Yinmei Core, Bilibili, QQ Bot: napcat
-- **Automated Lottery:** Yinmei Core, MongoDB
-- **MCP + Custom Code:** Yinmei Core, MongoDB
+## Function Overview 
+- **Aggregated Bullet Comments:** Aggregates live stream bullet comments, supporting the display of bullet comments from 9 major sources including Bilibili development platform, Napcat [QQ robot], Barragefly [Douyin, Huya, Kuaishou, Douyu], WeChat live stream, desktop pets, and background chat dialogues. 
+- **Intent Analysis:** Intent analysis with a 10ms response time can be used to train corpora to increase intent classification. Currently, it uses a multi-head attention mechanism, which can simultaneously analyze intent classification and sentiment classification. 
+- **Large Model Tools:** Supports MCP tools and custom-written code tools, including: camera observation, timed patrol, visual capabilities, image search, greeting functionality, Wikipedia, TMDB movie rating website, browser manipulation, calculator, user points query, advanced search, thought chain, product information query, stock tools, time zone conversion, random number generation, cooking guide, changing character clothing, character movement and rotation, video search and playback, speech synthesis switch, speech speed adjustment, AI video, AI singing, AI painting, search tools, and 27 other tools. 
+- **Lottery:** The lottery is divided into self-service lotteries and streamer lotteries. Self-service lotteries are initiated by users entering "lottery" in the chat, while streamer lotteries are conducted by the streamer who clicks the lottery button to all online users in the live stream. Features include a list of lottery prizes and lottery records. 
+- **Long-term memory:** Intelligently recalls memories from different time periods based on time pronouns. High-performance memory recall without affecting the main process speed. Parameters such as quantity and similarity can be set. 
+- **Short-term memory:** Recorded in the large model context memory of the MongoDB database, all chat records are fully persisted. 
+- **Points:** Each user earns points for chatting, liking, sending gifts, and registering. Singing, drawing, playing videos, switching songs, and participating in raffles will deduct points. Points configuration options are available. 
+- **Diffusion Thinking:** Using the graph relation database neo4j to construct word relationships, you can export q-group data for thinking relationship training, and the analyzed graph will be displayed in neo4j. 
+- **Chat:** Supports all cloud service providers and local services that meet the OpenAI specification, with 100% coverage of large LLM models. LLM is streamed for high-performance dialogue. 
+- **Voice Support:** Supports Cosyvoice2, Bert-Vits2, the entire GPT-Sovits series, and Edge-TTS. OpenAI-compliant TTS is supported by 80% of TTS cloud providers on the market. Cosyvoice2 has been significantly modified and tweaked for tone and emotion, and VLLM acceleration has been implemented, making it stronger and faster than other speech synthesizers on the market. Voice is streamed for high-performance TTS. 
+- **Vision:** Supports OpenAI-compliant data models and visual models from most cloud vendors. 
+- **Live Streaming UI Plugins:** Supports 18 UI plugins to assist with live streaming. 
+- **Knowledge Base:** Currently using FastGPT knowledge base capabilities for knowledge management and loading. 
+- **Singing:** It can cover songs in any language. It takes about 150 to 200 seconds to learn a song. The singing model can train its own tone. 
+- **Painting:** Supports downloading any painting model from civitai.com for drawing. 
+- **Image Search:** Use Baidu search to search for images. 
+- **Search:** Use the search aggregation platform searchng, which includes search engines such as Google, Bing, duckduckgo, Wikipedia, startpage, and brave. Requires a VPN. 
+- **Characters:** Supports the self-developed Yinmei desktop pet and Vtube Studio [available for download on Steam or the product's cloud drive]. The Yinmei desktop pet comes with a built-in microphone, powerful noise reduction, VAD, and AEC capabilities, and is overlaid with a voiceprint system, ensuring real-time conversations without accidental touches. 
+- **Emojis:** There are emoji schemes that can control character expressions, support loop playback, and trigger emojis with keywords. 
+- **Videos:** Can play any video within a local folder, and supports videos stored in subfolders. Supports pulling and playing videos from Bilibili. 
+- **NSFW:** Supports image content moderation, can filter illegal characters in comments, provides AI responses to illegal characters, and draws prompts for illegal words. 
+- **Other:** Supports off-peak tasks, supports welcome messages upon entering a room, supports intelligent installation of Docker services, supports server monitoring, and supports data statistics.
 
 ## Command Description
-**1. Basic Commands:**
+**1. Basic Commands:**  
 1.1 Add "\" for example "\I'm chatting in the livestream." This will prevent the AI from responding to user content.
 
 **2. Singing Function:**
@@ -123,18 +127,23 @@ Enter "Outfit + Outfit Name": Plain Clothes, Wings of Love, Youthful Cat Girl, G
 Enter "search + keyword"
 
 ## Technical Architecture
-![Technical Architecture.png](https://www.yinmei.vip/images/%E5%90%9F%E7%BE%8E%E6%B5%81%E7%A8%8B%E5%9B%BE2.4.0.png)
+![技术架构.png](https://www.yinmei.vip/images/吟美流程图2.4.1.png)
+![聊天异步流程.png](https://www.yinmei.vip/images/聊天异步流程.png)
+![吟美工具调用.png](https://www.yinmei.vip/images/吟美工具调用.png)
+![意图分析.png](https://www.yinmei.vip/images/意图分析.png)
+![流式语音.png](https://www.yinmei.vip/images/流式语音.png)
+![聚合弹幕.png](https://www.yinmei.vip/images/聚合弹幕.png)  
 
-## Quick Start
-**Download Package:**  
-Download Path: In the "YinMei Core" folder  
-Application Package: AI-YinMei-v2.4.0.zip  
-**Startup Method:**  
-Double-click to launch "start.bat" or "yinmei-core-api.exe"  
-
-![0.png](https://www.yinmei.vip/images/yinmei-core/0.png)  
-![0.png](https://www.yinmei.vip/images/comm/4.png)  
-> Successfully started: Admin backend address  
-
-![00.png](https://www.yinmei.vip/images/comm/5.png)  
-**Access URL:** http://127.0.0.1:9000  
+## Quick Start 
+**Download package:** 
+Download path: in the "Yinmei Core" folder 
+Application package: AI-YinMei-v2.4.0.zip 
+**Startup Method:** 
+Double-click to launch "start.bat" or "yinmei-core-api.exe" 
+![0.png](https://www.yinmei.vip/images/yinmei-core/0.png) 
+![0.png](https://www.yinmei.vip/images/comm/4.png) 
+ 
+> Startup successful: Management backend address 
+ 
+![00.png](https://www.yinmei.vip/images/comm/5.png) 
+**Access address:** http://127.0.0.1:9000
