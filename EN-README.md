@@ -25,7 +25,7 @@
 **Open Source Version: 1.8.1**
 Note: This version is open source on GitHub, but it does not have a backend management interface.  
 **Full Version: 2.4.0**
-Note: This version includes a complete backend management interface, intent analysis, sentiment analysis, voiceprint recognition, diffuse thinking, a points system, a user system, and other features. A download link is available on the official website. The full version is not open source.  
+Note: This version includes a complete backend management interface, intent analysis, sentiment analysis, voiceprint recognition, diffuse thinking, a points system, a user system, and other features. [A download link](https://www.bilibili.com/video/BV1FLuEztEGR) is available on the official website. The full version is not open source.  
 
 ## Project Download
 **Yinmei Integration Package Download Address:**  
