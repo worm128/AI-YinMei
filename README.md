@@ -5,9 +5,9 @@
 <p align="right" style="font-weight: bold; font-size: 1.5em">技术Q群：27831318</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">粉丝福利群：264534845</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.4.1</p>
-<p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://www.yinmei.vip/images/logo.png" width="200px"/></p>
+<p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://docs.yinmei.vip/images/logo.png" width="200px"/></p>
 <br/><br/><br/>
-<p align="center"><img src="https://www.yinmei.vip/images/%E7%9B%B4%E6%92%AD%E9%97%B4%E5%B0%81%E9%9D%A2.png" width="80%"/></p>
+<p align="center"><img src="https://docs.yinmei.vip/images/%E7%9B%B4%E6%92%AD%E9%97%B4%E5%B0%81%E9%9D%A2.png" width="80%"/></p>
 
 ## 语言[Lanuage]
 [[中文](https://github.com/worm128/AI-YinMei) | [EN](https://github.com/worm128/AI-YinMei/blob/master/EN-README.md)]
