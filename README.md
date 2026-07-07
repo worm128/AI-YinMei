@@ -144,8 +144,12 @@ https://www.yinmei.vip/
 **启动方式：**
 双击启动“start.bat"或者"yinmei-core-api.exe"  
 ![0.png](https://www.yinmei.vip/images/yinmei-core/0.png)  
+
+**启动成功：** 
 ![0.png](https://www.yinmei.vip/images/comm/4.png)  
 
-**启动成功：** 管理后台地址  
+
+**访问地址：**  
+http://127.0.0.1:9000  
 ![首页](https://www.yinmei.vip/images/monitor.png)  
-**访问地址：** http://127.0.0.1:9000  
+
