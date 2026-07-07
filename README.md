@@ -146,6 +146,5 @@ https://www.yinmei.vip/
 ![0.png](https://www.yinmei.vip/images/comm/4.png)  
 
 > 启动成功：管理后台地址
-
-![00.png](https://www.yinmei.vip/images/comm/5.png)  
+![首页](https://www.yinmei.vip/images/monitor.png)  
 **访问地址：** http://127.0.0.1:9000  
