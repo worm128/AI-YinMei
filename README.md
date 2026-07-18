@@ -4,7 +4,7 @@
 <p align="right" style="font-weight: bold; font-size: 1.5em">B站：程序猿的退休生活</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">技术Q群：27831318</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">粉丝福利群：264534845</p>
-<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.4.1</p>
+<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.4.3</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://www.yinmei.vip/images/logo.png" width="200px"/></p>
 <br/><br/><br/>
 <p align="center"><img src="https://www.yinmei.vip/images/yinmei-cover.jpg" width="80%"/></p>
