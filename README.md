@@ -4,7 +4,7 @@
 <p align="right" style="font-weight: bold; font-size: 1.5em">B站：程序猿的退休生活</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">技术Q群：27831318</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">粉丝福利群：264534845</p>
-<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.4.3</p>
+<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.4.4</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://www.yinmei.vip/images/logo.png" width="200px"/></p>
 <br/><br/><br/>
 <p align="center"><img src="https://www.yinmei.vip/images/yinmei-cover.jpg" width="80%"/></p>
@@ -20,12 +20,12 @@
 https://www.yinmei.vip/  
 
 ## 下载软件
-[Docker版本](https://hub.docker.com/r/worm128/yinmei-core) | [Window版本](https://pan.baidu.com/s/1YD2elj-LQvrvkTQubjegRg?pwd=e6s7) | [Linux版本](https://pan.baidu.com/s/1YD2elj-LQvrvkTQubjegRg?pwd=e6s7)
+[Docker版本](https://hub.docker.com/r/worm128/yinmei-core) | [Window版本](https://pan.baidu.com/s/1zQr_lafz5LiscHhkfSj2bw?pwd=2tep) | [Linux版本](https://pan.baidu.com/s/1zQr_lafz5LiscHhkfSj2bw?pwd=2tep)
 
 ## 项目声明
 **开源版本：1.8.1**   
 说明：这个版本是在github开源，但是她没有后台管理界面  
-**完整版：2.4.0**  
+**完整版：2.4.4**  
 说明：这个版本有完整后台管理界面，意图分析+情感分析+语音声纹识别+扩散思维+积分系统+用户系统等多种功能，你可以尽情[观看软件](https://www.bilibili.com/video/BV1FLuEztEGR)的具体效果，如需软件请到[网盘下载](https://pan.baidu.com/s/1YD2elj-LQvrvkTQubjegRg?pwd=e6s7)，完整版不开源  
 
 ## 项目下载
@@ -139,7 +139,7 @@ https://www.yinmei.vip/
 ## 快速启动
 **下载包：**  
 下载路径：在"吟美核心"文件夹  
-应用包：AI-YinMei-v2.4.0.zip  
+应用包：AI-YinMei-v2.4.4.zip  
 
 **启动方式：**
 双击启动“start.bat"或者"yinmei-core-api.exe"  
