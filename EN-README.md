@@ -4,7 +4,7 @@
 <p align="right" style="font-weight: bold; font-size: 1.5em">Bilibili: A Programmer's Retirement Life</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">Technical QQ Group: 27831318</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">Fan Welfare Group: 264534845</p>
-<p align="right" style="font-weight: bold; font-size: 1.5em">Version: 2.4.0</p>
+<p align="right" style="font-weight: bold; font-size: 1.5em">Version: 2.4.4</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://www.yinmei.vip/images/logo.png" width="200px"/></p>
 <br/><br/><br/>
 
@@ -21,10 +21,13 @@
 ## Official Website
 [https://www.yinmei.vip/](https://www.yinmei.vip/#/en/)  
 
+## Download the software 
+[Docker](https://hub.docker.com/r/worm128/yinmei-core) | [Windows](https://pan.baidu.com/s/1zQr_lafz5LiscHhkfSj2bw?pwd=2tep) | [Linux](https://pan.baidu.com/s/1zQr_lafz5LiscHhkfSj2bw?pwd=2tep)
+
 ## Project Statement
 **Open Source Version: 1.8.1**
 Note: This version is open source on GitHub, but it does not have a backend management interface.  
-**Full Version: 2.4.0**
+**Full Version: 2.4.4**
 Note: This version includes a complete backend management interface, intent analysis, sentiment analysis, voiceprint recognition, diffuse thinking, a points system, a user system, and other features. [A download link](https://www.bilibili.com/video/BV1FLuEztEGR) is available on the official website. The full version is not open source.  
 
 ## Project Download
@@ -47,9 +50,9 @@ Yinmei Development Documentation: Artificial Intelligence -> Yinmei Development 
 ## Quick Configuration
 > Configure the following two settings to start chatting immediately.  
 
-1. [Configure Chat](https://www.yinmei.vip/#/yinmei-core?id=_2, General AI Chat)  
-2. [Configure Voice](https://www.yinmei.vip/#/yinmei-core?id=_2, Voice Synthesis)  
-3. [Start a Conversation](https://www.yinmei.vip/#/yinmei-core?id=_23, Chat Conversation)  
+1. [Configure Chat](https://docs.yinmei.vip/#/yinmei-core?id=_2, General AI Chat)  
+2. [Configure Voice](https://docs.yinmei.vip/#/yinmei-core?id=_2, Voice Synthesis)  
+3. [Start a Conversation](https://docs.yinmei.vip/#/yinmei-core?id=_23, Chat Conversation)  
 
 ## Function Overview
 - **Aggregated Bullet Comments:** Aggregates live stream bullet comments, supporting the display of bullet comments from 9 major sources including Bilibili development platform, Napcat [QQ robot], Barragefly [Douyin, Huya, Kuaishou, Douyu], WeChat live stream, desktop pets, and background chat dialogues.
