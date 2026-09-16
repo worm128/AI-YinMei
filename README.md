@@ -51,8 +51,8 @@ https://www.yinmei.vip/
 > 配置好以下两个配置，就可以马上进行聊天了
 
 1、[配置聊天](https://docs.yinmei.vip/#/yinmei-core?id=_2、通用ai聊天)  
-2、[配置语音](https://docs.yinmei.vip/#/yinmei-core?id=二、语音合成)  
-3、[进行对话](https://docs.yinmei.vip/#/yinmei-core?id=_23-聊天对话)  
+2、[配置语音](https://docs.yinmei.vip/#/yinmei-core?id=三、语音合成)  
+3、[进行对话](https://docs.yinmei.vip/#/yinmei-core?id=_24-聊天对话)  
 
 ## 产品概述
 泛用式人工智能：支持聚合直播、QQ机器人、桌宠
