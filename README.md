@@ -24,13 +24,13 @@ http://demo.yinmei.vip/
 账号密码：admin
 
 ## 下载软件
-[Docker版本](https://hub.docker.com/r/worm128/yinmei-core) | [Window版本](https://pan.baidu.com/s/1zQr_lafz5LiscHhkfSj2bw?pwd=2tep) | [Linux版本](https://pan.baidu.com/s/1zQr_lafz5LiscHhkfSj2bw?pwd=2tep)
+[Docker版本](https://hub.docker.com/r/worm128/yinmei-core) | [Window版本](https://pan.baidu.com/s/11kIws0H0YITmwVucqoCWrA?pwd=6e74) | [Linux版本](https://pan.baidu.com/s/11kIws0H0YITmwVucqoCWrA?pwd=6e74)
 
 ## 项目声明
 **开源版本：1.8.1**   
 说明：这个版本是在github开源，但是她没有后台管理界面  
-**完整版：2.4.4**  
-说明：这个版本有完整后台管理界面，意图分析+情感分析+语音声纹识别+扩散思维+积分系统+用户系统等多种功能，你可以尽情[观看软件](https://www.bilibili.com/video/BV17mfZBkEMR)的具体效果，如需软件请到[网盘下载](https://pan.baidu.com/s/1zQr_lafz5LiscHhkfSj2bw?pwd=2tep)，完整版不开源  
+**完整版：3.0.0-Pre**  
+说明：这个版本有完整后台管理界面，意图分析+情感分析+语音声纹识别+扩散思维+积分系统+用户系统等多种功能，你可以尽情[观看软件](https://www.bilibili.com/video/BV17mfZBkEMR)的具体效果，如需软件请到[网盘下载](https://pan.baidu.com/s/11kIws0H0YITmwVucqoCWrA?pwd=6e74)，完整版不开源  
 
 ## 项目下载
 **吟美整合包下载地址：**  
