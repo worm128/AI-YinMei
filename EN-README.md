@@ -4,7 +4,7 @@
 <p align="right" style="font-weight: bold; font-size: 1.5em">Bilibili: A Programmer's Retirement Life</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">Technical QQ Group: 27831318</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">Fan Welfare Group: 264534845</p>
-<p align="right" style="font-weight: bold; font-size: 1.5em">Version: 2.4.4</p>
+<p align="right" style="font-weight: bold; font-size: 1.5em">Version: 3.0.1-Pre</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://www.yinmei.vip/images/logo.png" width="200px"/></p>
 <br/><br/><br/>
 
@@ -31,7 +31,7 @@ Account and password: admin
 ## Project Statement
 **Open Source Version: 1.8.1**
 Note: This version is open source on GitHub, but it does not have a backend management interface.  
-**Full Version: 2.4.4**
+**Full Version: 3.0.1-Pre**
 Note: This version includes a complete backend management interface, intent analysis, sentiment analysis, voiceprint recognition, diffuse thinking, a points system, a user system, and other features. You can fully enjoy [the specific effects](https://www.bilibili.com/video/BV17mfZBkEMR) of the software, [A download link](https://pan.baidu.com/s/11kIws0H0YITmwVucqoCWrA?pwd=6e74) is available on the official website. The full version is not open source.  
 
 ## Project Download
