@@ -4,7 +4,7 @@
 <p align="right" style="font-weight: bold; font-size: 1.5em">B站：程序猿的退休生活</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">技术Q群：27831318</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em">粉丝福利群：264534845</p>
-<p align="right" style="font-weight: bold; font-size: 1.5em">版本：2.4.4</p>
+<p align="right" style="font-weight: bold; font-size: 1.5em">版本：3.0.1-Pre</p>
 <p align="right" style="font-weight: bold; font-size: 1.5em"><img src="https://www.yinmei.vip/images/logo.png" width="200px"/></p>
 <br/><br/><br/>
 <p align="center"><img src="https://www.yinmei.vip/images/yinmei-cover.jpg" width="80%"/></p>
@@ -13,7 +13,7 @@
 [[中文](https://github.com/worm128/AI-YinMei) | [EN](https://github.com/worm128/AI-YinMei/blob/master/EN-README.md)]
 
 ## 视频介绍 
-[桌宠、声纹、语音、QQ机器人](https://www.bilibili.com/video/BV1kh5TzLEv6/) | [2.0强大管理后台+RAG知识库+KAG扩散思维+长期记忆+意图分析](https://www.bilibili.com/video/BV1vFqjYBEK7) <br>
+[桌宠、声纹、语音、QQ机器人](https://www.bilibili.com/video/BV1kh5TzLEv6/) | [3.0强大管理后台+RAG知识库+KAG扩散思维+长期记忆+意图分析](https://www.bilibili.com/video/BV1vFqjYBEK7) <br>
 [MCP插件](https://www.bilibili.com/video/BV1FLuEztEGR) | [兼容所有LLM接口](https://www.bilibili.com/video/BV1NkktYTEkZ) | [扩散思维](https://www.bilibili.com/video/BV15iBuY9EZ7)
 
 ## 官网
@@ -29,7 +29,7 @@ http://demo.yinmei.vip/
 ## 项目声明
 **开源版本：1.8.1**   
 说明：这个版本是在github开源，但是她没有后台管理界面  
-**完整版：3.0.0-Pre**  
+**完整版：3.0.1-Pre**  
 说明：这个版本有完整后台管理界面，意图分析+情感分析+语音声纹识别+扩散思维+积分系统+用户系统等多种功能，你可以尽情[观看软件](https://www.bilibili.com/video/BV17mfZBkEMR)的具体效果，如需软件请到[网盘下载](https://pan.baidu.com/s/11kIws0H0YITmwVucqoCWrA?pwd=6e74)，完整版不开源  
 
 ## 项目下载
