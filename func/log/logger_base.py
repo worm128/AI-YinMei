@@ -1,4 +1,5 @@
 import logging
+import os
 import colorlog
 
 class LoggerBase:
@@ -26,6 +27,10 @@ class LoggerBase:
         logger.addHandler(console)
 
         # 文件日志
+        # 日志目录默认被 .gitignore 排除，全新检出的仓库里不存在，需自行创建
+        log_dir = os.path.dirname(fileName)
+        if log_dir:
+            os.makedirs(log_dir, exist_ok=True)
         handler = logging.FileHandler(fileName, encoding=encoding, mode="a+")
         format_str = logging.Formatter("%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s")
         handler.setFormatter(format_str)

@@ -1,5 +1,7 @@
 *__pycache__/
 .vscode/
+.venv/
+build/
 runtime/
 *.bin
 .github/

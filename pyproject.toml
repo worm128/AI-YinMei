@@ -1,0 +1,63 @@
+# 依赖用 uv 管理：pyproject.toml 是唯一事实来源，uv.lock 锁定实际安装版本。
+#   uv sync                     # 按 uv.lock 装好运行时依赖（.venv）
+#   uv run api.py               # 在项目环境里启动
+#   uv sync --group test        # 额外装 test/ 下脚本需要的依赖
+#   uv run --group build python -m nuitka --standalone --mingw64 api.py   # 打包
+#   uv lock --upgrade           # 升级依赖后重新解析
+# requirements.txt 是 `uv export --format requirements-txt --no-hashes --output-file requirements.txt`
+# 从 uv.lock 导出的产物，仅供不走 uv 的 pip 用户／整合包使用，不要手工编辑。
+
+[project]
+name = "ai-yinmei"
+version = "1.0.0"
+description = "AI 虚拟主播「吟美」核心：B站弹幕对接 + LLM 对话 + TTS + 绘画 + VTube Studio 控制"
+requires-python = ">=3.12,<3.13"
+# 运行时依赖：由 api.py + func/ 实际 import 的模块反推确定，版本取当前已验证可跑的虚拟环境
+dependencies = [
+    "flask==3.0.0",
+    "flask-apscheduler==1.13.1",
+    "apscheduler==3.10.4",
+    # 弹幕长连接
+    "aiohttp==3.14.5",
+    "yarl==1.25.1",
+    "brotli==1.1.0",
+    "websocket-client==1.7.0",
+    # 外部服务对接
+    "requests==2.31.0",
+    # 不 import、但 requests 走 socks5 代理时必需：缺了会报 Missing dependencies for SOCKS support
+    # （config.yml 里的 translate/draw 都配了 socks5://127.0.0.1:10806）
+    "pysocks==1.7.1",
+    "obs-websocket-py==1.0",
+    "edge-tts==7.3.1",
+    "duckduckgo-search==4.1.1",
+    "beautifulsoup4==4.15.0",
+    "cachetools==8.0.2",
+    # 配置与日志
+    "pyyaml==6.0.3",
+    "colorlog==6.12.0",
+    "pillow==10.0.1",
+]
+
+# 仅 test/ 下的独立脚本需要，用 `uv sync --group test` 安装；
+# 主程序不 import 这些包，所以默认不装（opencv/numpy 体积大，pyvirtualcam 还需 OBS 虚拟摄像头驱动）
+[dependency-groups]
+test = [
+    "opencv-python==4.8.1.78",
+    "numpy==1.26.3",
+    "pynput==1.7.6",
+    "pyvirtualcam==0.11.0",
+    "simplejson==3.19.2",
+]
+# 打包用，不随默认环境安装：
+#   uv run --group build python -m nuitka --standalone --mingw64 api.py
+# 不要用 `uv pip install nuitka`：它不在 uv.lock 里，下一次 `uv sync` 就会被卸掉。
+build = [
+    "nuitka==4.3.5",
+]
+
+# 故意未列入：bilibili-api-python==16.1.1 只有 test/ 下的脚本用，且它要求 aiohttp<3.9，
+# 与运行时的 aiohttp==3.14.5 互斥，装进同一环境会解析失败；需要时请另建一个环境。
+
+[tool.uv]
+# 本项目是「脚本 + 包目录」的运行型项目，不需要被构建成 wheel 安装进环境
+package = false
